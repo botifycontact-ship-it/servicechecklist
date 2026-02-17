@@ -89,8 +89,9 @@
     /* ── SERVICE GRID ── */
     .service-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
       gap: 14px;
+      align-items: start;
     }
 
     /* ── CARD ── */
@@ -133,7 +134,7 @@
     .card-check:checked { border-color: var(--accent, var(--neon)); box-shadow: 0 0 8px rgba(var(--accent-rgb,0,255,65), .5); }
     .card-check:checked::after { opacity: 1; transform: scale(1); }
 
-    .card-desc { font-size: 11.5px; color: var(--text-dim); line-height: 1.6; margin-bottom: 14px; flex: 1; }
+    .card-desc { font-size: 12px; color: var(--text-dim); line-height: 1.65; margin-bottom: 14px; flex: 1; }
     .card-footer { display: flex; align-items: center; justify-content: space-between; margin-top: auto; }
     .card-price { font-size: 17px; font-weight: 700; color: var(--accent, var(--neon)); text-shadow: 0 0 12px rgba(var(--accent-rgb,0,255,65),.5); }
     .card-unit { font-size: 10px; color: var(--text-dim); margin-left: 3px; font-weight: 400; }
@@ -235,7 +236,7 @@
     <div class="section-header">
       <span class="eyebrow">Service Configuration by Position</span>
       <h1 class="section-title"><span>HYBRYD</span> &mdash; Build Your<br>Custom Operations Budget</h1>
-      <p class="section-subtitle">Activa las posiciones y servicios que necesitas. El presupuesto se construye en tiempo real seg&uacute;n tu selecci&oacute;n.</p>
+      <p class="section-subtitle">Cada casilla que marcas representa una tarea real que alguien ejecuta por ti todos los meses. Lee cada descripci&oacute;n, eval&uacute;a lo que necesitas y construye el presupuesto que refleja exactamente tu operaci&oacute;n.</p>
     </div>
 
     <!-- BUDGET DIAL -->
@@ -259,7 +260,7 @@
           <div class="pos-number">Posici&oacute;n 01</div>
           <div class="pos-name">Community Management</div>
         </div>
-        <div class="pos-desc">Gesti&oacute;n activa de comunidad, presencia digital y conversaciones de marca en redes sociales.</div>
+        <div class="pos-desc">Todo lo que ocurre en tus redes despu&eacute;s de publicar: qui&eacute;n responde, c&oacute;mo se responde y qu&eacute; imagen proyectas en cada interacci&oacute;n diaria.</div>
       </div>
       <div class="service-grid">
 
@@ -268,7 +269,7 @@
             <span class="card-title">Gesti&oacute;n de Contenido y Calendario</span>
             <input type="checkbox" class="card-check" onclick="event.stopPropagation()">
           </div>
-          <p class="card-desc">Planificaci&oacute;n mensual, calendario editorial estructurado y coordinaci&oacute;n de publicaciones en todos los canales activos.</p>
+          <p class="card-desc">Cada mes se define qu&eacute; se publica, cu&aacute;ndo y con qu&eacute; objetivo. Se crea un calendario editorial estructurado por semanas con los temas, formatos y fechas clave marcadas. Si no existe este sistema, el contenido se publica de forma reactiva y sin coherencia estrat&eacute;gica &mdash; lo que hace que la cuenta parezca inconsistente y sin direcci&oacute;n clara.</p>
           <div class="card-footer">
             <div><span class="card-price">350&euro;</span><span class="card-unit">/ mes</span></div>
             <span class="card-badge">Base</span>
@@ -280,7 +281,7 @@
             <span class="card-title">Gesti&oacute;n de DMs y Comentarios</span>
             <input type="checkbox" class="card-check" onclick="event.stopPropagation()">
           </div>
-          <p class="card-desc">Respuesta a mensajes directos, moderaci&oacute;n de comentarios, filtrado de leads y mantenimiento del tono de marca.</p>
+          <p class="card-desc">Alguien responde por ti, todos los d&iacute;as. Los mensajes directos se gestionan con protocolo, los comentarios se moderan para eliminar ruido y los leads reales se identifican y separan para seguimiento. Incluye mantenimiento activo del tono de marca en cada interacci&oacute;n. Sin esto, tu comunidad percibe que no hay nadie detr&aacute;s de la cuenta &mdash; y los clientes potenciales se van en silencio.</p>
           <div class="card-footer">
             <div><span class="card-price">450&euro;</span><span class="card-unit">/ mes</span></div>
           </div>
@@ -291,7 +292,7 @@
             <span class="card-title">Monitoreo y Escucha Social</span>
             <input type="checkbox" class="card-check" onclick="event.stopPropagation()">
           </div>
-          <p class="card-desc">Seguimiento de menciones, an&aacute;lisis de competencia, alertas de reputaci&oacute;n y reportes semanales de sentimiento.</p>
+          <p class="card-desc">Se monitorizan en tiempo real las menciones de tu marca, los movimientos de tu competencia directa y cualquier conversaci&oacute;n relevante en tu sector. Recibes alertas ante situaciones de riesgo reputacional y un reporte semanal que refleja c&oacute;mo est&aacute; siendo percibido tu contenido. Te permite reaccionar a tiempo en lugar de enterarte tarde de lo que se dice de ti.</p>
           <div class="card-footer">
             <div><span class="card-price">300&euro;</span><span class="card-unit">/ mes</span></div>
           </div>
@@ -302,7 +303,7 @@
             <span class="card-title">Community Management Avanzado (Full)</span>
             <input type="checkbox" class="card-check" onclick="event.stopPropagation()">
           </div>
-          <p class="card-desc">Paquete completo: calendario + DMs + comentarios + monitoreo + reportes. Presencia activa 6 d&iacute;as a la semana.</p>
+          <p class="card-desc">La gesti&oacute;n completa de tu presencia en redes: planificaci&oacute;n editorial, respuesta de mensajes, moderaci&oacute;n de comentarios, monitoreo de marca y reportes semanales, todo incluido. Presencia activa 6 d&iacute;as a la semana. Es la opci&oacute;n para quien quiere delegar por completo esta posici&oacute;n sin preocuparse de ning&uacute;n detalle operativo.</p>
           <div class="card-footer">
             <div><span class="card-price">500&euro;</span><span class="card-unit">/ mes</span></div>
             <span class="card-badge">Full</span>
@@ -322,7 +323,7 @@
           <div class="pos-number">Posici&oacute;n 02</div>
           <div class="pos-name">Dise&ntilde;o Gr&aacute;fico</div>
         </div>
-        <div class="pos-desc">Producci&oacute;n visual de marca: piezas est&aacute;ticas, contenido animado y sistemas de identidad aplicados.</div>
+        <div class="pos-desc">Lo que se ve determina si la gente para a leer. Aqu&iacute; se decide el volumen, el formato y la calidad visual de todo lo que publicas cada mes.</div>
       </div>
       <div class="service-grid">
 
@@ -331,7 +332,7 @@
             <span class="card-title">Pack Carruseles (8 / mes)</span>
             <input type="checkbox" class="card-check" onclick="event.stopPropagation()">
           </div>
-          <p class="card-desc">8 carruseles mensuales de contenido educativo y de autoridad, optimizados para engagement y posicionamiento.</p>
+          <p class="card-desc">8 carruseles al mes dise&ntilde;ados para posicionarte como referente en tu sector. Cada pieza tiene estructura narrativa propia: portada de impacto, desarrollo de contenido real y cierre con llamada a la acci&oacute;n. Son el formato que m&aacute;s guarda, comparte y genera seguidores cualificados en Instagram. Si no los tienes, tu perfil solo acumula views &mdash; sin convertir.</p>
           <div class="card-footer">
             <div><span class="card-price">400&euro;</span><span class="card-unit">/ mes</span></div>
             <span class="card-badge">Base</span>
@@ -343,7 +344,7 @@
             <span class="card-title">Pack Carruseles (12 / mes)</span>
             <input type="checkbox" class="card-check" onclick="event.stopPropagation()">
           </div>
-          <p class="card-desc">12 carruseles mensuales. Posicionamiento de autoridad m&aacute;ximo con mayor frecuencia visual y variedad narrativa.</p>
+          <p class="card-desc">12 carruseles al mes para quienes necesitan mayor frecuencia de publicaci&oacute;n y quieren saturar su nicho con contenido de valor constante. A este volumen, el algoritmo te premia, tu audiencia te asocia directamente con tu &aacute;rea de expertise y la curva de crecimiento org&aacute;nico se acelera de forma visible. Recomendado si est&aacute;s en una fase activa de crecimiento o lanzamiento.</p>
           <div class="card-footer">
             <div><span class="card-price">650&euro;</span><span class="card-unit">/ mes</span></div>
             <span class="card-badge">Pro</span>
@@ -355,7 +356,7 @@
             <span class="card-title">Sistema de Stories (Templates diarias)</span>
             <input type="checkbox" class="card-check" onclick="event.stopPropagation()">
           </div>
-          <p class="card-desc">Plantillas editables de stories estructuradas para uso diario. Estrat&eacute;gia visual + guia de uso mensual incluida.</p>
+          <p class="card-desc">Las stories son el canal m&aacute;s directo con tu audiencia diaria y el primero que ven cuando abren la app. Se crea un sistema de plantillas editables con diferentes formatos: encuestas, preguntas, contenido de valor, detr&aacute;s de c&aacute;maras y llamadas a la acci&oacute;n. Incluye gu&iacute;a mensual de uso para que cualquier persona del equipo pueda publicarlas correctamente sin romper la est&eacute;tica de marca.</p>
           <div class="card-footer">
             <div><span class="card-price">350&euro;</span><span class="card-unit">/ mes</span></div>
           </div>
@@ -366,7 +367,7 @@
             <span class="card-title">Edici&oacute;n de Reels (4 / mes)</span>
             <input type="checkbox" class="card-check" onclick="event.stopPropagation()">
           </div>
-          <p class="card-desc">4 reels editados por mes con dise&ntilde;o avanzado, subt&iacute;tulos animados y dise&ntilde;o de audio profesional.</p>
+          <p class="card-desc">4 reels editados por mes con tratamiento profesional completo: correcci&oacute;n de color, subt&iacute;tulos animados sincronizados, selecci&oacute;n musical estratégica y ritmo de edici&oacute;n adaptado al formato corto. Los reels son el principal motor de alcance org&aacute;nico en Instagram y TikTok. Con este servicio tu contenido de v&iacute;deo deja de parecer improvisado y empieza a competir visualmente con cuentas de mucho mayor tama&ntilde;o.</p>
           <div class="card-footer">
             <div><span class="card-price">450&euro;</span><span class="card-unit">/ mes</span></div>
           </div>
@@ -377,7 +378,7 @@
             <span class="card-title">Piezas de Campa&ntilde;a y Eventos</span>
             <input type="checkbox" class="card-check" onclick="event.stopPropagation()">
           </div>
-          <p class="card-desc">Dise&ntilde;o de piezas visuales para lanzamientos, eventos y activaciones puntuales. Hasta 10 artes por campa&ntilde;a.</p>
+          <p class="card-desc">Cuando tienes un evento, un lanzamiento o una campa&ntilde;a especial, necesitas piezas visuales que comuniquen urgencia, exclusividad y coherencia de marca. Se dise&ntilde;an hasta 10 artes adaptadas a distintos formatos (feed, stories, portada, banner) con lenguaje visual unificado. Evita el error habitual de publicar campa&ntilde;as con dise&ntilde;os improvisados que restan credibilidad al producto.</p>
           <div class="card-footer">
             <div><span class="card-price">300&euro;</span><span class="card-unit">/ campa&ntilde;a</span></div>
           </div>
@@ -396,7 +397,7 @@
           <div class="pos-number">Posici&oacute;n 03</div>
           <div class="pos-name">Gesti&oacute;n de Base de Datos</div>
         </div>
-        <div class="pos-desc">Estructura, organizaci&oacute;n y mantenimiento de activos digitales, contactos y sistemas de informaci&oacute;n.</div>
+        <div class="pos-desc">El orden interno que nadie ve pero que hace que todo funcione: archivos, listas de contactos, m&eacute;tricas y datos estructurados para tomar decisiones.</div>
       </div>
       <div class="service-grid">
 
@@ -405,7 +406,7 @@
             <span class="card-title">Gesti&oacute;n Drive y Activos Digitales</span>
             <input type="checkbox" class="card-check" onclick="event.stopPropagation()">
           </div>
-          <p class="card-desc">Carga, organizaci&oacute;n y optimizaci&oacute;n de toda la estructura de archivos digitales en Drive. Sistema de nomenclatura incluido.</p>
+          <p class="card-desc">Si tienes carpetas en Drive con nombres como "final", "final2" o "definitivo_v3", este servicio es para ti. Se organiza toda la estructura de archivos digitales &mdash; contenido, artes, v&iacute;deos, documentos &mdash; con un sistema de nomenclatura claro, carpetas bien jerarquizadas y permisos de acceso correctamente configurados. El equipo deja de perder tiempo buscando archivos y empieza a trabajar con orden real.</p>
           <div class="card-footer">
             <div><span class="card-price">300&euro;</span><span class="card-unit">/ mes</span></div>
             <span class="card-badge">Base</span>
@@ -417,7 +418,7 @@
             <span class="card-title">Sistema de Archivo de Contenido</span>
             <input type="checkbox" class="card-check" onclick="event.stopPropagation()">
           </div>
-          <p class="card-desc">Control de versiones, etiquetado por rendimiento y archivo hist&oacute;rico de todo el contenido producido por el equipo.</p>
+          <p class="card-desc">Todo el contenido que se produce queda archivado con su versi&oacute;n, fecha, canal y m&eacute;trica de rendimiento asociada. Esto permite saber qu&eacute; funciona, reutilizar piezas de alto impacto y tener un historial completo del trabajo realizado. Sin este sistema, el contenido se produce, se publica y desaparece &mdash; sin aprendizaje acumulado ni posibilidad de escalar lo que ya funciona.</p>
           <div class="card-footer">
             <div><span class="card-price">250&euro;</span><span class="card-unit">/ mes</span></div>
           </div>
@@ -428,7 +429,7 @@
             <span class="card-title">Base de Datos de Contactos y Leads</span>
             <input type="checkbox" class="card-check" onclick="event.stopPropagation()">
           </div>
-          <p class="card-desc">Mantenimiento, limpieza y segmentaci&oacute;n de la base de datos de contactos. Preparaci&oacute;n de listas para campa&ntilde;as activas.</p>
+          <p class="card-desc">Una base de datos sucia es dinero perdido. Este servicio incluye la limpieza peri&oacute;dica de contactos duplicados o inactivos, la segmentaci&oacute;n por perfiles de inter&eacute;s o etapa del embudo, y la preparaci&oacute;n de listas limpias listas para usar en cada campa&ntilde;a. La calidad de tus resultados en email marketing y publicidad de pago depende directamente de cu&aacute;n bien est&eacute; segmentada tu base de datos.</p>
           <div class="card-footer">
             <div><span class="card-price">350&euro;</span><span class="card-unit">/ mes</span></div>
           </div>
@@ -439,7 +440,7 @@
             <span class="card-title">Reportes y Dashboards de Rendimiento</span>
             <input type="checkbox" class="card-check" onclick="event.stopPropagation()">
           </div>
-          <p class="card-desc">Creaci&oacute;n y mantenimiento de dashboards visuales con KPIs, m&eacute;tricas de contenido y seguimiento de objetivos mensuales.</p>
+          <p class="card-desc">Se crean dashboards visuales que consolidan en un solo lugar todas las m&eacute;tricas relevantes: alcance, engagement, apertura de emails, conversiones, crecimiento de seguidores y estado de los objetivos del mes. Sin esto, cada reuni&oacute;n empieza buscando n&uacute;meros en sitios distintos. Con esto, la toma de decisiones se basa en datos reales actualizados &mdash; no en intuici&oacute;n.</p>
           <div class="card-footer">
             <div><span class="card-price">400&euro;</span><span class="card-unit">/ mes</span></div>
             <span class="card-badge">Pro</span>
@@ -459,7 +460,7 @@
           <div class="pos-number">Posici&oacute;n 04</div>
           <div class="pos-name">Email Marketing &amp; Estrategia</div>
         </div>
-        <div class="pos-desc">Desde secuencias de email hasta direcci&oacute;n estrat&eacute;gica completa del departamento de marketing.</div>
+        <div class="pos-desc">Desde enviar emails a tu lista hasta tener a alguien que piensa y dirige toda la estrategia de marketing de tu negocio. Elige el nivel que necesitas.</div>
       </div>
       <div class="service-grid">
 
@@ -468,7 +469,7 @@
             <span class="card-title">Email Marketing Mensual (4 campa&ntilde;as)</span>
             <input type="checkbox" class="card-check" onclick="event.stopPropagation()">
           </div>
-          <p class="card-desc">4 env&iacute;os mensuales: dise&ntilde;o, redacci&oacute;n, segmentaci&oacute;n y an&aacute;lisis de resultados. Compatible con Mailchimp, Klaviyo y similares.</p>
+          <p class="card-desc">El email sigue siendo el canal con mayor retorno de inversi&oacute;n de todos los canales digitales. Se gestionan 4 env&iacute;os mensuales completos: redacci&oacute;n del copy, dise&ntilde;o de la plantilla, segmentaci&oacute;n de la lista y an&aacute;lisis de apertura y clics post-env&iacute;o. Si ya tienes una lista pero no la est&aacute;s usando de forma consistente, estás dejando caducar uno de tus activos m&aacute;s valiosos.</p>
           <div class="card-footer">
             <div><span class="card-price">350&euro;</span><span class="card-unit">/ mes</span></div>
             <span class="card-badge">Base</span>
@@ -480,7 +481,7 @@
             <span class="card-title">Automatizaciones y Secuencias de Email</span>
             <input type="checkbox" class="card-check" onclick="event.stopPropagation()">
           </div>
-          <p class="card-desc">Dise&ntilde;o e implementaci&oacute;n de flujos automatizados: bienvenida, nutrici&oacute;n, recuperaci&oacute;n de leads y secuencias post-evento.</p>
+          <p class="card-desc">Las automatizaciones trabajan mientras t&uacute; duermes. Se dise&ntilde;an e implementan flujos que se activan autom&aacute;ticamente seg&uacute;n el comportamiento del usuario: secuencia de bienvenida para nuevos suscriptores, flujo de nutrici&oacute;n para leads fr&iacute;os, recuperaci&oacute;n de contactos inactivos y seguimiento post-evento o post-lanzamiento. Una vez configurados, estos flujos generan ventas y retenci&oacute;n de forma continua sin intervenci&oacute;n manual.</p>
           <div class="card-footer">
             <div><span class="card-price">500&euro;</span><span class="card-unit">/ mes</span></div>
           </div>
@@ -491,7 +492,7 @@
             <span class="card-title">Redacci&oacute;n de Scripts y Copys</span>
             <input type="checkbox" class="card-check" onclick="event.stopPropagation()">
           </div>
-          <p class="card-desc">Scripts para v&iacute;deos, copys de anuncios y textos de venta. Voz y narrativa adaptada a David / Xavi y al posicionamiento de marca.</p>
+          <p class="card-desc">Todo lo que David o Xavi comunican en c&aacute;mara o por escrito tiene que sonar aut&eacute;ntico, claro y con intenci&oacute;n de venta. Se redactan los scripts de los v&iacute;deos con estructura narrativa, los copys de los anuncios para Meta y Google, y los textos de landing pages o secuencias de venta. La voz siempre est&aacute; adaptada al tono de marca &mdash; no suena a texto gen&eacute;rico ni a promoci&oacute;n agresiva.</p>
           <div class="card-footer">
             <div><span class="card-price">450&euro;</span><span class="card-unit">/ mes</span></div>
           </div>
@@ -502,7 +503,7 @@
             <span class="card-title">Direcci&oacute;n Estrat&eacute;gica (Monthly)</span>
             <input type="checkbox" class="card-check" onclick="event.stopPropagation()">
           </div>
-          <p class="card-desc">Planificaci&oacute;n narrativa, posicionamiento de marca y supervisi&oacute;n del rendimiento mensual. Sesiones de alineaci&oacute;n estrat&eacute;gica.</p>
+          <p class="card-desc">Una persona con visi&oacute;n estrat&eacute;gica que supervisa que todo lo que se produce y publica est&eacute; alineado con el posicionamiento de la marca y los objetivos del mes. Incluye la definici&oacute;n de la narrativa mensual, revisi&oacute;n del rendimiento y dos sesiones de alineaci&oacute;n. Ideal si ya tienes equipo operativo pero necesitas alguien que garantice coherencia y direcci&oacute;n en todo lo que sale al mercado.</p>
           <div class="card-footer">
             <div><span class="card-price">700&euro;</span><span class="card-unit">/ mes</span></div>
             <span class="card-badge">Pro</span>
@@ -514,7 +515,7 @@
             <span class="card-title">CMO Fraccionado (Marketing Completo)</span>
             <input type="checkbox" class="card-check" onclick="event.stopPropagation()">
           </div>
-          <p class="card-desc">Externalizaci&oacute;n completa del departamento de marketing. Liderazgo estrat&eacute;gico sin estructura interna. M&aacute;xima capacidad operativa.</p>
+          <p class="card-desc">HYBRYD act&uacute;a como tu Director de Marketing externo. Se gestiona la estrategia global, la coordinaci&oacute;n de todos los servicios activos, las decisiones de posicionamiento y la supervisi&oacute;n de resultados &mdash; todo ello sin que necesites contratar un CMO interno. Pagas la capacidad de un departamento completo por una fracci&oacute;n del coste. Es la opci&oacute;n para quien quiere escalar de forma seria sin inflar la estructura.</p>
           <div class="card-footer">
             <div><span class="card-price">950&euro;</span><span class="card-unit">/ mes</span></div>
             <span class="card-badge">Full</span>
@@ -526,7 +527,7 @@
             <span class="card-title">Paid Ads (Meta / Google)</span>
             <input type="checkbox" class="card-check" onclick="event.stopPropagation()">
           </div>
-          <p class="card-desc">Setup, gesti&oacute;n y optimizaci&oacute;n de campa&ntilde;as de pago. Budget publicitario no incluido en este honorario.</p>
+          <p class="card-desc">Se configuran y gestionan las campa&ntilde;as de publicidad de pago en Meta (Facebook e Instagram) y Google Ads: estructura de campa&ntilde;a, definici&oacute;n de p&uacute;blicos, redacci&oacute;n de copies y optimizaci&oacute;n continua seg&uacute;n rendimiento. El presupuesto publicitario que inviertes directamente en las plataformas va aparte y es tuyo. Este honorario cubre exclusivamente la estrategia, configuraci&oacute;n y gesti&oacute;n profesional de ese presupuesto.</p>
           <div class="card-footer">
             <div><span class="card-price">600&euro;</span><span class="card-unit">/ mes</span></div>
           </div>
@@ -545,7 +546,7 @@
           <div class="pos-number">Posici&oacute;n 05</div>
           <div class="pos-name">Customer Service Support</div>
         </div>
-        <div class="pos-desc">Atenci&oacute;n al cliente, coordinaci&oacute;n operativa y soporte ejecutivo para mantener la operaci&oacute;n activa y alineada.</div>
+        <div class="pos-desc">Quien cuida a tus clientes despu&eacute;s de que compran y quien mantiene al equipo coordinado d&iacute;a a d&iacute;a. La posici&oacute;n que sostiene todo lo dem&aacute;s.</div>
       </div>
       <div class="service-grid">
 
@@ -554,7 +555,7 @@
             <span class="card-title">Atenci&oacute;n al Cliente (Mensajes y Consultas)</span>
             <input type="checkbox" class="card-check" onclick="event.stopPropagation()">
           </div>
-          <p class="card-desc">Gesti&oacute;n de consultas entrantes por email, DM y WhatsApp. Protocolo de respuesta definido con tiempos de 24h.</p>
+          <p class="card-desc">Toda persona que contacta con tu marca esperando una respuesta es un cliente potencial o un cliente activo que necesita sentirse atendido. Se gestionan todas las consultas entrantes por email, mensajes directos y WhatsApp con protocolo de respuesta definido y tiempos m&aacute;ximos de 24 horas. Cada interacci&oacute;n sigue el tono y los protocolos de tu marca. Sin esto, los leads se enfrían y los clientes existentes perciben desorden.</p>
           <div class="card-footer">
             <div><span class="card-price">400&euro;</span><span class="card-unit">/ mes</span></div>
             <span class="card-badge">Base</span>
@@ -566,7 +567,7 @@
             <span class="card-title">Soporte Operativo Diario (WhatsApp)</span>
             <input type="checkbox" class="card-check" onclick="event.stopPropagation()">
           </div>
-          <p class="card-desc">Coordinaci&oacute;n continua v&iacute;a WhatsApp durante d&iacute;as laborables. Resoluci&oacute;n &aacute;gil y alineaci&oacute;n de ejecuci&oacute;n diaria.</p>
+          <p class="card-desc">El punto de contacto directo entre t&uacute; y el equipo para que la operaci&oacute;n fluya sin cuellos de botella. Coordinaci&oacute;n diaria por WhatsApp en d&iacute;as laborables: resolución de dudas en tiempo real, gesti&oacute;n de imprevistos, confirmaci&oacute;n de entregas y alineaci&oacute;n de prioridades. Elimina los hilos interminables de mensajes sin respuesta y garantiza que nada se quede bloqueado por falta de comunicaci&oacute;n.</p>
           <div class="card-footer">
             <div><span class="card-price">350&euro;</span><span class="card-unit">/ mes</span></div>
           </div>
@@ -577,7 +578,7 @@
             <span class="card-title">Seguimiento Post-Venta y Retenci&oacute;n</span>
             <input type="checkbox" class="card-check" onclick="event.stopPropagation()">
           </div>
-          <p class="card-desc">Protocolo de seguimiento despu&eacute;s del cierre o inscripci&oacute;n. Fidelizaci&oacute;n activa de clientes con secuencias estructuradas.</p>
+          <p class="card-desc">El momento en que alguien compra o se inscribe es solo el principio. Este servicio gestiona el contacto posterior al cierre con una secuencia estructurada: mensaje de bienvenida, confirmaci&oacute;n de expectativas, check-in a los 7 d&iacute;as y puntos de contacto programados para garantizar satisfacci&oacute;n y detectar oportunidades de upgrade o referido. Los clientes que se sienten atendidos despu&eacute;s de comprar son los que m&aacute;s repiten y m&aacute;s recomiendan.</p>
           <div class="card-footer">
             <div><span class="card-price">300&euro;</span><span class="card-unit">/ mes</span></div>
           </div>
@@ -588,7 +589,7 @@
             <span class="card-title">Reuniones de Seguimiento Semanales (4/mes)</span>
             <input type="checkbox" class="card-check" onclick="event.stopPropagation()">
           </div>
-          <p class="card-desc">4 sesiones de evaluaci&oacute;n mensual con an&aacute;lisis de KPIs, recalibraci&oacute;n estrat&eacute;gica y pr&oacute;ximos pasos definidos.</p>
+          <p class="card-desc">4 reuniones mensuales estructuradas &mdash; una por semana &mdash; con orden del d&iacute;a definido y actas de seguimiento. En cada sesi&oacute;n se revisan los resultados de la semana anterior, se identifican bloqueos, se toman decisiones basadas en datos y se establecen las prioridades de la pr&oacute;xima semana. Sin esta cadencia, los equipos trabajan sin visibilidad compartida y los problemas se detectan cuando ya es dif&iacute;cil corregirlos.</p>
           <div class="card-footer">
             <div><span class="card-price">350&euro;</span><span class="card-unit">/ mes</span></div>
           </div>
@@ -599,7 +600,7 @@
             <span class="card-title">Gesti&oacute;n Comunidad Privada (Discord / Grupo)</span>
             <input type="checkbox" class="card-check" onclick="event.stopPropagation()">
           </div>
-          <p class="card-desc">Moderaci&oacute;n, activaci&oacute;n y dinamizaci&oacute;n de comunidad privada de alumnos o clientes. Contenido exclusivo + interacci&oacute;n activa.</p>
+          <p class="card-desc">Si tienes un grupo privado de Discord, Telegram o WhatsApp con alumnos o clientes, su valor depende completamente de cu&aacute;n activa est&eacute; la comunidad. Se gestionan la moderaci&oacute;n diaria, las interacciones para mantener el nivel de actividad alto, la publicaci&oacute;n de contenido exclusivo y la detecci&oacute;n de miembros en riesgo de abandono. Una comunidad bien gestionada es tu mayor activo de retenci&oacute;n y la fuente m&aacute;s potente de testimonios y referidos org&aacute;nicos.</p>
           <div class="card-footer">
             <div><span class="card-price">500&euro;</span><span class="card-unit">/ mes</span></div>
             <span class="card-badge">Pro</span>
@@ -615,7 +616,7 @@
     <div class="breakdown">
       <div class="breakdown-header">
         <h2>Resumen del Presupuesto</h2>
-        <p>Todos los servicios seleccionados se detallan y totalizan a continuaci&oacute;n</p>
+        <p>Aqu&iacute; se refleja exactamente en qu&eacute; estás invirtiendo y cu&aacute;nto representa cada euro del presupuesto total.</p>
       </div>
       <div class="breakdown-card">
         <div class="breakdown-list" id="breakdownList">
