@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HYBRYD — Budget Builder by Position</title>
+  <style>
+    :root {
+      --neon: #00ff41;
+      --neon-dim: rgba(0,255,65,.1);
+      --neon-glow: 0 0 8px #00ff41, 0 0 24px rgba(0,255,65,.4);
+      --bg: #050a07;
+      --surface: rgba(255,255,255,.03);
+      --surface-2: rgba(255,255,255,.055);
+      --border: rgba(0,255,65,.15);
+      --border-hl: rgba(0,255,65,.5);
+      --text: #c8d6cc;
+      --text-dim: #4e6657;
+      --white: #eaf0ec;
+      --grid-color: rgba(0,255,65,.045);
+      --r: 10px;
+      --font: 'Inter','Segoe UI',system-ui,sans-serif;
+
+      /* position accent colours */
+      --c1: #00ff41; /* community */
+      --c2: #7b61ff; /* design */
+      --c3: #00cfff; /* database */
+      --c4: #ff6b35; /* marketing */
+      --c5: #ffcc00; /* customer */
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      min-height: 100vh;
+      background-image:
+        linear-gradient(var(--grid-color) 1px, transparent 1px),
+        linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
+      background-size: 40px 40px;
+    }
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: #1a3a22; border-radius: 4px; }
+
+    /* ── LAYOUT ── */
+    .block { padding: 80px 0 110px; }
+    .container { max-width: 1240px; margin: 0 auto; padding: 0 28px; }
+
+    /* ── HEADER ── */
+    .section-header { text-align: center; margin-bottom: 72px; }
+    .eyebrow { font-size: 9.5px; letter-spacing: .26em; text-transform: uppercase; color: var(--neon); margin-bottom: 20px; display: block; }
+    .section-title { font-size: clamp(26px, 4vw, 44px); font-weight: 800; color: var(--white); letter-spacing: -.025em; line-height: 1.12; margin-bottom: 18px; }
+    .section-title span { color: var(--neon); text-shadow: var(--neon-glow); }
+    .section-subtitle { font-size: 14.5px; color: var(--text-dim); max-width: 540px; margin: 0 auto; line-height: 1.75; }
+
+    /* ── BUDGET DIAL ── */
+    .budget-dial-wrap {
+      display: flex; justify-content: center; gap: 10px;
+      flex-wrap: wrap; margin-bottom: 64px;
+    }
+    .dial-btn {
+      padding: 9px 20px; border-radius: 30px; font-size: 11px;
+      font-weight: 700; letter-spacing: .14em; text-transform: uppercase;
+      cursor: pointer; border: 1.5px solid var(--border-hl);
+      background: transparent; color: var(--text-dim);
+      font-family: var(--font); transition: all .2s;
+    }
+    .dial-btn:hover { color: var(--neon); border-color: var(--neon); background: var(--neon-dim); }
+    .dial-btn.active { color: var(--bg); background: var(--neon); border-color: var(--neon); box-shadow: 0 0 14px rgba(0,255,65,.4); }
+
+    /* ── POSITION SECTION ── */
+    .pos-section { margin-bottom: 60px; }
+    .pos-header {
+      display: flex; align-items: center; gap: 14px;
+      margin-bottom: 22px; padding-bottom: 16px;
+      border-bottom: 1px solid var(--border);
+    }
+    .pos-dot {
+      width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+      box-shadow: 0 0 10px currentColor;
+    }
+    .pos-number { font-size: 9px; letter-spacing: .22em; color: var(--text-dim); text-transform: uppercase; }
+    .pos-name { font-size: 15px; font-weight: 700; color: var(--white); }
+    .pos-desc { font-size: 12px; color: var(--text-dim); margin-left: auto; max-width: 360px; text-align: right; line-height: 1.5; }
+
+    /* ── SERVICE GRID ── */
+    .service-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 14px;
+    }
+
+    /* ── CARD ── */
+    .card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--r); padding: 20px 20px 18px;
+      position: relative; cursor: pointer; overflow: hidden;
+      transition: border-color .22s, box-shadow .22s, background .22s, transform .18s;
+      display: flex; flex-direction: column; gap: 0;
+    }
+    .card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+      background: var(--accent, var(--neon)); opacity: 0;
+      transition: opacity .22s;
+    }
+    .card:hover { transform: translateY(-2px); background: var(--surface-2); }
+    .card:hover::before { opacity: 1; }
+    .card.selected {
+      border-color: var(--accent, var(--neon));
+      background: rgba(var(--accent-rgb, 0,255,65), .07);
+      box-shadow: 0 0 0 1px var(--accent, var(--neon)), 0 0 24px rgba(var(--accent-rgb, 0,255,65), .14);
+    }
+    .card.selected::before { opacity: 1; }
+    .card.dimmed { opacity: .38; pointer-events: none; }
+
+    .card-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; margin-bottom: 8px; }
+    .card-title { font-size: 13px; font-weight: 600; color: var(--white); line-height: 1.4; flex: 1; }
+    .card-check {
+      flex-shrink: 0; width: 17px; height: 17px;
+      appearance: none; -webkit-appearance: none;
+      border: 1.5px solid var(--border-hl); border-radius: 3px;
+      background: transparent; cursor: pointer; position: relative;
+      transition: border-color .18s, box-shadow .18s; margin-top: 1px;
+    }
+    .card-check::after {
+      content: ''; position: absolute; inset: 3px;
+      background: var(--accent, var(--neon)); border-radius: 1px;
+      opacity: 0; transform: scale(.3); transition: opacity .16s, transform .16s;
+    }
+    .card-check:checked { border-color: var(--accent, var(--neon)); box-shadow: 0 0 8px rgba(var(--accent-rgb,0,255,65), .5); }
+    .card-check:checked::after { opacity: 1; transform: scale(1); }
+
+    .card-desc { font-size: 11.5px; color: var(--text-dim); line-height: 1.6; margin-bottom: 14px; flex: 1; }
+    .card-footer { display: flex; align-items: center; justify-content: space-between; margin-top: auto; }
+    .card-price { font-size: 17px; font-weight: 700; color: var(--accent, var(--neon)); text-shadow: 0 0 12px rgba(var(--accent-rgb,0,255,65),.5); }
+    .card-unit { font-size: 10px; color: var(--text-dim); margin-left: 3px; font-weight: 400; }
+    .card-badge {
+      font-size: 9px; letter-spacing: .1em; text-transform: uppercase;
+      color: var(--bg); background: var(--accent, var(--neon));
+      padding: 3px 7px; border-radius: 20px; font-weight: 700; opacity: .85;
+    }
+
+    /* ── DIVIDER ── */
+    .divider { height: 1px; background: linear-gradient(90deg, transparent, var(--border), transparent); margin: 64px 0; }
+
+    /* ── STICKY SUMMARY ── */
+    .summary-sticky {
+      position: sticky; bottom: 24px; z-index: 100;
+      pointer-events: none;
+    }
+    .summary-pill {
+      pointer-events: all;
+      max-width: 700px; margin: 0 auto;
+      background: rgba(5,10,7,.92);
+      border: 1px solid var(--border-hl);
+      border-radius: 14px;
+      backdrop-filter: blur(18px);
+      box-shadow: 0 0 40px rgba(0,255,65,.12), 0 8px 32px rgba(0,0,0,.6);
+      padding: 20px 28px;
+      display: flex; align-items: center; gap: 24px; flex-wrap: wrap;
+    }
+    .summary-counts {
+      display: flex; gap: 20px; flex: 1; flex-wrap: wrap;
+    }
+    .summary-count-item { text-align: center; }
+    .summary-count-num { font-size: 18px; font-weight: 800; color: var(--neon); text-shadow: var(--neon-glow); display: block; line-height: 1; }
+    .summary-count-label { font-size: 9px; letter-spacing: .14em; text-transform: uppercase; color: var(--text-dim); display: block; margin-top: 4px; }
+    .summary-sep { width: 1px; height: 40px; background: var(--border); flex-shrink: 0; }
+    .summary-total-wrap { text-align: right; }
+    .summary-total-label { font-size: 9px; letter-spacing: .18em; text-transform: uppercase; color: var(--text-dim); display: block; margin-bottom: 2px; }
+    .summary-total-num { font-size: 26px; font-weight: 800; color: var(--neon); text-shadow: var(--neon-glow); line-height: 1; }
+    .counting { animation: pulse .3s ease; }
+    @keyframes pulse { 0% { opacity:.5; transform:scale(.96); } 60% { opacity:1; transform:scale(1.03); } 100% { opacity:1; transform:scale(1); } }
+
+    /* ── FULL BREAKDOWN ── */
+    .breakdown { max-width: 680px; margin: 0 auto; }
+    .breakdown-header { text-align: center; margin-bottom: 32px; }
+    .breakdown-header h2 { font-size: 11px; letter-spacing: .22em; text-transform: uppercase; color: var(--neon); margin-bottom: 8px; }
+    .breakdown-header p { font-size: 13px; color: var(--text-dim); }
+    .breakdown-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r); overflow: hidden; }
+    .breakdown-list { padding: 22px 26px 4px; min-height: 54px; }
+    .breakdown-empty { font-size: 12px; color: var(--text-dim); font-style: italic; padding-bottom: 18px; }
+    .b-item { display: flex; justify-content: space-between; align-items: center; padding: 9px 0; border-bottom: 1px solid var(--border); animation: fadeIn .2s ease; }
+    .b-item:last-child { border-bottom: none; }
+    @keyframes fadeIn { from { opacity:0; transform:translateY(-5px); } to { opacity:1; transform:translateY(0); } }
+    .b-item-left { display: flex; align-items: center; gap: 9px; }
+    .b-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+    .b-name { font-size: 12.5px; color: var(--text); }
+    .b-price { font-size: 13px; font-weight: 600; color: var(--white); flex-shrink: 0; margin-left: 16px; }
+    .breakdown-totals { border-top: 1px solid var(--border-hl); padding: 22px 26px; background: rgba(0,255,65,.02); }
+    .bt-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+    .bt-row:last-child { margin-bottom: 0; }
+    .bt-label { font-size: 11.5px; color: var(--text-dim); text-transform: uppercase; letter-spacing: .1em; }
+    .bt-val { font-size: 14px; color: var(--text); font-weight: 500; }
+    .bt-row.final .bt-label { font-size: 13px; font-weight: 700; color: var(--white); letter-spacing: .12em; }
+    .bt-row.final .bt-val { font-size: 30px; font-weight: 800; color: var(--neon); text-shadow: var(--neon-glow); }
+    .bt-sep { height: 1px; background: var(--border); margin: 14px 0; }
+
+    /* ── ACTIONS ── */
+    .actions { display: flex; gap: 12px; margin-top: 24px; flex-wrap: wrap; }
+    .btn { flex: 1; min-width: 190px; padding: 14px 20px; border-radius: 8px; font-size: 11px; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; cursor: pointer; transition: all .2s; border: none; font-family: var(--font); text-align: center; }
+    .btn-primary { background: var(--neon); color: #050a07; box-shadow: 0 0 18px rgba(0,255,65,.3); }
+    .btn-primary:hover { box-shadow: 0 0 32px rgba(0,255,65,.55); transform: translateY(-1px); }
+    .btn-outline { background: transparent; color: var(--neon); border: 1.5px solid var(--border-hl); }
+    .btn-outline:hover { border-color: var(--neon); background: var(--neon-dim); transform: translateY(-1px); }
+    .btn-reset { background: transparent; color: var(--text-dim); border: 1.5px solid rgba(255,255,255,.08); }
+    .btn-reset:hover { color: #ff4444; border-color: rgba(255,68,68,.4); background: rgba(255,68,68,.06); }
+
+    /* ── FOOTER ── */
+    .footer-line { text-align: center; margin-top: 80px; padding-top: 40px; border-top: 1px solid var(--border); }
+    .footer-line p { font-size: 12px; letter-spacing: .24em; text-transform: uppercase; color: var(--text-dim); }
+    .footer-line p strong { color: var(--neon); text-shadow: 0 0 14px rgba(0,255,65,.35); }
+
+    /* ── TOAST ── */
+    .toast { position: fixed; bottom: 110px; right: 28px; background: #050a07; border: 1px solid var(--neon); color: var(--neon); padding: 12px 20px; border-radius: 8px; font-size: 11.5px; letter-spacing: .08em; box-shadow: 0 0 20px rgba(0,255,65,.25); opacity: 0; transform: translateY(10px); transition: all .28s; z-index: 999; pointer-events: none; max-width: 320px; }
+    .toast.show { opacity: 1; transform: translateY(0); }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 700px) {
+      .pos-desc { display: none; }
+      .summary-pill { padding: 16px 18px; gap: 14px; }
+      .summary-total-num { font-size: 20px; }
+    }
+  </style>
+</head>
+<body>
+
+<section class="block">
+  <div class="container">
+
+    <!-- HEADER -->
+    <div class="section-header">
+      <span class="eyebrow">Service Configuration by Position</span>
+      <h1 class="section-title"><span>HYBRYD</span> &mdash; Build Your<br>Custom Operations Budget</h1>
+      <p class="section-subtitle">Activa las posiciones y servicios que necesitas. El presupuesto se construye en tiempo real seg&uacute;n tu selecci&oacute;n.</p>
+    </div>
+
+    <!-- BUDGET DIAL -->
+    <div class="budget-dial-wrap" id="dialWrap">
+      <span style="font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--text-dim);align-self:center;margin-right:4px;">Referencia:</span>
+      <button class="dial-btn" data-budget="1500" onclick="applyDial(1500,this)">~1.500&euro;</button>
+      <button class="dial-btn" data-budget="2000" onclick="applyDial(2000,this)">~2.000&euro;</button>
+      <button class="dial-btn" data-budget="2500" onclick="applyDial(2500,this)">~2.500&euro;</button>
+      <button class="dial-btn" data-budget="3000" onclick="applyDial(3000,this)">~3.000&euro;</button>
+      <button class="dial-btn" data-budget="4000" onclick="applyDial(4000,this)">~4.000&euro;</button>
+      <button class="dial-btn" data-budget="6000" onclick="applyDial(6000,this)">Full Stack</button>
+    </div>
+
+    <!-- ══════════════════════════════════════════════ -->
+    <!-- POSITION 01 — COMMUNITY MANAGEMENT            -->
+    <!-- ══════════════════════════════════════════════ -->
+    <div class="pos-section" data-pos="1">
+      <div class="pos-header">
+        <div class="pos-dot" style="color:var(--c1);background:var(--c1);"></div>
+        <div>
+          <div class="pos-number">Posici&oacute;n 01</div>
+          <div class="pos-name">Community Management</div>
+        </div>
+        <div class="pos-desc">Gesti&oacute;n activa de comunidad, presencia digital y conversaciones de marca en redes sociales.</div>
+      </div>
+      <div class="service-grid">
+
+        <div class="card" style="--accent:var(--c1);--accent-rgb:0,255,65;" data-price="350" data-name="Gesti&oacute;n de Contenido y Calendario" data-pos="1" onclick="toggleCard(this)">
+          <div class="card-top">
+            <span class="card-title">Gesti&oacute;n de Contenido y Calendario</span>
+            <input type="checkbox" class="card-check" onclick="event.stopPropagation()">
+          </div>
+          <p class="card-desc">Planificaci&oacute;n mensual, calendario editorial estructurado y coordinaci&oacute;n de publicaciones en todos los canales activos.</p>
+          <div class="card-footer">
+            <div><span class="card-price">350&euro;</span><span class="card-unit">/ mes</span></div>
+            <span class="card-badge">Base</span>
+          </div>
+        </div>
+
+        <div class="card" style="--accent:var(--c1);--accent-rgb:0,255,65;" data-price="450" data-name="Gesti&oacute;n de DMs y Comentarios" data-pos="1" onclick="toggleCard(this)">
+          <div class="card-top">
+            <span class="card-title">Gesti&oacute;n de DMs y Comentarios</span>
+            <input type="checkbox" class="card-check" onclick="event.stopPropagation()">
+          </div>
+          <p class="card-desc">Respuesta a mensajes directos, moderaci&oacute;n de comentarios, filtrado de leads y mantenimiento del tono de marca.</p>
+          <div class="card-footer">
+            <div><span class="card-price">450&euro;</span><span class="card-unit">/ mes</span></div>
+          </div>
+        </div>
+
+        <div class="card" style="--accent:var(--c1);--accent-rgb:0,255,65;" data-price="300" data-name="Monitoreo y Escucha Social" data-pos="1" onclick="toggleCard(this)">
+          <div class="card-top">
+            <span class="card-title">Monitoreo y Escucha Social</span>
+            <input type="checkbox" class="card-check" onclick="event.stopPropagation()">
+          </div>
+          <p class="card-desc">Seguimiento de menciones, an&aacute;lisis de competencia, alertas de reputaci&oacute;n y reportes semanales de sentimiento.</p>
+          <div class="card-footer">
+            <div><span class="card-price">300&euro;</span><span class="card-unit">/ mes</span></div>
+          </div>
+        </div>
+
+        <div class="card" style="--accent:var(--c1);--accent-rgb:0,255,65;" data-price="500" data-name="Community Management Avanzado (Full)" data-pos="1" onclick="toggleCard(this)">
+          <div class="card-top">
+            <span class="card-title">Community Management Avanzado (Full)</span>
+            <input type="checkbox" class="card-check" onclick="event.stopPropagation()">
+          </div>
+          <p class="card-desc">Paquete completo: calendario + DMs + comentarios + monitoreo + reportes. Presencia activa 6 d&iacute;as a la semana.</p>
+          <div class="card-footer">
+            <div><span class="card-price">500&euro;</span><span class="card-unit">/ mes</span></div>
+            <span class="card-badge">Full</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════ -->
+    <!-- POSITION 02 — GRAPHIC DESIGN                  -->
+    <!-- ══════════════════════════════════════════════ -->
+    <div class="pos-section" data-pos="2">
+      <div class="pos-header">
+        <div class="pos-dot" style="color:var(--c2);background:var(--c2);"></div>
+        <div>
+          <div class="pos-number">Posici&oacute;n 02</div>
+          <div class="pos-name">Dise&ntilde;o Gr&aacute;fico</div>
+        </div>
+        <div class="pos-desc">Producci&oacute;n visual de marca: piezas est&aacute;ticas, contenido animado y sistemas de identidad aplicados.</div>
+      </div>
+      <div class="service-grid">
+
+        <div class="card" style="--accent:var(--c2);--accent-rgb:123,97,255;" data-price="400" data-name="Pack Carruseles (8 / mes)" data-pos="2" onclick="toggleCard(this)">
+          <div class="card-top">
+            <span class="card-title">Pack Carruseles (8 / mes)</span>
+            <input type="checkbox" class="card-check" onclick="event.stopPropagation()">
+          </div>
+          <p class="card-desc">8 carruseles mensuales de contenido educativo y de autoridad, optimizados para engagement y posicionamiento.</p>
+          <div class="card-footer">
+            <div><span class="card-price">400&euro;</span><span class="card-unit">/ mes</span></div>
+            <span class="card-badge">Base</span>
+          </div>
+        </div>
+
+        <div class="card" style="--accent:var(--c2);--accent-rgb:123,97,255;" data-price="650" data-name="Pack Carruseles (12 / mes)" data-pos="2" onclick="toggleCard(this)">
+          <div class="card-top">
+            <span class="card-title">Pack Carruseles (12 / mes)</span>
+            <input type="checkbox" class="card-check" onclick="event.stopPropagation()">
+          </div>
+          <p class="card-desc">12 carruseles mensuales. Posicionamiento de autoridad m&aacute;ximo con mayor frecuencia visual y variedad narrativa.</p>
+          <div class="card-footer">
+            <div><span class="card-price">650&euro;</span><span class="card-unit">/ mes</span></div>
+            <span class="card-badge">Pro</span>
+          </div>
+        </div>
+
+        <div class="card" style="--accent:var(--c2);--accent-rgb:123,97,255;" data-price="350" data-name="Sistema de Stories (Templates diarias)" data-pos="2" onclick="toggleCard(this)">
+          <div class="card-top">
+            <span class="card-title">Sistema de Stories (Templates diarias)</span>
+            <input type="checkbox" class="card-check" onclick="event.stopPropagation()">
+          </div>
+          <p class="card-desc">Plantillas editables de stories estructuradas para uso diario. Estrat&eacute;gia visual + guia de uso mensual incluida.</p>
+          <div class="card-footer">
+            <div><span class="card-price">350&euro;</span><span class="card-unit">/ mes</span></div>
+          </div>
+        </div>
+
+        <div class="card" style="--accent:var(--c2);--accent-rgb:123,97,255;" data-price="450" data-name="Edici&oacute;n de Reels (4 / mes)" data-pos="2" onclick="toggleCard(this)">
+          <div class="card-top">
+            <span class="card-title">Edici&oacute;n de Reels (4 / mes)</span>
+            <input type="checkbox" class="card-check" onclick="event.stopPropagation()">
+          </div>
+          <p class="card-desc">4 reels editados por mes con dise&ntilde;o avanzado, subt&iacute;tulos animados y dise&ntilde;o de audio profesional.</p>
+          <div class="card-footer">
+            <div><span class="card-price">450&euro;</span><span class="card-unit">/ mes</span></div>
+          </div>
+        </div>
+
+        <div class="card" style="--accent:var(--c2);--accent-rgb:123,97,255;" data-price="300" data-name="Piezas de Campana y Eventos" data-pos="2" onclick="toggleCard(this)">
+          <div class="card-top">
+            <span class="card-title">Piezas de Campa&ntilde;a y Eventos</span>
+            <input type="checkbox" class="card-check" onclick="event.stopPropagation()">
+          </div>
+          <p class="card-desc">Dise&ntilde;o de piezas visuales para lanzamientos, eventos y activaciones puntuales. Hasta 10 artes por campa&ntilde;a.</p>
+          <div class="card-footer">
+            <div><span class="card-price">300&euro;</span><span class="card-unit">/ campa&ntilde;a</span></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════ -->
+    <!-- POSITION 03 — DATABASE MANAGEMENT             -->
+    <!-- ══════════════════════════════════════════════ -->
+    <div class="pos-section" data-pos="3">
+      <div class="pos-header">
+        <div class="pos-dot" style="color:var(--c3);background:var(--c3);"></div>
+        <div>
+          <div class="pos-number">Posici&oacute;n 03</div>
+          <div class="pos-name">Gesti&oacute;n de Base de Datos</div>
+        </div>
+        <div class="pos-desc">Estructura, organizaci&oacute;n y mantenimiento de activos digitales, contactos y sistemas de informaci&oacute;n.</div>
+      </div>
+      <div class="service-grid">
+
+        <div class="card" style="--accent:var(--c3);--accent-rgb:0,207,255;" data-price="300" data-name="Gesti&oacute;n Drive y Activos Digitales" data-pos="3" onclick="toggleCard(this)">
+          <div class="card-top">
+            <span class="card-title">Gesti&oacute;n Drive y Activos Digitales</span>
+            <input type="checkbox" class="card-check" onclick="event.stopPropagation()">
+          </div>
+          <p class="card-desc">Carga, organizaci&oacute;n y optimizaci&oacute;n de toda la estructura de archivos digitales en Drive. Sistema de nomenclatura incluido.</p>
+          <div class="card-footer">
+            <div><span class="card-price">300&euro;</span><span class="card-unit">/ mes</span></div>
+            <span class="card-badge">Base</span>
+          </div>
+        </div>
+
+        <div class="card" style="--accent:var(--c3);--accent-rgb:0,207,255;" data-price="250" data-name="Sistema de Archivo de Contenido" data-pos="3" onclick="toggleCard(this)">
+          <div class="card-top">
+            <span class="card-title">Sistema de Archivo de Contenido</span>
+            <input type="checkbox" class="card-check" onclick="event.stopPropagation()">
+          </div>
+          <p class="card-desc">Control de versiones, etiquetado por rendimiento y archivo hist&oacute;rico de todo el contenido producido por el equipo.</p>
+          <div class="card-footer">
+            <div><span class="card-price">250&euro;</span><span class="card-unit">/ mes</span></div>
+          </div>
+        </div>
+
+        <div class="card" style="--accent:var(--c3);--accent-rgb:0,207,255;" data-price="350" data-name="Base de Datos de Contactos y Leads" data-pos="3" onclick="toggleCard(this)">
+          <div class="card-top">
+            <span class="card-title">Base de Datos de Contactos y Leads</span>
+            <input type="checkbox" class="card-check" onclick="event.stopPropagation()">
+          </div>
+          <p class="card-desc">Mantenimiento, limpieza y segmentaci&oacute;n de la base de datos de contactos. Preparaci&oacute;n de listas para campa&ntilde;as activas.</p>
+          <div class="card-footer">
+            <div><span class="card-price">350&euro;</span><span class="card-unit">/ mes</span></div>
+          </div>
+        </div>
+
+        <div class="card" style="--accent:var(--c3);--accent-rgb:0,207,255;" data-price="400" data-name="Reportes y Dashboards de Rendimiento" data-pos="3" onclick="toggleCard(this)">
+          <div class="card-top">
+            <span class="card-title">Reportes y Dashboards de Rendimiento</span>
+            <input type="checkbox" class="card-check" onclick="event.stopPropagation()">
+          </div>
+          <p class="card-desc">Creaci&oacute;n y mantenimiento de dashboards visuales con KPIs, m&eacute;tricas de contenido y seguimiento de objetivos mensuales.</p>
+          <div class="card-footer">
+            <div><span class="card-price">400&euro;</span><span class="card-unit">/ mes</span></div>
+            <span class="card-badge">Pro</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════ -->
+    <!-- POSITION 04 — EMAIL / FULL MARKETING          -->
+    <!-- ══════════════════════════════════════════════ -->
+    <div class="pos-section" data-pos="4">
+      <div class="pos-header">
+        <div class="pos-dot" style="color:var(--c4);background:var(--c4);"></div>
+        <div>
+          <div class="pos-number">Posici&oacute;n 04</div>
+          <div class="pos-name">Email Marketing &amp; Estrategia</div>
+        </div>
+        <div class="pos-desc">Desde secuencias de email hasta direcci&oacute;n estrat&eacute;gica completa del departamento de marketing.</div>
+      </div>
+      <div class="service-grid">
+
+        <div class="card" style="--accent:var(--c4);--accent-rgb:255,107,53;" data-price="350" data-name="Email Marketing Mensual (4 campa&ntilde;as)" data-pos="4" onclick="toggleCard(this)">
+          <div class="card-top">
+            <span class="card-title">Email Marketing Mensual (4 campa&ntilde;as)</span>
+            <input type="checkbox" class="card-check" onclick="event.stopPropagation()">
+          </div>
+          <p class="card-desc">4 env&iacute;os mensuales: dise&ntilde;o, redacci&oacute;n, segmentaci&oacute;n y an&aacute;lisis de resultados. Compatible con Mailchimp, Klaviyo y similares.</p>
+          <div class="card-footer">
+            <div><span class="card-price">350&euro;</span><span class="card-unit">/ mes</span></div>
+            <span class="card-badge">Base</span>
+          </div>
+        </div>
+
+        <div class="card" style="--accent:var(--c4);--accent-rgb:255,107,53;" data-price="500" data-name="Automatizaciones y Secuencias de Email" data-pos="4" onclick="toggleCard(this)">
+          <div class="card-top">
+            <span class="card-title">Automatizaciones y Secuencias de Email</span>
+            <input type="checkbox" class="card-check" onclick="event.stopPropagation()">
+          </div>
+          <p class="card-desc">Dise&ntilde;o e implementaci&oacute;n de flujos automatizados: bienvenida, nutrici&oacute;n, recuperaci&oacute;n de leads y secuencias post-evento.</p>
+          <div class="card-footer">
+            <div><span class="card-price">500&euro;</span><span class="card-unit">/ mes</span></div>
+          </div>
+        </div>
+
+        <div class="card" style="--accent:var(--c4);--accent-rgb:255,107,53;" data-price="450" data-name="Redacci&oacute;n de Scripts y Copys" data-pos="4" onclick="toggleCard(this)">
+          <div class="card-top">
+            <span class="card-title">Redacci&oacute;n de Scripts y Copys</span>
+            <input type="checkbox" class="card-check" onclick="event.stopPropagation()">
+          </div>
+          <p class="card-desc">Scripts para v&iacute;deos, copys de anuncios y textos de venta. Voz y narrativa adaptada a David / Xavi y al posicionamiento de marca.</p>
+          <div class="card-footer">
+            <div><span class="card-price">450&euro;</span><span class="card-unit">/ mes</span></div>
+          </div>
+        </div>
+
+        <div class="card" style="--accent:var(--c4);--accent-rgb:255,107,53;" data-price="700" data-name="Direcci&oacute;n Estrat&eacute;gica (Monthly)" data-pos="4" onclick="toggleCard(this)">
+          <div class="card-top">
+            <span class="card-title">Direcci&oacute;n Estrat&eacute;gica (Monthly)</span>
+            <input type="checkbox" class="card-check" onclick="event.stopPropagation()">
+          </div>
+          <p class="card-desc">Planificaci&oacute;n narrativa, posicionamiento de marca y supervisi&oacute;n del rendimiento mensual. Sesiones de alineaci&oacute;n estrat&eacute;gica.</p>
+          <div class="card-footer">
+            <div><span class="card-price">700&euro;</span><span class="card-unit">/ mes</span></div>
+            <span class="card-badge">Pro</span>
+          </div>
+        </div>
+
+        <div class="card" style="--accent:var(--c4);--accent-rgb:255,107,53;" data-price="950" data-name="CMO Fraccionado (Marketing Completo)" data-pos="4" onclick="toggleCard(this)">
+          <div class="card-top">
+            <span class="card-title">CMO Fraccionado (Marketing Completo)</span>
+            <input type="checkbox" class="card-check" onclick="event.stopPropagation()">
+          </div>
+          <p class="card-desc">Externalizaci&oacute;n completa del departamento de marketing. Liderazgo estrat&eacute;gico sin estructura interna. M&aacute;xima capacidad operativa.</p>
+          <div class="card-footer">
+            <div><span class="card-price">950&euro;</span><span class="card-unit">/ mes</span></div>
+            <span class="card-badge">Full</span>
+          </div>
+        </div>
+
+        <div class="card" style="--accent:var(--c4);--accent-rgb:255,107,53;" data-price="600" data-name="Paid Ads (Meta / Google)" data-pos="4" onclick="toggleCard(this)">
+          <div class="card-top">
+            <span class="card-title">Paid Ads (Meta / Google)</span>
+            <input type="checkbox" class="card-check" onclick="event.stopPropagation()">
+          </div>
+          <p class="card-desc">Setup, gesti&oacute;n y optimizaci&oacute;n de campa&ntilde;as de pago. Budget publicitario no incluido en este honorario.</p>
+          <div class="card-footer">
+            <div><span class="card-price">600&euro;</span><span class="card-unit">/ mes</span></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════ -->
+    <!-- POSITION 05 — CUSTOMER SERVICE SUPPORT        -->
+    <!-- ══════════════════════════════════════════════ -->
+    <div class="pos-section" data-pos="5">
+      <div class="pos-header">
+        <div class="pos-dot" style="color:var(--c5);background:var(--c5);"></div>
+        <div>
+          <div class="pos-number">Posici&oacute;n 05</div>
+          <div class="pos-name">Customer Service Support</div>
+        </div>
+        <div class="pos-desc">Atenci&oacute;n al cliente, coordinaci&oacute;n operativa y soporte ejecutivo para mantener la operaci&oacute;n activa y alineada.</div>
+      </div>
+      <div class="service-grid">
+
+        <div class="card" style="--accent:var(--c5);--accent-rgb:255,204,0;" data-price="400" data-name="Atenci&oacute;n al Cliente (Mensajes y Consultas)" data-pos="5" onclick="toggleCard(this)">
+          <div class="card-top">
+            <span class="card-title">Atenci&oacute;n al Cliente (Mensajes y Consultas)</span>
+            <input type="checkbox" class="card-check" onclick="event.stopPropagation()">
+          </div>
+          <p class="card-desc">Gesti&oacute;n de consultas entrantes por email, DM y WhatsApp. Protocolo de respuesta definido con tiempos de 24h.</p>
+          <div class="card-footer">
+            <div><span class="card-price">400&euro;</span><span class="card-unit">/ mes</span></div>
+            <span class="card-badge">Base</span>
+          </div>
+        </div>
+
+        <div class="card" style="--accent:var(--c5);--accent-rgb:255,204,0;" data-price="350" data-name="Soporte Operativo Diario (WhatsApp)" data-pos="5" onclick="toggleCard(this)">
+          <div class="card-top">
+            <span class="card-title">Soporte Operativo Diario (WhatsApp)</span>
+            <input type="checkbox" class="card-check" onclick="event.stopPropagation()">
+          </div>
+          <p class="card-desc">Coordinaci&oacute;n continua v&iacute;a WhatsApp durante d&iacute;as laborables. Resoluci&oacute;n &aacute;gil y alineaci&oacute;n de ejecuci&oacute;n diaria.</p>
+          <div class="card-footer">
+            <div><span class="card-price">350&euro;</span><span class="card-unit">/ mes</span></div>
+          </div>
+        </div>
+
+        <div class="card" style="--accent:var(--c5);--accent-rgb:255,204,0;" data-price="300" data-name="Seguimiento Post-Venta y Retenci&oacute;n" data-pos="5" onclick="toggleCard(this)">
+          <div class="card-top">
+            <span class="card-title">Seguimiento Post-Venta y Retenci&oacute;n</span>
+            <input type="checkbox" class="card-check" onclick="event.stopPropagation()">
+          </div>
+          <p class="card-desc">Protocolo de seguimiento despu&eacute;s del cierre o inscripci&oacute;n. Fidelizaci&oacute;n activa de clientes con secuencias estructuradas.</p>
+          <div class="card-footer">
+            <div><span class="card-price">300&euro;</span><span class="card-unit">/ mes</span></div>
+          </div>
+        </div>
+
+        <div class="card" style="--accent:var(--c5);--accent-rgb:255,204,0;" data-price="350" data-name="Reuniones de Seguimiento Semanales (4/mes)" data-pos="5" onclick="toggleCard(this)">
+          <div class="card-top">
+            <span class="card-title">Reuniones de Seguimiento Semanales (4/mes)</span>
+            <input type="checkbox" class="card-check" onclick="event.stopPropagation()">
+          </div>
+          <p class="card-desc">4 sesiones de evaluaci&oacute;n mensual con an&aacute;lisis de KPIs, recalibraci&oacute;n estrat&eacute;gica y pr&oacute;ximos pasos definidos.</p>
+          <div class="card-footer">
+            <div><span class="card-price">350&euro;</span><span class="card-unit">/ mes</span></div>
+          </div>
+        </div>
+
+        <div class="card" style="--accent:var(--c5);--accent-rgb:255,204,0;" data-price="500" data-name="Gesti&oacute;n de Comunidad Privada (Discord / Grupo)" data-pos="5" onclick="toggleCard(this)">
+          <div class="card-top">
+            <span class="card-title">Gesti&oacute;n Comunidad Privada (Discord / Grupo)</span>
+            <input type="checkbox" class="card-check" onclick="event.stopPropagation()">
+          </div>
+          <p class="card-desc">Moderaci&oacute;n, activaci&oacute;n y dinamizaci&oacute;n de comunidad privada de alumnos o clientes. Contenido exclusivo + interacci&oacute;n activa.</p>
+          <div class="card-footer">
+            <div><span class="card-price">500&euro;</span><span class="card-unit">/ mes</span></div>
+            <span class="card-badge">Pro</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- FULL BREAKDOWN -->
+    <div class="breakdown">
+      <div class="breakdown-header">
+        <h2>Resumen del Presupuesto</h2>
+        <p>Todos los servicios seleccionados se detallan y totalizan a continuaci&oacute;n</p>
+      </div>
+      <div class="breakdown-card">
+        <div class="breakdown-list" id="breakdownList">
+          <p class="breakdown-empty" id="breakdownEmpty">Selecciona servicios arriba para construir tu presupuesto.</p>
+        </div>
+        <div class="breakdown-totals">
+          <div class="bt-row">
+            <span class="bt-label">Subtotal</span>
+            <span class="bt-val" id="subtotal" data-raw="0">0,00&euro;</span>
+          </div>
+          <div class="bt-row">
+            <span class="bt-label">IVA (21%)</span>
+            <span class="bt-val" id="vatAmount" data-raw="0">0,00&euro;</span>
+          </div>
+          <div class="bt-sep"></div>
+          <div class="bt-row final">
+            <span class="bt-label">Total con IVA</span>
+            <span class="bt-val" id="finalTotal" data-raw="0">0,00&euro;</span>
+          </div>
+        </div>
+      </div>
+      <div class="actions">
+        <button class="btn btn-primary" onclick="generatePDF()">Generar Presupuesto PDF</button>
+        <button class="btn btn-outline" onclick="sendByEmail()">Enviar por Email</button>
+        <button class="btn btn-reset" onclick="resetAll()">Limpiar</button>
+      </div>
+    </div>
+
+    <div class="footer-line">
+      <p><strong>HYBRYD</strong> is built on structure. Now choose yours.</p>
+    </div>
+
+  </div>
+</section>
+
+<!-- STICKY PILL -->
+<div class="summary-sticky" id="summarySticky" style="display:none;">
+  <div class="container">
+    <div class="summary-pill">
+      <div class="summary-counts" id="summaryCounts"></div>
+      <div class="summary-sep"></div>
+      <div class="summary-total-wrap">
+        <span class="summary-total-label">Total + IVA</span>
+        <span class="summary-total-num" id="pillTotal">0,00&euro;</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  const VAT = 0.21;
+  const selected = new Map();
+
+  const POS_COLORS = {
+    1: '#00ff41',
+    2: '#7b61ff',
+    3: '#00cfff',
+    4: '#ff6b35',
+    5: '#ffcc00'
+  };
+
+  const POS_NAMES = {
+    1: 'Community Mgmt',
+    2: 'Dise\u00f1o Gr\u00e1fico',
+    3: 'Base de Datos',
+    4: 'Email / Marketing',
+    5: 'Customer Service'
+  };
+
+  function toggleCard(card) {
+    const cb = card.querySelector('.card-check');
+    const on = !cb.checked;
+    cb.checked = on;
+    card.classList.toggle('selected', on);
+    if (on) {
+      selected.set(card, {
+        name: card.dataset.name,
+        price: parseInt(card.dataset.price, 10),
+        pos: parseInt(card.dataset.pos, 10)
+      });
+    } else {
+      selected.delete(card);
+    }
+    render();
+  }
+
+  function render() {
+    // breakdown list
+    const list = document.getElementById('breakdownList');
+    const empty = document.getElementById('breakdownEmpty');
+    list.querySelectorAll('.b-item').forEach(e => e.remove());
+
+    if (selected.size === 0) {
+      empty.style.display = 'block';
+    } else {
+      empty.style.display = 'none';
+      selected.forEach(({ name, price, pos }) => {
+        const row = document.createElement('div');
+        row.className = 'b-item';
+        row.innerHTML =
+          '<div class="b-item-left">' +
+            '<div class="b-dot" style="background:' + POS_COLORS[pos] + ';box-shadow:0 0 6px ' + POS_COLORS[pos] + ';"></div>' +
+            '<span class="b-name">' + name + '</span>' +
+          '</div>' +
+          '<span class="b-price">' + fmt(price) + '</span>';
+        list.appendChild(row);
+      });
+    }
+
+    // totals
+    let sub = 0;
+    selected.forEach(({ price }) => { sub += price; });
+    const vat = sub * VAT;
+    const total = sub + vat;
+
+    anim('subtotal', sub);
+    anim('vatAmount', vat);
+    anim('finalTotal', total);
+
+    // sticky pill
+    const sticky = document.getElementById('summarySticky');
+    if (selected.size === 0) {
+      sticky.style.display = 'none';
+    } else {
+      sticky.style.display = 'block';
+      // count by position
+      const counts = {};
+      selected.forEach(({ pos }) => { counts[pos] = (counts[pos] || 0) + 1; });
+      const countsEl = document.getElementById('summaryCounts');
+      countsEl.innerHTML = '';
+      Object.entries(counts).forEach(([pos, count]) => {
+        const item = document.createElement('div');
+        item.className = 'summary-count-item';
+        item.innerHTML =
+          '<span class="summary-count-num" style="color:' + POS_COLORS[pos] + ';text-shadow:0 0 10px ' + POS_COLORS[pos] + ';">' + count + '</span>' +
+          '<span class="summary-count-label">' + POS_NAMES[pos] + '</span>';
+        countsEl.appendChild(item);
+      });
+      document.getElementById('pillTotal').textContent = fmt(total);
+    }
+  }
+
+  function fmt(n) {
+    return new Intl.NumberFormat('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(n) + '\u20ac';
+  }
+
+  function anim(id, target) {
+    const el = document.getElementById(id);
+    el.classList.remove('counting');
+    void el.offsetWidth;
+    el.classList.add('counting');
+    const dur = 350, start = Date.now();
+    const from = parseFloat(el.dataset.raw || 0);
+    el.dataset.raw = target;
+    (function step() {
+      const t = Math.min((Date.now() - start) / dur, 1);
+      const e = 1 - Math.pow(1 - t, 3);
+      el.textContent = fmt(from + (target - from) * e);
+      if (t < 1) requestAnimationFrame(step);
+      else el.textContent = fmt(target);
+    })();
+  }
+
+  // Budget presets
+  const PRESETS = {
+    1500: [
+      // community base + stories
+      { pos: 1, name: 'Gesti\u00f3n de Contenido y Calendario' },
+      { pos: 2, name: 'Sistema de Stories (Templates diarias)' },
+      { pos: 5, name: 'Soporte Operativo Diario (WhatsApp)' }
+    ],
+    2000: [
+      { pos: 1, name: 'Gesti\u00f3n de Contenido y Calendario' },
+      { pos: 1, name: 'Gesti\u00f3n de DMs y Comentarios' },
+      { pos: 2, name: 'Pack Carruseles (8 / mes)' },
+      { pos: 5, name: 'Atenci\u00f3n al Cliente (Mensajes y Consultas)' }
+    ],
+    2500: [
+      { pos: 1, name: 'Community Management Avanzado (Full)' },
+      { pos: 2, name: 'Pack Carruseles (8 / mes)' },
+      { pos: 2, name: 'Sistema de Stories (Templates diarias)' },
+      { pos: 3, name: 'Gesti\u00f3n Drive y Activos Digitales' },
+      { pos: 5, name: 'Atenci\u00f3n al Cliente (Mensajes y Consultas)' }
+    ],
+    3000: [
+      { pos: 1, name: 'Community Management Avanzado (Full)' },
+      { pos: 2, name: 'Pack Carruseles (8 / mes)' },
+      { pos: 2, name: 'Edici\u00f3n de Reels (4 / mes)' },
+      { pos: 3, name: 'Gesti\u00f3n Drive y Activos Digitales' },
+      { pos: 4, name: 'Email Marketing Mensual (4 campa\u00f1as)' },
+      { pos: 5, name: 'Soporte Operativo Diario (WhatsApp)' }
+    ],
+    4000: [
+      { pos: 1, name: 'Community Management Avanzado (Full)' },
+      { pos: 2, name: 'Pack Carruseles (12 / mes)' },
+      { pos: 2, name: 'Sistema de Stories (Templates diarias)' },
+      { pos: 3, name: 'Gesti\u00f3n Drive y Activos Digitales' },
+      { pos: 3, name: 'Base de Datos de Contactos y Leads' },
+      { pos: 4, name: 'Email Marketing Mensual (4 campa\u00f1as)' },
+      { pos: 5, name: 'Atenci\u00f3n al Cliente (Mensajes y Consultas)' },
+      { pos: 5, name: 'Seguimiento Post-Venta y Retenci\u00f3n' }
+    ],
+    6000: [
+      { pos: 1, name: 'Community Management Avanzado (Full)' },
+      { pos: 2, name: 'Pack Carruseles (12 / mes)' },
+      { pos: 2, name: 'Sistema de Stories (Templates diarias)' },
+      { pos: 2, name: 'Edici\u00f3n de Reels (4 / mes)' },
+      { pos: 3, name: 'Gesti\u00f3n Drive y Activos Digitales' },
+      { pos: 3, name: 'Sistema de Archivo de Contenido' },
+      { pos: 3, name: 'Reportes y Dashboards de Rendimiento' },
+      { pos: 4, name: 'Email Marketing Mensual (4 campa\u00f1as)' },
+      { pos: 4, name: 'Automatizaciones y Secuencias de Email' },
+      { pos: 4, name: 'Direcci\u00f3n Estrat\u00e9gica (Monthly)' },
+      { pos: 5, name: 'Atenci\u00f3n al Cliente (Mensajes y Consultas)' },
+      { pos: 5, name: 'Soporte Operativo Diario (WhatsApp)' },
+      { pos: 5, name: 'Reuniones de Seguimiento Semanales (4/mes)' }
+    ]
+  };
+
+  function applyDial(budget, btn) {
+    document.querySelectorAll('.dial-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    resetAll(true);
+
+    const preset = PRESETS[budget];
+    if (!preset) return;
+
+    const allCards = document.querySelectorAll('.card');
+    preset.forEach(({ name }) => {
+      allCards.forEach(card => {
+        const cardName = card.dataset.name || '';
+        if (cardName === name && !card.querySelector('.card-check').checked) {
+          toggleCard(card);
+        }
+      });
+    });
+
+    let sub = 0;
+    selected.forEach(({ price }) => { sub += price; });
+    showToast('Selecci\u00f3n sugerida: ~' + fmt(sub) + ' / mes (sin IVA)');
+  }
+
+  function resetAll(silent) {
+    document.querySelectorAll('.card.selected').forEach(c => {
+      c.classList.remove('selected');
+      c.querySelector('.card-check').checked = false;
+    });
+    selected.clear();
+    render();
+    if (!silent) {
+      document.querySelectorAll('.dial-btn').forEach(b => b.classList.remove('active'));
+      showToast('Selecci\u00f3n limpiada.');
+    }
+  }
+
+  function generatePDF() {
+    if (selected.size === 0) { showToast('Selecciona al menos un servicio.'); return; }
+    let sub = 0, rows = '';
+    const byPos = {};
+    selected.forEach(({ name, price, pos }) => {
+      sub += price;
+      if (!byPos[pos]) byPos[pos] = [];
+      byPos[pos].push({ name, price });
+    });
+
+    Object.entries(byPos).forEach(([pos, items]) => {
+      rows += '<tr><td colspan="2" style="padding:16px 0 6px;font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:' + POS_COLORS[pos] + ';border-bottom:1px solid ' + POS_COLORS[pos] + '40;">' + POS_NAMES[pos] + '</td></tr>';
+      items.forEach(({ name, price }) => {
+        rows += '<tr><td style="padding:8px 0;border-bottom:1px solid #1a2a1e;color:#c8d6cc;font-size:12px;">' + name + '</td><td style="padding:8px 0;border-bottom:1px solid #1a2a1e;color:#fff;font-weight:600;text-align:right;font-size:12px;">' + fmt(price) + '</td></tr>';
+      });
+    });
+
+    const vat = sub * VAT, total = sub + vat;
+    const date = new Date().toLocaleDateString('es-ES', { year:'numeric', month:'long', day:'numeric' });
+
+    const html = '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>HYBRYD Presupuesto</title>' +
+      '<style>body{font-family:Segoe UI,Arial,sans-serif;background:#050a07;color:#c8d6cc;padding:60px 40px;max-width:720px;margin:0 auto;}' +
+      'h1{color:#00ff41;font-size:28px;font-weight:800;letter-spacing:-.02em;margin-bottom:4px;}' +
+      '.sub{color:#5a7062;font-size:10px;letter-spacing:.2em;text-transform:uppercase;margin-bottom:40px;display:block;}' +
+      '.date{color:#5a7062;font-size:11px;margin-bottom:40px;display:block;}' +
+      'table{width:100%;border-collapse:collapse;}' +
+      '.tr td{padding:12px 0;font-size:13px;color:#c8d6cc;border-top:1px solid #00ff41;}' +
+      '.fin td{font-size:22px;font-weight:800;color:#00ff41;padding:14px 0;border-top:2px solid #00ff41;}' +
+      '.foot{color:#5a7062;font-size:10px;letter-spacing:.2em;text-transform:uppercase;margin-top:60px;border-top:1px solid #1a2a1e;padding-top:24px;}</style></head>' +
+      '<body><h1>HYBRYD</h1><span class="sub">Propuesta de Servicios &mdash; Presupuesto Personalizado</span>' +
+      '<span class="date">Fecha: ' + date + '</span>' +
+      '<table><tbody>' + rows +
+      '<tr class="tr"><td>Subtotal</td><td style="text-align:right;">' + fmt(sub) + '</td></tr>' +
+      '<tr class="tr"><td>IVA (21%)</td><td style="text-align:right;">' + fmt(vat) + '</td></tr>' +
+      '<tr class="fin"><td>Total con IVA</td><td style="text-align:right;">' + fmt(total) + '</td></tr>' +
+      '</tbody></table><p class="foot">HYBRYD is built on structure. Now choose yours.</p></body></html>';
+
+    const win = window.open('', '_blank');
+    if (win) { win.document.write(html); win.document.close(); win.onload = () => win.print(); }
+    showToast('Presupuesto listo \u2014 Imprimir > Guardar como PDF.');
+  }
+
+  function sendByEmail() {
+    if (selected.size === 0) { showToast('Selecciona al menos un servicio.'); return; }
+    let sub = 0, body = 'HYBRYD \u2014 Propuesta de Servicios%0A%0A';
+    const byPos = {};
+    selected.forEach(({ name, price, pos }) => {
+      sub += price;
+      if (!byPos[pos]) byPos[pos] = [];
+      byPos[pos].push({ name, price });
+    });
+    Object.entries(byPos).forEach(([pos, items]) => {
+      body += POS_NAMES[pos].toUpperCase() + '%0A';
+      items.forEach(({ name, price }) => { body += '\u2014 ' + name + ': ' + fmt(price) + '%0A'; });
+      body += '%0A';
+    });
+    const vat = sub * VAT, total = sub + vat;
+    body += 'Subtotal: ' + fmt(sub) + '%0AIVA (21%25): ' + fmt(vat) + '%0ATotal con IVA: ' + fmt(total) + '%0A%0AHYBRYD is built on structure. Now choose yours.';
+    window.location.href = 'mailto:?subject=HYBRYD%20%E2%80%94%20Propuesta%20de%20Servicios&body=' + body;
+    showToast('Cliente de email abierto con la selecci\u00f3n.');
+  }
+
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 3400);
+  }
+</script>
+
+</body>
+</html>
