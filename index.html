@@ -1,441 +1,259 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>HYBRYD — Presupuesto Mensual</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
-<style>
-:root {
-  --bg: #04080a;
-  --bg2: #070d10;
-  --surface: rgba(255,255,255,.028);
-  --surface-hl: rgba(255,255,255,.052);
-  --neon: #00ff85;
-  --neon-dim: rgba(0,255,133,.08);
-  --neon-glow: 0 0 16px rgba(0,255,133,.45), 0 0 48px rgba(0,255,133,.18);
-  --border: rgba(0,255,133,.1);
-  --border-hl: rgba(0,255,133,.38);
-  --text: #a8bfb4;
-  --text-dim: #3d5247;
-  --white: #f0f7f3;
-  --grid: rgba(0,255,133,.032);
-  --r: 12px;
-  --r-lg: 18px;
-  /* section accent colors */
-  --c1: #00ff85; --c1r: 0,255,133;
-  --c2: #5b8cff; --c2r: 91,140,255;
-  --c3: #ff9500; --c3r: 255,149,0;
-  --c4: #bf5fff; --c4r: 191,95,255;
-  --c5: #ff4d6d; --c5r: 255,77,109;
-  --c6: #00d4ff; --c6r: 0,212,255;
-  --c7: #ffcc00; --c7r: 255,204,0;
-  --font-display: 'Syne', sans-serif;
-  --font-mono: 'DM Mono', monospace;
-}
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HYBRYD — Presupuesto Mensual</title>
+  <style>
+    :root {
+      --neon: #00ff41; --neon-dim: rgba(0,255,65,.1);
+      --neon-glow: 0 0 8px #00ff41, 0 0 24px rgba(0,255,65,.4);
+      --bg: #050a07; --surface: rgba(255,255,255,.03); --surface-2: rgba(255,255,255,.055);
+      --border: rgba(0,255,65,.15); --border-hl: rgba(0,255,65,.5);
+      --text: #c8d6cc; --text-dim: #4e6657; --white: #ffffff;
+      --grid-color: rgba(0,255,65,.045); --r: 10px;
+      --font: 'Inter','Segoe UI',system-ui,sans-serif;
+      --c1:#00ff41; --c2:#7b61ff; --c3:#00cfff; --c4:#ff6b35; --c5:#ffcc00;
+      --c6:#ff2d78; --c7:#25d366; --c8:#a78bfa;
+    }
+    *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+    html { scroll-behavior:smooth; }
+    body { font-family:var(--font); background:var(--bg); color:var(--text); line-height:1.6; min-height:100vh;
+      background-image: linear-gradient(var(--grid-color) 1px,transparent 1px), linear-gradient(90deg,var(--grid-color) 1px,transparent 1px);
+      background-size:40px 40px; }
+    ::-webkit-scrollbar{width:4px} ::-webkit-scrollbar-track{background:var(--bg)} ::-webkit-scrollbar-thumb{background:#1a3a22;border-radius:4px}
 
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { scroll-behavior: smooth; }
+    /* ── LANG ── */
+    .lang-bar { position:fixed; top:0; left:0; right:0; z-index:200;
+      display:flex; justify-content:flex-end; align-items:center;
+      padding:10px 28px; gap:4px;
+      background:linear-gradient(to bottom, rgba(5,10,7,.95) 70%, transparent);
+      backdrop-filter:blur(8px); }
+    .lang-btn { padding:5px 12px; border-radius:20px; font-size:10px; font-weight:700;
+      letter-spacing:.14em; text-transform:uppercase; cursor:pointer;
+      border:1px solid transparent; background:transparent; color:var(--text-dim);
+      font-family:var(--font); transition:all .18s; }
+    .lang-btn:hover { color:var(--neon); border-color:var(--border-hl); }
+    .lang-btn.active { color:var(--bg); background:var(--neon); border-color:var(--neon); box-shadow:0 0 10px rgba(0,255,65,.3); }
+    .lang-sep { width:1px; height:14px; background:var(--border); margin:0 2px; }
 
-body {
-  font-family: var(--font-mono);
-  background: var(--bg);
-  color: var(--text);
-  line-height: 1.6;
-  min-height: 100vh;
-  overflow-x: hidden;
-}
+    /* ── LAYOUT ── */
+    .block { padding:100px 0 110px; }
+    .container { max-width:1240px; margin:0 auto; padding:0 28px; }
 
-/* GRID BG */
-body::before {
-  content: '';
-  position: fixed; inset: 0; z-index: 0; pointer-events: none;
-  background-image:
-    linear-gradient(var(--grid) 1px, transparent 1px),
-    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
-  background-size: 48px 48px;
-}
+    /* ── HEADER ── */
+    .section-header { text-align:center; margin-bottom:72px; }
+    .eyebrow { font-size:9.5px; letter-spacing:.26em; text-transform:uppercase; color:var(--neon); margin-bottom:20px; display:block; }
+    .section-title { font-size:clamp(26px,4vw,44px); font-weight:800; color:var(--white); letter-spacing:-.025em; line-height:1.12; margin-bottom:18px; }
+    .section-title span { color:var(--neon); text-shadow:var(--neon-glow); }
+    .section-subtitle { font-size:14.5px; color:var(--text-dim); max-width:640px; margin:0 auto; line-height:1.75; }
 
-/* RADIAL GLOW TOP */
-body::after {
-  content: '';
-  position: fixed; top: -200px; left: 50%; transform: translateX(-50%);
-  width: 800px; height: 600px; z-index: 0; pointer-events: none;
-  background: radial-gradient(ellipse, rgba(0,255,133,.07) 0%, transparent 70%);
-}
+    /* ── VALUE PROP ── */
+    .value-prop { max-width:820px; margin:0 auto 64px; padding:24px 28px; background:var(--surface);
+      border:1px solid var(--border); border-radius:var(--r); text-align:center; }
+    .value-prop-title { font-size:13px; letter-spacing:.2em; text-transform:uppercase; color:var(--neon); margin-bottom:12px; }
+    .value-prop-text { font-size:14px; color:var(--text); line-height:1.75; }
 
-::-webkit-scrollbar { width: 3px; }
-::-webkit-scrollbar-track { background: var(--bg); }
-::-webkit-scrollbar-thumb { background: #142b1e; border-radius: 3px; }
+    /* ── MARKET REF ── */
+    .market-ref { max-width:820px; margin:0 auto 64px; padding:24px 28px; background:var(--surface);
+      border:1px solid var(--border); border-radius:var(--r); }
+    .market-ref-title { font-size:11px; letter-spacing:.2em; text-transform:uppercase; color:var(--neon); margin-bottom:12px; }
+    .market-ref-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:16px; }
+    .market-ref-item { font-size:12px; color:var(--text); line-height:1.6; padding:8px 0; border-bottom:1px solid rgba(255,255,255,.05); }
+    .market-ref-item:last-child { border-bottom:none; }
+    .market-ref-label { color:var(--text-dim); display:block; font-size:10px; text-transform:uppercase; letter-spacing:.1em; margin-bottom:2px; }
+    .market-ref-value { color:var(--white); font-weight:600; }
 
-/* ── LANG BAR ── */
-.lang-bar {
-  position: fixed; top: 0; left: 0; right: 0; z-index: 500;
-  display: flex; justify-content: center; align-items: center; gap: 6px;
-  padding: 12px 28px;
-  background: linear-gradient(to bottom, rgba(4,8,10,.98) 60%, transparent);
-  backdrop-filter: blur(12px);
-}
-.lang-btn {
-  padding: 5px 14px; border-radius: 20px; font-size: 9px; font-weight: 500;
-  letter-spacing: .2em; text-transform: uppercase; cursor: pointer;
-  border: 1px solid transparent; background: transparent; color: var(--text-dim);
-  font-family: var(--font-mono); transition: all .2s;
-}
-.lang-btn:hover { color: var(--neon); border-color: var(--border-hl); }
-.lang-btn.active { color: var(--bg); background: var(--neon); border-color: var(--neon); box-shadow: 0 0 14px rgba(0,255,133,.35); }
-.lang-sep { width: 1px; height: 12px; background: var(--border); }
+    /* ── SECTION ── */
+    .pos-section { margin-bottom:60px; }
+    .pos-header { display:flex; align-items:center; gap:14px; margin-bottom:22px; padding-bottom:16px; border-bottom:1px solid var(--border); }
+    .pos-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; box-shadow:0 0 10px currentColor; }
+    .pos-number { font-size:9px; letter-spacing:.22em; color:var(--text-dim); text-transform:uppercase; }
+    .pos-name { font-size:15px; font-weight:700; color:var(--white); }
+    .pos-desc { font-size:12px; color:var(--text-dim); margin-left:auto; max-width:460px; text-align:right; line-height:1.5; }
 
-/* ── MAIN LAYOUT ── */
-.page { position: relative; z-index: 1; }
+    /* ── COVERS BADGE ── */
+    .covers-row { display:flex; flex-wrap:wrap; gap:5px; margin-bottom:10px; }
+    .cover-badge { font-size:8.5px; letter-spacing:.1em; text-transform:uppercase; font-weight:700;
+      padding:2px 8px; border-radius:20px; border:1px solid; opacity:.85; }
 
-/* ── HERO ── */
-.hero {
-  text-align: center; padding: 130px 28px 80px;
-  max-width: 860px; margin: 0 auto;
-}
-.hero-eyebrow {
-  display: inline-block; font-size: 9px; letter-spacing: .32em; text-transform: uppercase;
-  color: var(--neon); margin-bottom: 24px;
-  padding: 6px 16px; border: 1px solid var(--border); border-radius: 20px;
-  background: var(--neon-dim);
-}
-.hero-title {
-  font-family: var(--font-display); font-size: clamp(32px, 5.5vw, 62px);
-  font-weight: 800; color: var(--white); letter-spacing: -.03em; line-height: 1.06;
-  margin-bottom: 22px;
-}
-.hero-title .accent { color: var(--neon); text-shadow: var(--neon-glow); }
-.hero-title .dim { color: var(--text-dim); }
-.hero-sub {
-  font-size: 13px; color: var(--text-dim); line-height: 1.85; max-width: 600px; margin: 0 auto 40px;
-  font-family: var(--font-mono);
-}
-.hero-tagline {
-  display: inline-flex; align-items: center; gap: 10px;
-  font-family: var(--font-display); font-size: 14px; font-weight: 600; color: var(--text);
-  padding: 12px 24px; border: 1px solid var(--border); border-radius: var(--r);
-  background: var(--surface);
-}
-.hero-tagline::before { content: '◆'; color: var(--neon); font-size: 8px; }
+    /* ── GRID ── */
+    .service-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:14px; align-items:start; }
 
-/* ── CONTAINER ── */
-.container { max-width: 1100px; margin: 0 auto; padding: 0 28px; }
+    /* ── CARD ── */
+    .card { background:var(--surface); border:1px solid var(--border); border-radius:var(--r); padding:20px 20px 18px;
+      position:relative; cursor:pointer; overflow:hidden;
+      transition:border-color .22s,box-shadow .22s,background .22s,transform .18s;
+      display:flex; flex-direction:column; }
+    .card::before { content:''; position:absolute; top:0; left:0; right:0; height:2px;
+      background:var(--accent,var(--neon)); opacity:0; transition:opacity .22s; }
+    .card:hover { transform:translateY(-2px); background:var(--surface-2); }
+    .card:hover::before { opacity:1; }
+    .card.selected { border-color:var(--accent,var(--neon)); background:rgba(var(--accent-rgb,0,255,65),.07);
+      box-shadow:0 0 0 1px var(--accent,var(--neon)),0 0 24px rgba(var(--accent-rgb,0,255,65),.14); }
+    .card.selected::before { opacity:1; }
+    .card-top { display:flex; justify-content:space-between; align-items:flex-start; gap:10px; margin-bottom:8px; }
+    .card-title { font-size:13px; font-weight:600; color:var(--white); line-height:1.4; flex:1; }
+    .card-check { flex-shrink:0; width:17px; height:17px; appearance:none; -webkit-appearance:none;
+      border:1.5px solid var(--border-hl); border-radius:3px; background:transparent; cursor:pointer;
+      position:relative; transition:border-color .18s,box-shadow .18s; margin-top:1px; }
+    .card-check::after { content:''; position:absolute; inset:3px; background:var(--accent,var(--neon));
+      border-radius:1px; opacity:0; transform:scale(.3); transition:opacity .16s,transform .16s; }
+    .card-check:checked { border-color:var(--accent,var(--neon)); box-shadow:0 0 8px rgba(var(--accent-rgb,0,255,65),.5); }
+    .card-check:checked::after { opacity:1; transform:scale(1); }
+    .card-desc { font-size:12px; color:var(--text-dim); line-height:1.65; margin-bottom:14px; flex:1; }
+    .card-includes { margin-bottom:12px; padding:10px; background:rgba(0,255,65,.04); border-radius:6px; border:1px solid var(--border); }
+    .card-includes-title { font-size:9px; letter-spacing:.14em; text-transform:uppercase; color:var(--neon); margin-bottom:6px; }
+    .card-includes-list { list-style:none; padding:0; margin:0; }
+    .card-includes-list li { font-size:11px; color:var(--text); padding:3px 0; padding-left:14px; position:relative; }
+    .card-includes-list li::before { content:'✓'; position:absolute; left:0; color:var(--neon); font-weight:700; }
+    .card-footer { display:flex; align-items:center; justify-content:space-between; margin-top:auto; }
+    .card-price { font-size:17px; font-weight:700; color:var(--accent,var(--neon)); text-shadow:0 0 12px rgba(var(--accent-rgb,0,255,65),.5); }
+    .card-unit { font-size:10px; color:var(--text-dim); margin-left:3px; font-weight:400; }
+    .card-badge { font-size:9px; letter-spacing:.1em; text-transform:uppercase; color:var(--bg);
+      background:var(--accent,var(--neon)); padding:3px 7px; border-radius:20px; font-weight:700; opacity:.85; }
 
-/* ── SECTION ── */
-.section { padding: 0 0 80px; }
+    /* ── PLATFORM GRID (CM) ── */
+    .platform-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(175px,1fr)); gap:12px; margin-bottom:14px; }
+    .platform-card { background:var(--surface); border:1px solid var(--border); border-radius:var(--r);
+      padding:16px; cursor:pointer; position:relative; overflow:hidden;
+      transition:border-color .22s,box-shadow .22s,background .22s,transform .18s;
+      display:flex; flex-direction:column; align-items:center; gap:8px; text-align:center; }
+    .platform-card::before { content:''; position:absolute; top:0; left:0; right:0; height:2px; background:var(--p-color,var(--neon)); opacity:0; transition:opacity .22s; }
+    .platform-card:hover { transform:translateY(-2px); background:var(--surface-2); }
+    .platform-card:hover::before { opacity:1; }
+    .platform-card.selected { border-color:var(--p-color,var(--neon)); background:rgba(var(--p-rgb,0,255,65),.07);
+      box-shadow:0 0 0 1px var(--p-color,var(--neon)),0 0 20px rgba(var(--p-rgb,0,255,65),.12); }
+    .platform-card.selected::before { opacity:1; }
+    .platform-icon { font-size:22px; line-height:1; }
+    .platform-name { font-size:11px; font-weight:700; color:var(--white); letter-spacing:.06em; text-transform:uppercase; }
+    .platform-price { font-size:16px; font-weight:800; color:var(--p-color,var(--neon)); text-shadow:0 0 10px rgba(var(--p-rgb,0,255,65),.5); }
+    .platform-price-sub { font-size:9px; color:var(--text-dim); }
+    .platform-check { position:absolute; top:8px; right:8px; width:14px; height:14px; appearance:none; -webkit-appearance:none;
+      border:1.5px solid var(--border-hl); border-radius:3px; background:transparent; cursor:pointer; transition:border-color .18s; }
+    .platform-check::after { content:''; position:absolute; inset:2px; background:var(--p-color,var(--neon)); border-radius:1px; opacity:0; transform:scale(.3); transition:opacity .16s,transform .16s; }
+    .platform-check:checked { border-color:var(--p-color,var(--neon)); }
+    .platform-check:checked::after { opacity:1; transform:scale(1); }
 
-.section-head {
-  display: flex; align-items: center; gap: 16px;
-  padding: 20px 28px; margin-bottom: 28px;
-  border-radius: var(--r-lg);
-  background: linear-gradient(135deg, var(--surface) 0%, transparent 100%);
-  border: 1px solid var(--border);
-  position: relative; overflow: hidden;
-}
-.section-head::before {
-  content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
-  background: var(--s-color, var(--neon));
-  box-shadow: 0 0 12px var(--s-color, var(--neon));
-}
-.section-head-num {
-  font-size: 9px; letter-spacing: .28em; color: var(--text-dim);
-  text-transform: uppercase; font-family: var(--font-mono);
-  background: var(--surface-hl); padding: 4px 10px; border-radius: 20px; flex-shrink: 0;
-}
-.section-head-text { flex: 1; }
-.section-head-label {
-  font-family: var(--font-display); font-size: 17px; font-weight: 700;
-  color: var(--white); letter-spacing: -.01em;
-}
-.section-head-sub { font-size: 11px; color: var(--text-dim); margin-top: 2px; }
-.section-head-note {
-  font-size: 10px; color: var(--text-dim); text-align: right; max-width: 280px;
-  line-height: 1.5; font-family: var(--font-mono);
-}
+    /* ── DESIGN COUNTER CARD ── */
+    .design-counter-card { background:var(--surface); border:1px solid var(--border); border-radius:var(--r);
+      padding:22px; position:relative; overflow:hidden; display:flex; flex-direction:column; gap:14px;
+      transition:border-color .22s,background .22s; }
+    .design-counter-card::before { content:''; position:absolute; top:0; left:0; right:0; height:2px; background:var(--c3); opacity:0; transition:opacity .22s; }
+    .design-counter-card.has-selection { border-color:var(--c3); background:rgba(0,207,255,.04);
+      box-shadow:0 0 0 1px var(--c3),0 0 24px rgba(0,207,255,.10); }
+    .design-counter-card.has-selection::before { opacity:1; }
+    .dcc-header { display:flex; justify-content:space-between; align-items:flex-start; gap:12px; }
+    .dcc-title { font-size:13px; font-weight:600; color:var(--white); }
+    .dcc-desc { font-size:11.5px; color:var(--text-dim); line-height:1.65; }
 
-/* ── CARD GRID ── */
-.card-grid {
-  display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 14px; align-items: start;
-}
-.card-grid.two-col { grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); }
+    .counter-row { display:flex; align-items:center; gap:10px;
+      padding:10px 12px; background:rgba(0,207,255,.03); border:1px solid rgba(0,207,255,.1); border-radius:8px;
+      transition:background .2s, border-color .2s; }
+    .counter-row.active { background:rgba(0,207,255,.07); border-color:rgba(0,207,255,.35); }
+    .counter-row-info { flex:1; min-width:0; }
+    .counter-row-name { font-size:11.5px; color:var(--text); font-weight:600; }
+    .counter-row-sub { font-size:9.5px; color:var(--text-dim); margin-top:1px; display:flex; align-items:center; gap:6px; flex-wrap:wrap; }
+    .discount-tag { font-size:8.5px; font-weight:700; color:#ff6b35; background:rgba(255,107,53,.12); border:1px solid rgba(255,107,53,.3); padding:1px 6px; border-radius:10px; }
+    .active-discount-tag { font-size:8.5px; font-weight:700; color:#00ff41; background:rgba(0,255,65,.1); border:1px solid rgba(0,255,65,.3); padding:1px 6px; border-radius:10px; }
+    .counter-controls { display:flex; align-items:center; gap:0; flex-shrink:0; }
+    .counter-btn { width:28px; height:28px; border:1px solid rgba(0,207,255,.25); background:transparent;
+      color:var(--c3); font-size:16px; font-weight:700; cursor:pointer; border-radius:6px;
+      display:flex; align-items:center; justify-content:center;
+      transition:background .15s, border-color .15s, transform .1s;
+      font-family:var(--font); line-height:1; user-select:none; }
+    .counter-btn:hover { background:rgba(0,207,255,.12); border-color:var(--c3); transform:scale(1.08); }
+    .counter-btn:active { transform:scale(.94); }
+    .counter-value { min-width:40px; text-align:center; font-size:20px; font-weight:800; color:var(--white);
+      padding:0 6px; font-variant-numeric:tabular-nums; }
+    .counter-value.bump { animation:bump .2s ease; color:var(--c3); }
+    @keyframes bump { 0%{transform:scale(.75)} 55%{transform:scale(1.22)} 100%{transform:scale(1)} }
+    .counter-row-price { font-size:13px; font-weight:700; color:var(--c3); min-width:64px; text-align:right; flex-shrink:0; }
+    .counter-row-price.zero { color:var(--text-dim); }
+    .dcc-total-row { display:flex; justify-content:space-between; align-items:center; padding:12px 14px;
+      background:rgba(0,207,255,.07); border:1px solid rgba(0,207,255,.25); border-radius:8px; }
+    .dcc-total-label { font-size:10px; letter-spacing:.14em; text-transform:uppercase; color:var(--c3); }
+    .dcc-total-price { font-size:20px; font-weight:800; color:var(--c3); text-shadow:0 0 10px rgba(0,207,255,.4); }
 
-/* ── SERVICE CARD ── */
-.svc-card {
-  background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-lg);
-  padding: 22px 22px 18px; position: relative; cursor: pointer; overflow: hidden;
-  transition: border-color .22s, background .22s, transform .18s, box-shadow .22s;
-  display: flex; flex-direction: column;
-}
-.svc-card::after {
-  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
-  background: var(--s-color, var(--neon)); opacity: 0; transition: opacity .22s;
-}
-.svc-card:hover { transform: translateY(-3px); background: var(--surface-hl); }
-.svc-card:hover::after { opacity: 1; }
-.svc-card.selected {
-  border-color: var(--s-color, var(--neon));
-  background: rgba(var(--s-rgb, 0,255,133), .06);
-  box-shadow: 0 0 0 1px var(--s-color, var(--neon)), 0 4px 32px rgba(var(--s-rgb, 0,255,133), .12);
-}
-.svc-card.selected::after { opacity: 1; }
+    /* ── DIVIDER ── */
+    .divider { height:1px; background:linear-gradient(90deg,transparent,var(--border),transparent); margin:64px 0; }
 
-.card-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; margin-bottom: 6px; }
-.card-name {
-  font-family: var(--font-display); font-size: 13.5px; font-weight: 700;
-  color: var(--white); line-height: 1.35; flex: 1;
-}
-.card-chk {
-  flex-shrink: 0; width: 18px; height: 18px; appearance: none; -webkit-appearance: none;
-  border: 1.5px solid rgba(255,255,255,.15); border-radius: 4px; background: transparent;
-  cursor: pointer; position: relative; transition: border-color .18s; margin-top: 1px;
-}
-.card-chk::after {
-  content: ''; position: absolute; inset: 3px;
-  background: var(--s-color, var(--neon)); border-radius: 2px;
-  opacity: 0; transform: scale(.2); transition: opacity .16s, transform .16s;
-}
-.card-chk:checked { border-color: var(--s-color, var(--neon)); box-shadow: 0 0 10px rgba(var(--s-rgb,0,255,133),.4); }
-.card-chk:checked::after { opacity: 1; transform: scale(1); }
+    /* ── SUB LABEL ── */
+    .sub-section-label { font-size:10px; letter-spacing:.2em; text-transform:uppercase; color:var(--text-dim); margin-bottom:10px; margin-top:4px; }
 
-.card-body { font-size: 11.5px; color: var(--text-dim); line-height: 1.7; margin-bottom: 14px; flex: 1; }
-.card-covers { font-size: 10px; color: var(--s-color, var(--neon)); margin-bottom: 12px; display: flex; flex-wrap: wrap; gap: 5px; }
-.cover-tag {
-  padding: 3px 8px; border-radius: 20px; border: 1px solid rgba(var(--s-rgb,0,255,133),.25);
-  background: rgba(var(--s-rgb,0,255,133),.06); letter-spacing: .04em; font-size: 9px; font-weight: 500;
-}
+    /* ── STICKY ── */
+    .summary-sticky { position:sticky; bottom:24px; z-index:100; pointer-events:none; }
+    .summary-pill { pointer-events:all; max-width:700px; margin:0 auto;
+      background:rgba(5,10,7,.92); border:1px solid var(--border-hl); border-radius:14px;
+      backdrop-filter:blur(18px); box-shadow:0 0 40px rgba(0,255,65,.12),0 8px 32px rgba(0,0,0,.6);
+      padding:20px 28px; display:flex; align-items:center; gap:24px; flex-wrap:wrap; }
+    .summary-counts { display:flex; gap:20px; flex:1; flex-wrap:wrap; }
+    .summary-count-item { text-align:center; }
+    .summary-count-num { font-size:18px; font-weight:800; display:block; line-height:1; }
+    .summary-count-label { font-size:9px; letter-spacing:.14em; text-transform:uppercase; color:var(--text-dim); display:block; margin-top:4px; }
+    .summary-sep { width:1px; height:40px; background:var(--border); flex-shrink:0; }
+    .summary-total-wrap { text-align:right; }
+    .summary-total-label { font-size:9px; letter-spacing:.18em; text-transform:uppercase; color:var(--text-dim); display:block; margin-bottom:2px; }
+    .summary-total-num { font-size:26px; font-weight:800; color:var(--neon); text-shadow:var(--neon-glow); line-height:1; }
 
-.card-features { margin-bottom: 14px; }
-.card-feat-title { font-size: 8.5px; letter-spacing: .2em; text-transform: uppercase; color: var(--neon); margin-bottom: 7px; }
-.card-feat-list { list-style: none; }
-.card-feat-list li {
-  font-size: 11px; color: var(--text); padding: 3.5px 0; padding-left: 16px; position: relative; line-height: 1.5;
-}
-.card-feat-list li::before { content: '—'; position: absolute; left: 0; color: var(--s-color, var(--neon)); font-size: 9px; top: 5px; }
+    /* ── BREAKDOWN ── */
+    .breakdown { max-width:680px; margin:0 auto; }
+    .breakdown-header { text-align:center; margin-bottom:32px; }
+    .breakdown-header h2 { font-size:11px; letter-spacing:.22em; text-transform:uppercase; color:var(--neon); margin-bottom:8px; }
+    .breakdown-header p { font-size:13px; color:var(--text-dim); }
+    .breakdown-card { background:var(--surface); border:1px solid var(--border); border-radius:var(--r); overflow:hidden; }
+    .breakdown-list { padding:22px 26px 4px; min-height:54px; }
+    .breakdown-empty { font-size:12px; color:var(--text-dim); font-style:italic; padding-bottom:18px; }
+    .b-item { display:flex; justify-content:space-between; align-items:center; padding:9px 0; border-bottom:1px solid var(--border); animation:fadeIn .2s ease; }
+    .b-item:last-child { border-bottom:none; }
+    @keyframes fadeIn { from{opacity:0;transform:translateY(-5px)} to{opacity:1;transform:translateY(0)} }
+    .b-item-left { display:flex; align-items:center; gap:9px; }
+    .b-dot { width:6px; height:6px; border-radius:50%; flex-shrink:0; }
+    .b-name { font-size:12.5px; color:var(--text); }
+    .b-price { font-size:13px; font-weight:600; color:var(--white); flex-shrink:0; margin-left:16px; }
+    .breakdown-totals { border-top:1px solid var(--border-hl); padding:22px 26px; background:rgba(0,255,65,.02); }
+    .bt-row { display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; }
+    .bt-row:last-child { margin-bottom:0; }
+    .bt-label { font-size:11.5px; color:var(--text-dim); text-transform:uppercase; letter-spacing:.1em; }
+    .bt-val { font-size:14px; color:var(--text); font-weight:500; }
+    .bt-row.discount .bt-label,.bt-row.discount .bt-val { color:#ff6b35; font-weight:700; }
+    .bt-row.final .bt-label { font-size:13px; font-weight:700; color:var(--white); letter-spacing:.12em; }
+    .bt-row.final .bt-val { font-size:30px; font-weight:800; color:var(--neon); text-shadow:var(--neon-glow); }
+    .bt-sep { height:1px; background:var(--border); margin:14px 0; }
+    .counting { animation:pulse .3s ease; }
+    @keyframes pulse { 0%{opacity:.5;transform:scale(.96)} 60%{opacity:1;transform:scale(1.03)} 100%{opacity:1;transform:scale(1)} }
 
-.card-footer { display: flex; align-items: center; justify-content: space-between; margin-top: auto; padding-top: 12px; border-top: 1px solid rgba(255,255,255,.05); }
-.card-price-wrap {}
-.card-price { font-family: var(--font-display); font-size: 22px; font-weight: 800; color: var(--s-color, var(--neon)); text-shadow: 0 0 16px rgba(var(--s-rgb,0,255,133),.4); line-height: 1; }
-.card-price-unit { font-size: 10px; color: var(--text-dim); margin-top: 2px; }
-.card-tier {
-  font-size: 8.5px; letter-spacing: .14em; text-transform: uppercase;
-  color: var(--bg); background: var(--s-color, var(--neon));
-  padding: 4px 9px; border-radius: 20px; font-weight: 700; opacity: .88;
-  font-family: var(--font-mono);
-}
+    /* ── ACTIONS ── */
+    .actions { display:flex; gap:12px; margin-top:24px; flex-wrap:wrap; }
+    .btn { flex:1; min-width:190px; padding:14px 20px; border-radius:8px; font-size:11px; font-weight:700;
+      letter-spacing:.18em; text-transform:uppercase; cursor:pointer; transition:all .2s;
+      border:none; font-family:var(--font); text-align:center; }
+    .btn-primary { background:var(--neon); color:#050a07; box-shadow:0 0 18px rgba(0,255,65,.3); }
+    .btn-primary:hover { box-shadow:0 0 32px rgba(0,255,65,.55); transform:translateY(-1px); }
+    .btn-outline { background:transparent; color:var(--neon); border:1.5px solid var(--border-hl); }
+    .btn-outline:hover { border-color:var(--neon); background:var(--neon-dim); transform:translateY(-1px); }
+    .btn-reset { background:transparent; color:var(--text-dim); border:1.5px solid rgba(255,255,255,.08); }
+    .btn-reset:hover { color:#ff4444; border-color:rgba(255,68,68,.4); background:rgba(255,68,68,.06); }
 
-/* ── COUNTER CARD (Design) ── */
-.counter-card {
-  background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-lg);
-  padding: 22px; position: relative; overflow: hidden; transition: border-color .22s;
-}
-.counter-card.active { border-color: rgba(var(--c3r), .4); background: rgba(var(--c3r),.03); }
-.counter-card::after { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: var(--c3); opacity: 0; transition: opacity .22s; }
-.counter-card.active::after { opacity: 1; }
+    /* ── FOOTER ── */
+    .footer-line { text-align:center; margin-top:80px; padding-top:40px; border-top:1px solid var(--border); }
+    .footer-line p { font-size:12px; letter-spacing:.24em; text-transform:uppercase; color:var(--text-dim); }
+    .footer-line p strong { color:var(--neon); text-shadow:0 0 14px rgba(0,255,65,.35); }
 
-.cc-title { font-family: var(--font-display); font-size: 15px; font-weight: 700; color: var(--white); margin-bottom: 5px; }
-.cc-sub { font-size: 11px; color: var(--text-dim); margin-bottom: 20px; line-height: 1.6; }
+    /* ── TOAST ── */
+    .toast { position:fixed; bottom:110px; right:28px; background:#050a07; border:1px solid var(--neon);
+      color:var(--neon); padding:12px 20px; border-radius:8px; font-size:11.5px; letter-spacing:.08em;
+      box-shadow:0 0 20px rgba(0,255,65,.25); opacity:0; transform:translateY(10px);
+      transition:all .28s; z-index:999; pointer-events:none; max-width:320px; }
+    .toast.show { opacity:1; transform:translateY(0); }
 
-.counter-item {
-  display: flex; align-items: center; gap: 12px; padding: 12px 14px; margin-bottom: 8px;
-  border: 1px solid rgba(255,255,255,.05); border-radius: 10px; background: rgba(0,0,0,.2);
-  transition: border-color .2s, background .2s;
-}
-.counter-item.active { border-color: rgba(var(--c3r),.3); background: rgba(var(--c3r),.05); }
-.ci-icon { font-size: 18px; flex-shrink: 0; width: 28px; text-align: center; }
-.ci-info { flex: 1; min-width: 0; }
-.ci-name { font-family: var(--font-display); font-size: 12px; font-weight: 600; color: var(--white); }
-.ci-unit { font-size: 9.5px; color: var(--text-dim); margin-top: 1px; }
-.ci-controls { display: flex; align-items: center; gap: 2px; }
-.ci-btn {
-  width: 30px; height: 30px; border-radius: 8px;
-  border: 1px solid rgba(var(--c3r),.2); background: transparent;
-  color: var(--c3); font-size: 17px; font-weight: 700; cursor: pointer;
-  display: flex; align-items: center; justify-content: center;
-  font-family: var(--font-display); transition: background .15s, border-color .15s, transform .1s;
-  user-select: none; line-height: 1;
-}
-.ci-btn:hover { background: rgba(var(--c3r),.15); border-color: var(--c3); }
-.ci-btn:active { transform: scale(.9); }
-.ci-val {
-  min-width: 44px; text-align: center; font-family: var(--font-display); font-size: 20px;
-  font-weight: 800; color: var(--white); transition: color .15s;
-}
-.ci-val.pop { animation: pop .22s ease; color: var(--c3); }
-@keyframes pop { 0%{transform:scale(.7)} 55%{transform:scale(1.2)} 100%{transform:scale(1)} }
-.ci-price { min-width: 54px; text-align: right; font-family: var(--font-display); font-size: 13px; font-weight: 700; color: var(--c3); }
-.ci-price.zero { color: var(--text-dim); }
-.ci-discount { font-size: 8.5px; color: #ff4d6d; font-family: var(--font-mono); text-align: right; margin-top: 1px; }
-
-.cc-total-bar {
-  display: flex; justify-content: space-between; align-items: center;
-  padding: 14px 16px; margin-top: 12px;
-  border-radius: 10px; background: rgba(var(--c3r),.06); border: 1px solid rgba(var(--c3r),.2);
-}
-.cc-total-label { font-size: 9px; letter-spacing: .2em; text-transform: uppercase; color: var(--c3); }
-.cc-total-price { font-family: var(--font-display); font-size: 22px; font-weight: 800; color: var(--c3); text-shadow: 0 0 16px rgba(var(--c3r),.4); }
-
-/* ── COMMUNITY GRID ── */
-.community-grid {
-  display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 10px;
-}
-.cm-card {
-  background: var(--surface); border: 1px solid var(--border); border-radius: var(--r);
-  padding: 18px 14px; cursor: pointer; text-align: center; position: relative; overflow: hidden;
-  transition: border-color .22s, background .22s, transform .18s, box-shadow .22s;
-  display: flex; flex-direction: column; align-items: center; gap: 7px;
-}
-.cm-card::after { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: var(--cm-color, var(--neon)); opacity: 0; transition: opacity .22s; }
-.cm-card:hover { transform: translateY(-2px); background: var(--surface-hl); }
-.cm-card:hover::after { opacity: 1; }
-.cm-card.selected {
-  border-color: var(--cm-color, var(--neon));
-  background: rgba(var(--cm-rgb,0,255,133),.07);
-  box-shadow: 0 0 0 1px var(--cm-color,var(--neon)), 0 4px 20px rgba(var(--cm-rgb,0,255,133),.14);
-}
-.cm-card.selected::after { opacity: 1; }
-.cm-icon { font-size: 24px; line-height: 1; }
-.cm-platform { font-family: var(--font-display); font-size: 10.5px; font-weight: 700; color: var(--white); letter-spacing: .04em; text-transform: uppercase; }
-.cm-price { font-family: var(--font-display); font-size: 18px; font-weight: 800; color: var(--cm-color, var(--neon)); line-height: 1; }
-.cm-unit { font-size: 8.5px; color: var(--text-dim); }
-.cm-chk { position: absolute; top: 8px; right: 8px; width: 14px; height: 14px; appearance: none; -webkit-appearance: none; border: 1.5px solid rgba(255,255,255,.15); border-radius: 3px; cursor: pointer; transition: border-color .18s; }
-.cm-chk::after { content: ''; position: absolute; inset: 2px; background: var(--cm-color,var(--neon)); border-radius: 1px; opacity: 0; transform: scale(.2); transition: opacity .15s, transform .15s; }
-.cm-chk:checked { border-color: var(--cm-color, var(--neon)); }
-.cm-chk:checked::after { opacity: 1; transform: scale(1); }
-
-.cm-bundle-note {
-  margin-top: 12px; padding: 11px 16px;
-  background: rgba(255,77,109,.04); border: 1px solid rgba(255,77,109,.14);
-  border-radius: 8px; font-size: 10.5px; color: var(--text-dim); line-height: 1.6;
-}
-.cm-bundle-note strong { color: #ff4d6d; }
-.cm-bundle-active {
-  display: none; margin-top: 8px; padding: 10px 16px;
-  background: rgba(255,77,109,.08); border: 1px solid rgba(255,77,109,.35);
-  border-radius: 8px; font-size: 11px; font-weight: 700; color: #ff4d6d; text-align: center;
-  font-family: var(--font-display);
-}
-.cm-bundle-active.show { display: block; }
-
-/* ── MONTHLY / WEEKLY TASKS ── */
-.tasks-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 14px; }
-.task-card {
-  background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-lg);
-  padding: 20px 20px 18px; position: relative; cursor: pointer; overflow: hidden;
-  transition: border-color .22s, background .22s, transform .18s, box-shadow .22s;
-  display: flex; flex-direction: column;
-}
-.task-card::after { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: var(--s-color,var(--neon)); opacity: 0; transition: opacity .22s; }
-.task-card:hover { transform: translateY(-2px); background: var(--surface-hl); }
-.task-card:hover::after { opacity: 1; }
-.task-card.selected { border-color: var(--s-color,var(--neon)); background: rgba(var(--s-rgb,0,255,133),.06); box-shadow: 0 0 0 1px var(--s-color,var(--neon)), 0 4px 24px rgba(var(--s-rgb,0,255,133),.12); }
-.task-card.selected::after { opacity: 1; }
-.task-badge-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
-.task-freq { font-size: 8.5px; letter-spacing: .18em; text-transform: uppercase; color: var(--s-color,var(--neon)); font-family: var(--font-mono); }
-.task-chk { flex-shrink: 0; width: 18px; height: 18px; appearance: none; -webkit-appearance: none; border: 1.5px solid rgba(255,255,255,.15); border-radius: 4px; background: transparent; cursor: pointer; position: relative; transition: border-color .18s; }
-.task-chk::after { content: ''; position: absolute; inset: 3px; background: var(--s-color,var(--neon)); border-radius: 2px; opacity: 0; transform: scale(.2); transition: opacity .16s, transform .16s; }
-.task-chk:checked { border-color: var(--s-color,var(--neon)); box-shadow: 0 0 10px rgba(var(--s-rgb,0,255,133),.4); }
-.task-chk:checked::after { opacity: 1; transform: scale(1); }
-.task-name { font-family: var(--font-display); font-size: 14px; font-weight: 700; color: var(--white); margin-bottom: 6px; line-height: 1.3; }
-.task-desc { font-size: 11.5px; color: var(--text-dim); line-height: 1.7; margin-bottom: 12px; flex: 1; }
-.task-items { margin-bottom: 14px; display: flex; flex-wrap: wrap; gap: 5px; }
-.task-item { font-size: 9.5px; color: var(--text); padding: 4px 10px; border: 1px solid rgba(255,255,255,.07); border-radius: 20px; background: rgba(255,255,255,.03); font-family: var(--font-mono); }
-.task-footer { display: flex; align-items: center; justify-content: space-between; margin-top: auto; padding-top: 12px; border-top: 1px solid rgba(255,255,255,.05); }
-.task-price { font-family: var(--font-display); font-size: 20px; font-weight: 800; color: var(--s-color,var(--neon)); text-shadow: 0 0 14px rgba(var(--s-rgb,0,255,133),.4); }
-.task-unit { font-size: 9.5px; color: var(--text-dim); margin-top: 2px; }
-
-/* ── DIVIDER ── */
-.divider { height: 1px; background: linear-gradient(90deg, transparent, var(--border), transparent); margin: 24px 0 64px; }
-
-/* ── BREAKDOWN ── */
-.breakdown-wrap { max-width: 700px; margin: 0 auto 100px; }
-.breakdown-title-row { text-align: center; margin-bottom: 32px; }
-.breakdown-title-row h2 { font-family: var(--font-display); font-size: 13px; letter-spacing: .28em; text-transform: uppercase; color: var(--neon); margin-bottom: 8px; }
-.breakdown-title-row p { font-size: 12px; color: var(--text-dim); }
-
-.breakdown-box { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-lg); overflow: hidden; }
-.bd-list { padding: 24px 28px 8px; min-height: 56px; }
-.bd-empty { font-size: 12px; color: var(--text-dim); font-style: italic; padding-bottom: 16px; font-family: var(--font-mono); }
-.bd-item { display: flex; justify-content: space-between; align-items: center; padding: 9px 0; border-bottom: 1px solid rgba(255,255,255,.04); animation: fadeIn .2s ease; }
-.bd-item:last-child { border-bottom: none; }
-@keyframes fadeIn { from{opacity:0;transform:translateY(-4px)} to{opacity:1;transform:translateY(0)} }
-.bd-left { display: flex; align-items: center; gap: 9px; }
-.bd-dot { width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; }
-.bd-name { font-size: 12px; color: var(--text); font-family: var(--font-mono); }
-.bd-price { font-family: var(--font-display); font-size: 13px; font-weight: 700; color: var(--white); flex-shrink: 0; }
-
-.bd-totals { padding: 22px 28px; border-top: 1px solid rgba(0,255,133,.15); background: rgba(0,255,133,.015); }
-.bd-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-.bd-row:last-child { margin-bottom: 0; }
-.bd-label { font-size: 10.5px; color: var(--text-dim); letter-spacing: .1em; text-transform: uppercase; font-family: var(--font-mono); }
-.bd-val { font-size: 13.5px; color: var(--text); font-family: var(--font-display); font-weight: 600; }
-.bd-row.disc .bd-label, .bd-row.disc .bd-val { color: #ff9500; }
-.bd-row.final .bd-label { font-size: 12px; font-weight: 700; color: var(--white); font-family: var(--font-display); }
-.bd-row.final .bd-val { font-family: var(--font-display); font-size: 34px; font-weight: 800; color: var(--neon); text-shadow: var(--neon-glow); }
-.bd-sep { height: 1px; background: var(--border); margin: 14px 0; }
-
-.bd-actions { display: flex; gap: 10px; margin-top: 22px; flex-wrap: wrap; }
-.btn {
-  flex: 1; min-width: 170px; padding: 14px 20px; border-radius: 10px;
-  font-size: 9.5px; font-weight: 700; letter-spacing: .2em; text-transform: uppercase;
-  cursor: pointer; transition: all .2s; border: none; font-family: var(--font-mono); text-align: center;
-}
-.btn-primary { background: var(--neon); color: var(--bg); box-shadow: 0 0 20px rgba(0,255,133,.3); }
-.btn-primary:hover { box-shadow: 0 0 36px rgba(0,255,133,.55); transform: translateY(-1px); }
-.btn-ghost { background: transparent; color: var(--neon); border: 1px solid var(--border-hl); }
-.btn-ghost:hover { border-color: var(--neon); background: var(--neon-dim); transform: translateY(-1px); }
-.btn-danger { background: transparent; color: var(--text-dim); border: 1px solid rgba(255,255,255,.07); }
-.btn-danger:hover { color: #ff4d6d; border-color: rgba(255,77,109,.35); background: rgba(255,77,109,.05); }
-
-/* ── STICKY PILL ── */
-.sticky-pill-wrap { position: sticky; bottom: 20px; z-index: 100; pointer-events: none; }
-.sticky-pill {
-  pointer-events: all; max-width: 720px; margin: 0 auto;
-  background: rgba(4,8,10,.9); border: 1px solid var(--border-hl); border-radius: 14px;
-  backdrop-filter: blur(24px);
-  box-shadow: 0 0 48px rgba(0,255,133,.1), 0 8px 40px rgba(0,0,0,.7);
-  padding: 18px 28px; display: flex; align-items: center; gap: 20px; flex-wrap: wrap;
-}
-.pill-services { display: flex; gap: 16px; flex: 1; flex-wrap: wrap; }
-.pill-svc { text-align: center; }
-.pill-svc-num { font-family: var(--font-display); font-size: 20px; font-weight: 800; display: block; line-height: 1; }
-.pill-svc-label { font-size: 8.5px; letter-spacing: .12em; text-transform: uppercase; color: var(--text-dim); display: block; margin-top: 3px; }
-.pill-sep { width: 1px; height: 36px; background: var(--border); flex-shrink: 0; }
-.pill-total-wrap { text-align: right; }
-.pill-total-label { font-size: 8.5px; letter-spacing: .2em; text-transform: uppercase; color: var(--text-dim); display: block; }
-.pill-total { font-family: var(--font-display); font-size: 28px; font-weight: 800; color: var(--neon); text-shadow: var(--neon-glow); display: block; line-height: 1; margin-top: 2px; }
-
-/* ── FOOTER ── */
-.footer { text-align: center; padding: 40px 28px 60px; border-top: 1px solid var(--border); }
-.footer p { font-size: 10px; letter-spacing: .28em; text-transform: uppercase; color: var(--text-dim); }
-.footer strong { color: var(--neon); text-shadow: 0 0 12px rgba(0,255,133,.3); }
-
-/* ── TOAST ── */
-.toast {
-  position: fixed; bottom: 110px; right: 28px; z-index: 9999;
-  background: var(--bg2); border: 1px solid var(--neon); color: var(--neon);
-  padding: 12px 20px; border-radius: 10px; font-size: 11px; letter-spacing: .06em;
-  box-shadow: 0 0 24px rgba(0,255,133,.2); opacity: 0; transform: translateY(8px);
-  transition: all .28s; pointer-events: none; max-width: 300px; font-family: var(--font-mono);
-}
-.toast.show { opacity: 1; transform: translateY(0); }
-
-/* ── ANIM ── */
-.counting { animation: cnt-pulse .3s ease; }
-@keyframes cnt-pulse { 0%{opacity:.4;transform:scale(.96)} 55%{opacity:1;transform:scale(1.04)} 100%{opacity:1;transform:scale(1)} }
-
-@media(max-width: 640px) {
-  .hero { padding: 100px 20px 60px; }
-  .container { padding: 0 16px; }
-  .section-head-note { display: none; }
-  .sticky-pill { padding: 14px 16px; gap: 12px; }
-  .pill-total { font-size: 22px; }
-  .community-grid { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); }
-}
-</style>
+    @media(max-width:700px){
+      .pos-desc{display:none}
+      .summary-pill{padding:16px 18px;gap:14px}
+      .summary-total-num{font-size:20px}
+      .platform-grid{grid-template-columns:repeat(auto-fill,minmax(130px,1fr));}
+    }
+  </style>
 </head>
 <body>
 
@@ -450,689 +268,650 @@ body::after {
   <button class="lang-btn" onclick="setLang('sv')">SV</button>
 </div>
 
-<div class="page">
-
-<!-- HERO -->
-<div class="hero">
-  <div class="hero-eyebrow" data-i18n="eyebrow">Agencia de Marketing Digital — HYBRYD</div>
-  <h1 class="hero-title">
-    <span class="accent">Diseña</span> el proyecto<br>
-    <span class="dim">exactamente como</span> lo imaginas
-  </h1>
-  <p class="hero-sub" data-i18n="heroSub">Cada servicio es independiente. Tú decides qué incluyes, cuántas piezas necesitas y cuándo empezar. Nosotros ejecutamos con precisión profesional mientras tú te enfocas en tus clientes.</p>
-  <div class="hero-tagline" data-i18n="heroTagline">Tu equipo completo de marketing, sin contratar a nadie</div>
-</div>
-
+<section class="block">
 <div class="container">
 
-<!-- ═══════════════════════════════════════════════════════ -->
-<!-- S1 — MONTHLY OPERATIONS -->
-<!-- ═══════════════════════════════════════════════════════ -->
-<div class="section">
-  <div class="section-head" style="--s-color:var(--c1);">
-    <div class="section-head-num" data-i18n="s1num">01</div>
-    <div class="section-head-text">
-      <div class="section-head-label" data-i18n="s1label">Operaciones Mensuales</div>
-      <div class="section-head-sub" data-i18n="s1sub">Roadmap estratégico y actualizaciones continuas</div>
-    </div>
-    <div class="section-head-note" data-i18n="s1note">Planificación editorial, estrategia de contenido y actualizaciones del proyecto</div>
+  <!-- HEADER -->
+  <div class="section-header">
+    <span class="eyebrow" data-i18n="eyebrow">Servicio Integral de Marketing y Comunicación</span>
+    <h1 class="section-title"><span>HYBRYD</span> — <span data-i18n="title">Construye tu Proyecto a Medida</span></h1>
+    <p class="section-subtitle" data-i18n="subtitle">Selecciona únicamente los servicios que necesitas. Cada categoría es independiente — tú decides qué incluir, cuánto invertir y cómo crecer. Nosotros ejecutamos con precisión profesional.</p>
   </div>
-  <div class="card-grid">
 
-    <div class="svc-card" style="--s-color:var(--c1);--s-rgb:var(--c1r);" data-svc="monthly_roadmap" data-price="280" onclick="toggleSvc(this)">
-      <div class="card-header">
-        <div class="card-name" data-i18n="monthly_roadmap_name">Roadmap Mensual (días 1–7)</div>
-        <input type="checkbox" class="card-chk" onclick="event.stopPropagation()">
+  <!-- VALUE PROP -->
+  <div class="value-prop">
+    <div class="value-prop-title" data-i18n="valueTitle">Tu único trabajo: cuidar a tus clientes</div>
+    <p class="value-prop-text" data-i18n="valueText">Nos encargamos de que tu negocio crezca en digital mientras tú te dedicas a lo que mejor haces: construir relaciones reales con cada persona que confía en ti. Marketing, redes, campañas, análisis, producción — todo cubierto.</p>
+  </div>
+
+  <!-- MARKET REF -->
+  <div class="market-ref">
+    <div class="market-ref-title" data-i18n="refTitle">Referencias de mercado España 2026 — coste mensual de contratar estas posiciones por separado</div>
+    <div class="market-ref-grid">
+      <div class="market-ref-item">
+        <span class="market-ref-label">Community Manager in-house</span>
+        <span class="market-ref-value">1.400€ – 2.200€</span>
       </div>
-      <p class="card-body" data-i18n="monthly_roadmap_desc">Planificación editorial y estratégica de todo el mes: definición de objetivos, calendar de publicaciones, prioridades de comunicación y briefing completo al equipo. Se entrega en los primeros 7 días del mes.</p>
-      <ul class="card-feat-list">
-        <li data-i18n="monthly_roadmap_f1">Calendar editorial mensual</li>
-        <li data-i18n="monthly_roadmap_f2">Definición de objetivos y KPIs</li>
-        <li data-i18n="monthly_roadmap_f3">Briefing de contenido y diseño</li>
-        <li data-i18n="monthly_roadmap_f4">Coordinación de prioridades</li>
-      </ul>
-      <div class="card-footer">
-        <div class="card-price-wrap">
-          <div class="card-price">280€</div>
-          <div class="card-price-unit" data-i18n="perMonth">/ mes</div>
+      <div class="market-ref-item">
+        <span class="market-ref-label">Diseñador gráfico in-house</span>
+        <span class="market-ref-value">1.300€ – 2.000€</span>
+      </div>
+      <div class="market-ref-item">
+        <span class="market-ref-label">Email marketing manager</span>
+        <span class="market-ref-value">1.200€ – 1.800€</span>
+      </div>
+      <div class="market-ref-item">
+        <span class="market-ref-label">Paid ads specialist</span>
+        <span class="market-ref-value">1.500€ – 2.500€</span>
+      </div>
+      <div class="market-ref-item">
+        <span class="market-ref-label">Content producer / coordinator</span>
+        <span class="market-ref-value">1.400€ – 2.000€</span>
+      </div>
+      <div class="market-ref-item">
+        <span class="market-ref-label">Digital analyst</span>
+        <span class="market-ref-value">1.300€ – 2.200€</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════ -->
+  <!-- 01 — TAREAS MENSUALES -->
+  <!-- ═══════════════════════════════════════════════ -->
+  <div class="pos-section" data-pos="1">
+    <div class="pos-header">
+      <div class="pos-dot" style="color:var(--c1);background:var(--c1);"></div>
+      <div>
+        <div class="pos-number" data-i18n="pos1num">01 — Tareas Mensuales</div>
+        <div class="pos-name" data-i18n="pos1name">Planificación y ejecución mensual de tu proyecto</div>
+      </div>
+      <div class="pos-desc" data-i18n="pos1desc">Roadmap, producción de contenido y actualizaciones continuas</div>
+    </div>
+    <div class="service-grid">
+
+      <!-- Roadmap 1-7 -->
+      <div class="card" style="--accent:var(--c1);--accent-rgb:0,255,65;" data-pos="1" data-svc="monthly_roadmap" data-base-price="280" onclick="toggleCard(this)">
+        <div class="card-top"><span class="card-title" data-i18n="monthly_roadmap_title">Roadmap Mensual <small style="font-weight:400;opacity:.6">días 1–7</small></span><input type="checkbox" class="card-check" onclick="event.stopPropagation()"></div>
+        <p class="card-desc" data-i18n="monthly_roadmap_desc">Planificación editorial y estratégica de todo el mes. Definición de objetivos, calendario de publicaciones, prioridades de comunicación y briefing al equipo. Se entrega en los primeros 7 días del mes para que todo el proyecto arranque alineado.</p>
+        <div class="card-includes">
+          <div class="card-includes-title" data-i18n="includes">Incluye:</div>
+          <ul class="card-includes-list">
+            <li>Calendar editorial mensual completo</li>
+            <li>Definición de objetivos y KPIs</li>
+            <li>Briefing de contenido y diseño</li>
+            <li>Coordinación de prioridades del mes</li>
+          </ul>
         </div>
-        <div class="card-tier" data-i18n="tier_monthly">Mensual</div>
+        <div class="card-footer"><div><span class="card-price">280€</span><span class="card-unit">/ mes</span></div><span class="card-badge">Mensual</span></div>
       </div>
-    </div>
 
-    <div class="svc-card" style="--s-color:var(--c1);--s-rgb:var(--c1r);" data-svc="monthly_content" data-price="320" onclick="toggleSvc(this)">
-      <div class="card-header">
-        <div class="card-name" data-i18n="monthly_content_name">Producción de Contenido (días 7–14)</div>
-        <input type="checkbox" class="card-chk" onclick="event.stopPropagation()">
-      </div>
-      <p class="card-body" data-i18n="monthly_content_desc">Ejecución de todo el contenido planificado en el roadmap: redacción de copies, guiones, textos para redes y materiales de comunicación. Producción completa lista para publicar en la segunda semana del mes.</p>
-      <ul class="card-feat-list">
-        <li data-i18n="monthly_content_f1">Copies para redes sociales</li>
-        <li data-i18n="monthly_content_f2">Guiones para vídeos y reels</li>
-        <li data-i18n="monthly_content_f3">Textos de comunicación y anuncios</li>
-        <li data-i18n="monthly_content_f4">Revisión y aprobación incluida</li>
-      </ul>
-      <div class="card-footer">
-        <div class="card-price-wrap">
-          <div class="card-price">320€</div>
-          <div class="card-price-unit" data-i18n="perMonth">/ mes</div>
+      <!-- Content 7-14 -->
+      <div class="card" style="--accent:var(--c1);--accent-rgb:0,255,65;" data-pos="1" data-svc="monthly_content" data-base-price="320" onclick="toggleCard(this)">
+        <div class="card-top"><span class="card-title" data-i18n="monthly_content_title">Producción de Contenido <small style="font-weight:400;opacity:.6">días 7–14</small></span><input type="checkbox" class="card-check" onclick="event.stopPropagation()"></div>
+        <p class="card-desc" data-i18n="monthly_content_desc">Ejecución de todo el contenido planificado en el roadmap: copies, guiones, textos para redes y materiales de comunicación. Producción completa y revisada, lista para publicar durante la segunda semana del mes.</p>
+        <div class="card-includes">
+          <div class="card-includes-title" data-i18n="includes">Incluye:</div>
+          <ul class="card-includes-list">
+            <li>Copies para redes sociales</li>
+            <li>Guiones para vídeos y reels</li>
+            <li>Textos de comunicación y anuncios</li>
+            <li>Revisión y aprobación incluida</li>
+          </ul>
         </div>
-        <div class="card-tier" data-i18n="tier_monthly">Mensual</div>
+        <div class="card-footer"><div><span class="card-price">320€</span><span class="card-unit">/ mes</span></div><span class="card-badge">Mensual</span></div>
       </div>
-    </div>
 
-    <div class="svc-card" style="--s-color:var(--c1);--s-rgb:var(--c1r);" data-svc="monthly_updates" data-price="180" onclick="toggleSvc(this)">
-      <div class="card-header">
-        <div class="card-name" data-i18n="monthly_updates_name">Actualizaciones de Contenido</div>
-        <input type="checkbox" class="card-chk" onclick="event.stopPropagation()">
-      </div>
-      <p class="card-body" data-i18n="monthly_updates_desc">Ajustes y actualizaciones del contenido publicado durante el mes: modificaciones en textos, actualización de información, cambios de última hora y optimizaciones basadas en rendimiento.</p>
-      <ul class="card-feat-list">
-        <li data-i18n="monthly_updates_f1">Modificaciones en contenido activo</li>
-        <li data-i18n="monthly_updates_f2">Actualización de información</li>
-        <li data-i18n="monthly_updates_f3">Optimización por rendimiento</li>
-      </ul>
-      <div class="card-footer">
-        <div class="card-price-wrap">
-          <div class="card-price">180€</div>
-          <div class="card-price-unit" data-i18n="perMonth">/ mes</div>
+      <!-- Content Updates -->
+      <div class="card" style="--accent:var(--c1);--accent-rgb:0,255,65;" data-pos="1" data-svc="monthly_updates" data-base-price="180" onclick="toggleCard(this)">
+        <div class="card-top"><span class="card-title" data-i18n="monthly_updates_title">Actualizaciones de Contenido</span><input type="checkbox" class="card-check" onclick="event.stopPropagation()"></div>
+        <p class="card-desc" data-i18n="monthly_updates_desc">Ajustes y actualizaciones del contenido publicado durante el mes: modificaciones de textos, actualización de información, cambios de última hora y optimizaciones basadas en rendimiento real.</p>
+        <div class="card-includes">
+          <div class="card-includes-title" data-i18n="includes">Incluye:</div>
+          <ul class="card-includes-list">
+            <li>Modificaciones en contenido activo</li>
+            <li>Actualización de información y datos</li>
+            <li>Optimización continua por rendimiento</li>
+          </ul>
         </div>
-        <div class="card-tier" data-i18n="tier_monthly">Mensual</div>
+        <div class="card-footer"><div><span class="card-price">180€</span><span class="card-unit">/ mes</span></div><span class="card-badge">Mensual</span></div>
       </div>
+
     </div>
-
   </div>
-</div>
 
-<!-- ═══════════════════════════════════════════════════════ -->
-<!-- S2 — EMAIL & WHATSAPP MARKETING -->
-<!-- ═══════════════════════════════════════════════════════ -->
-<div class="section">
-  <div class="section-head" style="--s-color:var(--c2);">
-    <div class="section-head-num" data-i18n="s2num">02</div>
-    <div class="section-head-text">
-      <div class="section-head-label" data-i18n="s2label">Email & WhatsApp Marketing</div>
-      <div class="section-head-sub" data-i18n="s2sub">Campañas semanales de alto impacto</div>
+  <!-- ═══════════════════════════════════════════════ -->
+  <!-- 02 — EMAIL MARKETING & WHATSAPP -->
+  <!-- ═══════════════════════════════════════════════ -->
+  <div class="pos-section" data-pos="2">
+    <div class="pos-header">
+      <div class="pos-dot" style="color:var(--c2);background:var(--c2);"></div>
+      <div>
+        <div class="pos-number" data-i18n="pos2num">02 — Email Marketing & WhatsApp</div>
+        <div class="pos-name" data-i18n="pos2name">Comunicación directa semanal con tu base de clientes</div>
+      </div>
+      <div class="pos-desc" data-i18n="pos2desc">Exclusivamente Email y WhatsApp — no incluye redes sociales</div>
     </div>
-    <div class="section-head-note" data-i18n="s2note">Cubre exclusivamente Email y WhatsApp como canales de comunicación directa</div>
-  </div>
-  <div class="card-grid">
+    <div class="service-grid">
 
-    <div class="svc-card" style="--s-color:var(--c2);--s-rgb:var(--c2r);" data-svc="email_reminders" data-price="300" onclick="toggleSvc(this)">
-      <div class="card-header">
-        <div class="card-name" data-i18n="email_reminders_name">Recordatorios Semanales</div>
-        <input type="checkbox" class="card-chk" onclick="event.stopPropagation()">
-      </div>
-      <div class="card-covers">
-        <span class="cover-tag" style="--s-color:var(--c2);--s-rgb:var(--c2r);">Email</span>
-        <span class="cover-tag" style="--s-color:var(--c2);--s-rgb:var(--c2r);">WhatsApp</span>
-      </div>
-      <p class="card-body" data-i18n="email_reminders_desc">Envío semanal de recordatorios por Email y WhatsApp: citas, eventos, lanzamientos, fechas importantes y avisos de servicio. Mantiene a tus clientes informados y reduce el no-show.</p>
-      <ul class="card-feat-list">
-        <li data-i18n="email_reminders_f1">4 envíos mensuales por canal</li>
-        <li data-i18n="email_reminders_f2">Diseño y copy incluidos</li>
-        <li data-i18n="email_reminders_f3">Segmentación de audiencia</li>
-      </ul>
-      <div class="card-footer">
-        <div class="card-price-wrap">
-          <div class="card-price">300€</div>
-          <div class="card-price-unit" data-i18n="perMonth">/ mes</div>
+      <!-- Email (+300) / WhatsApp -->
+      <div class="card" style="--accent:var(--c2);--accent-rgb:123,97,255;" data-pos="2" data-svc="email_campaigns" data-base-price="300" onclick="toggleCard(this)">
+        <div class="card-top"><span class="card-title" data-i18n="email_campaigns_title">Campañas Semanales Email + WhatsApp</span><input type="checkbox" class="card-check" onclick="event.stopPropagation()"></div>
+        <div class="covers-row">
+          <span class="cover-badge" style="color:#7b61ff;border-color:rgba(123,97,255,.3);background:rgba(123,97,255,.08);">✉️ Email</span>
+          <span class="cover-badge" style="color:#25d366;border-color:rgba(37,211,102,.3);background:rgba(37,211,102,.08);">💬 WhatsApp</span>
         </div>
-        <div class="card-tier" data-i18n="tier_weekly">Semanal</div>
-      </div>
-    </div>
-
-    <div class="svc-card" style="--s-color:var(--c2);--s-rgb:var(--c2r);" data-svc="email_roadmaps" data-price="350" onclick="toggleSvc(this)">
-      <div class="card-header">
-        <div class="card-name" data-i18n="email_roadmaps_name">Roadmaps & Comunicados</div>
-        <input type="checkbox" class="card-chk" onclick="event.stopPropagation()">
-      </div>
-      <div class="card-covers">
-        <span class="cover-tag" style="--s-color:var(--c2);--s-rgb:var(--c2r);">Email</span>
-        <span class="cover-tag" style="--s-color:var(--c2);--s-rgb:var(--c2r);">WhatsApp</span>
-      </div>
-      <p class="card-body" data-i18n="email_roadmaps_desc">Comunicación estratégica con tu base de datos: presentación de novedades, lanzamientos de producto, cambios de servicio y comunicados corporativos. Redacción profesional y diseño de marca.</p>
-      <ul class="card-feat-list">
-        <li data-i18n="email_roadmaps_f1">Campañas de lanzamiento</li>
-        <li data-i18n="email_roadmaps_f2">Comunicados corporativos</li>
-        <li data-i18n="email_roadmaps_f3">Plantillas de marca personalizada</li>
-        <li data-i18n="email_roadmaps_f4">Análisis de apertura y clics</li>
-      </ul>
-      <div class="card-footer">
-        <div class="card-price-wrap">
-          <div class="card-price">350€</div>
-          <div class="card-price-unit" data-i18n="perMonth">/ mes</div>
+        <p class="card-desc" data-i18n="email_campaigns_desc">Envío semanal de campañas coordinadas por Email y WhatsApp (+300€/mes). 4 envíos mensuales por canal con diseño, copy y segmentación de audiencia. Análisis de métricas post-envío para optimizar continuamente.</p>
+        <div class="card-includes">
+          <div class="card-includes-title" data-i18n="includes">Incluye:</div>
+          <ul class="card-includes-list">
+            <li>4 campañas de email al mes</li>
+            <li>4 envíos de WhatsApp coordinados</li>
+            <li>Diseño, copy y segmentación</li>
+            <li>Análisis de resultados y optimización</li>
+          </ul>
         </div>
-        <div class="card-tier" data-i18n="tier_weekly">Semanal</div>
+        <div class="card-footer"><div><span class="card-price">300€</span><span class="card-unit">/ mes</span></div><span class="card-badge">Semanal</span></div>
       </div>
-    </div>
 
-  </div>
-</div>
-
-<!-- ═══════════════════════════════════════════════════════ -->
-<!-- S3 — PERSONAL ASSISTANT -->
-<!-- ═══════════════════════════════════════════════════════ -->
-<div class="section">
-  <div class="section-head" style="--s-color:var(--c4);">
-    <div class="section-head-num" data-i18n="s3num">03</div>
-    <div class="section-head-text">
-      <div class="section-head-label" data-i18n="s3label">Asistente Personal</div>
-      <div class="section-head-sub" data-i18n="s3sub">Gestión diaria de base de datos, links y mensajes</div>
-    </div>
-    <div class="section-head-note" data-i18n="s3note">Soporte operativo diario para que no tengas que gestionar nada</div>
-  </div>
-  <div class="card-grid">
-
-    <div class="svc-card" style="--s-color:var(--c4);--s-rgb:var(--c4r);" data-svc="pa_database" data-price="220" onclick="toggleSvc(this)">
-      <div class="card-header">
-        <div class="card-name" data-i18n="pa_database_name">Gestión de Base de Datos</div>
-        <input type="checkbox" class="card-chk" onclick="event.stopPropagation()">
-      </div>
-      <p class="card-body" data-i18n="pa_database_desc">Organización y mantenimiento continuo de tu base de datos de clientes: limpieza, segmentación, etiquetado y actualización de contactos. Tu base de datos siempre lista y usable.</p>
-      <ul class="card-feat-list">
-        <li data-i18n="pa_database_f1">Limpieza y deduplicación</li>
-        <li data-i18n="pa_database_f2">Segmentación por comportamiento</li>
-        <li data-i18n="pa_database_f3">Actualización continua</li>
-      </ul>
-      <div class="card-footer">
-        <div class="card-price-wrap">
-          <div class="card-price">220€</div>
-          <div class="card-price-unit" data-i18n="perMonth">/ mes</div>
+      <!-- Recordatorios -->
+      <div class="card" style="--accent:var(--c2);--accent-rgb:123,97,255;" data-pos="2" data-svc="email_reminders" data-base-price="180" onclick="toggleCard(this)">
+        <div class="card-top"><span class="card-title" data-i18n="email_reminders_title">Recordatorios Automáticos</span><input type="checkbox" class="card-check" onclick="event.stopPropagation()"></div>
+        <div class="covers-row">
+          <span class="cover-badge" style="color:#7b61ff;border-color:rgba(123,97,255,.3);background:rgba(123,97,255,.08);">✉️ Email</span>
+          <span class="cover-badge" style="color:#25d366;border-color:rgba(37,211,102,.3);background:rgba(37,211,102,.08);">💬 WhatsApp</span>
         </div>
-        <div class="card-tier" data-i18n="tier_daily">Diario</div>
-      </div>
-    </div>
-
-    <div class="svc-card" style="--s-color:var(--c4);--s-rgb:var(--c4r);" data-svc="pa_links" data-price="150" onclick="toggleSvc(this)">
-      <div class="card-header">
-        <div class="card-name" data-i18n="pa_links_name">Gestión de Links & Recursos</div>
-        <input type="checkbox" class="card-chk" onclick="event.stopPropagation()">
-      </div>
-      <p class="card-body" data-i18n="pa_links_desc">Organización y mantenimiento de todos tus links: bio de redes, landing pages, formularios, recursos descargables y enlaces de seguimiento. Todo actualizado y funcionando.</p>
-      <ul class="card-feat-list">
-        <li data-i18n="pa_links_f1">Bio links actualizados</li>
-        <li data-i18n="pa_links_f2">Monitoreo de enlaces rotos</li>
-        <li data-i18n="pa_links_f3">Organización de recursos</li>
-      </ul>
-      <div class="card-footer">
-        <div class="card-price-wrap">
-          <div class="card-price">150€</div>
-          <div class="card-price-unit" data-i18n="perMonth">/ mes</div>
+        <p class="card-desc" data-i18n="email_reminders_desc">Recordatorios estratégicos por Email y WhatsApp: citas, eventos, renovaciones, lanzamientos y avisos de servicio. Reduce el no-show y mantiene a tus clientes informados sin que inviertas tu tiempo.</p>
+        <div class="card-includes">
+          <div class="card-includes-title" data-i18n="includes">Incluye:</div>
+          <ul class="card-includes-list">
+            <li>Recordatorios automáticos de citas y eventos</li>
+            <li>Avisos de renovación y seguimiento</li>
+            <li>Configuración de flujos automáticos</li>
+          </ul>
         </div>
-        <div class="card-tier" data-i18n="tier_daily">Diario</div>
+        <div class="card-footer"><div><span class="card-price">180€</span><span class="card-unit">/ mes</span></div><span class="card-badge">Semanal</span></div>
       </div>
-    </div>
 
-    <div class="svc-card" style="--s-color:var(--c4);--s-rgb:var(--c4r);" data-svc="pa_messages" data-price="280" onclick="toggleSvc(this)">
-      <div class="card-header">
-        <div class="card-name" data-i18n="pa_messages_name">Mensajes Diarios</div>
-        <input type="checkbox" class="card-chk" onclick="event.stopPropagation()">
-      </div>
-      <p class="card-body" data-i18n="pa_messages_desc">Gestión de mensajes diarios en nombre tuyo: seguimientos, confirmaciones, respuestas de soporte y comunicación proactiva con clientes. Presencia constante sin que inviertas tu tiempo.</p>
-      <ul class="card-feat-list">
-        <li data-i18n="pa_messages_f1">Respuesta en menos de 4h laborables</li>
-        <li data-i18n="pa_messages_f2">Voz de marca consistente</li>
-        <li data-i18n="pa_messages_f3">Identificación y escalado de urgencias</li>
-      </ul>
-      <div class="card-footer">
-        <div class="card-price-wrap">
-          <div class="card-price">280€</div>
-          <div class="card-price-unit" data-i18n="perMonth">/ mes</div>
+      <!-- Roadmaps / Comunicados -->
+      <div class="card" style="--accent:var(--c2);--accent-rgb:123,97,255;" data-pos="2" data-svc="email_roadmaps" data-base-price="220" onclick="toggleCard(this)">
+        <div class="card-top"><span class="card-title" data-i18n="email_roadmaps_title">Roadmaps & Comunicados</span><input type="checkbox" class="card-check" onclick="event.stopPropagation()"></div>
+        <div class="covers-row">
+          <span class="cover-badge" style="color:#7b61ff;border-color:rgba(123,97,255,.3);background:rgba(123,97,255,.08);">✉️ Email</span>
+          <span class="cover-badge" style="color:#25d366;border-color:rgba(37,211,102,.3);background:rgba(37,211,102,.08);">💬 WhatsApp</span>
         </div>
-        <div class="card-tier" data-i18n="tier_daily">Diario</div>
-      </div>
-    </div>
-
-  </div>
-</div>
-
-<!-- ═══════════════════════════════════════════════════════ -->
-<!-- S4 — GRAPHIC DESIGN (COUNTER) -->
-<!-- ═══════════════════════════════════════════════════════ -->
-<div class="section">
-  <div class="section-head" style="--s-color:var(--c3);">
-    <div class="section-head-num" data-i18n="s4num">04</div>
-    <div class="section-head-text">
-      <div class="section-head-label" data-i18n="s4label">Diseño Gráfico</div>
-      <div class="section-head-sub" data-i18n="s4sub">Elige exactamente cuántas piezas necesitas cada mes</div>
-    </div>
-    <div class="section-head-note" data-i18n="s4note">Descuento automático: +6 carruseles o +30 stories</div>
-  </div>
-
-  <div class="counter-card" id="designCard">
-    <div class="cc-title" data-i18n="dg_title">Configura tu pack de diseño</div>
-    <p class="cc-sub" data-i18n="dg_sub">Ajusta la cantidad de cada pieza. El precio se calcula en tiempo real. Descuentos automáticos por volumen.</p>
-
-    <!-- Stories -->
-    <div class="counter-item" id="ci_stories">
-      <div class="ci-icon">📱</div>
-      <div class="ci-info">
-        <div class="ci-name" data-i18n="dg_stories">Historias (Stories)</div>
-        <div class="ci-unit" data-i18n="dg_stories_unit">15€ c/u — Descuento 10% a partir de 30</div>
-      </div>
-      <div class="ci-controls">
-        <button class="ci-btn" onclick="adj('stories',-1)">−</button>
-        <div class="ci-val" id="cv_stories">0</div>
-        <button class="ci-btn" onclick="adj('stories',1)">+</button>
-      </div>
-      <div style="text-align:right;min-width:80px;">
-        <div class="ci-price zero" id="cp_stories">0€</div>
-        <div class="ci-discount" id="cd_stories"></div>
-      </div>
-    </div>
-
-    <!-- Feed Posts -->
-    <div class="counter-item" id="ci_feedposts">
-      <div class="ci-icon">🖼️</div>
-      <div class="ci-info">
-        <div class="ci-name" data-i18n="dg_feedposts">Posts de Feed</div>
-        <div class="ci-unit" data-i18n="dg_feedposts_unit">35€ c/u — Imagen estática o carrusel simple</div>
-      </div>
-      <div class="ci-controls">
-        <button class="ci-btn" onclick="adj('feedposts',-1)">−</button>
-        <div class="ci-val" id="cv_feedposts">0</div>
-        <button class="ci-btn" onclick="adj('feedposts',1)">+</button>
-      </div>
-      <div style="text-align:right;min-width:80px;">
-        <div class="ci-price zero" id="cp_feedposts">0€</div>
-        <div class="ci-discount" id="cd_feedposts"></div>
-      </div>
-    </div>
-
-    <!-- Carruseles -->
-    <div class="counter-item" id="ci_carousels">
-      <div class="ci-icon">🎠</div>
-      <div class="ci-info">
-        <div class="ci-name" data-i18n="dg_carousels">Pack Carruseles</div>
-        <div class="ci-unit" data-i18n="dg_carousels_unit">55€ c/u — Descuento 12% a partir de 6</div>
-      </div>
-      <div class="ci-controls">
-        <button class="ci-btn" onclick="adj('carousels',-1)">−</button>
-        <div class="ci-val" id="cv_carousels">0</div>
-        <button class="ci-btn" onclick="adj('carousels',1)">+</button>
-      </div>
-      <div style="text-align:right;min-width:80px;">
-        <div class="ci-price zero" id="cp_carousels">0€</div>
-        <div class="ci-discount" id="cd_carousels"></div>
-      </div>
-    </div>
-
-    <!-- Reels covers -->
-    <div class="counter-item" id="ci_reels">
-      <div class="ci-icon">🎬</div>
-      <div class="ci-info">
-        <div class="ci-name" data-i18n="dg_reels">Portadas Reels / TikTok</div>
-        <div class="ci-unit" data-i18n="dg_reels_unit">22€ c/u — Miniatura + overlay de texto</div>
-      </div>
-      <div class="ci-controls">
-        <button class="ci-btn" onclick="adj('reels',-1)">−</button>
-        <div class="ci-val" id="cv_reels">0</div>
-        <button class="ci-btn" onclick="adj('reels',1)">+</button>
-      </div>
-      <div style="text-align:right;min-width:80px;">
-        <div class="ci-price zero" id="cp_reels">0€</div>
-        <div class="ci-discount" id="cd_reels"></div>
-      </div>
-    </div>
-
-    <!-- Banners -->
-    <div class="counter-item" id="ci_banners">
-      <div class="ci-icon">📣</div>
-      <div class="ci-info">
-        <div class="ci-name" data-i18n="dg_banners">Banners & Piezas de Ads</div>
-        <div class="ci-unit" data-i18n="dg_banners_unit">40€ c/u — Todos los formatos digitales</div>
-      </div>
-      <div class="ci-controls">
-        <button class="ci-btn" onclick="adj('banners',-1)">−</button>
-        <div class="ci-val" id="cv_banners">0</div>
-        <button class="ci-btn" onclick="adj('banners',1)">+</button>
-      </div>
-      <div style="text-align:right;min-width:80px;">
-        <div class="ci-price zero" id="cp_banners">0€</div>
-        <div class="ci-discount" id="cd_banners"></div>
-      </div>
-    </div>
-
-    <!-- Email Graphics -->
-    <div class="counter-item" id="ci_emailgfx">
-      <div class="ci-icon">✉️</div>
-      <div class="ci-info">
-        <div class="ci-name" data-i18n="dg_emailgfx">Gráficos para Email</div>
-        <div class="ci-unit" data-i18n="dg_emailgfx_unit">28€ c/u — Header + cuerpo + CTA</div>
-      </div>
-      <div class="ci-controls">
-        <button class="ci-btn" onclick="adj('emailgfx',-1)">−</button>
-        <div class="ci-val" id="cv_emailgfx">0</div>
-        <button class="ci-btn" onclick="adj('emailgfx',1)">+</button>
-      </div>
-      <div style="text-align:right;min-width:80px;">
-        <div class="ci-price zero" id="cp_emailgfx">0€</div>
-        <div class="ci-discount" id="cd_emailgfx"></div>
-      </div>
-    </div>
-
-    <div class="cc-total-bar">
-      <div class="cc-total-label" data-i18n="dg_total">Total Diseño Mensual</div>
-      <div class="cc-total-price" id="dcc_total">0€</div>
-    </div>
-  </div>
-</div>
-
-<!-- ═══════════════════════════════════════════════════════ -->
-<!-- S5 — COMMUNITY MANAGEMENT -->
-<!-- ═══════════════════════════════════════════════════════ -->
-<div class="section">
-  <div class="section-head" style="--s-color:var(--c5);">
-    <div class="section-head-num" data-i18n="s5num">05</div>
-    <div class="section-head-text">
-      <div class="section-head-label" data-i18n="s5label">Community Management</div>
-      <div class="section-head-sub" data-i18n="s5sub">Respuestas, DMs y FAQs — selecciona los canales</div>
-    </div>
-    <div class="section-head-note" data-i18n="s5note">Cada canal es independiente. Pack completo (5 canales) = 10% de descuento</div>
-  </div>
-
-  <!-- CM Platforms -->
-  <div class="community-grid" id="cmGrid">
-    <div class="cm-card" id="cmp_instagram" style="--cm-color:#e1306c;--cm-rgb:225,48,108;" data-platform="instagram" data-price="180" onclick="toggleCM(this)">
-      <input type="checkbox" class="cm-chk" onclick="event.stopPropagation()">
-      <div class="cm-icon">📸</div>
-      <div class="cm-platform">Instagram</div>
-      <div class="cm-price">180€</div>
-      <div class="cm-unit" data-i18n="perMonth">/ mes</div>
-    </div>
-    <div class="cm-card" id="cmp_facebook" style="--cm-color:#1877f2;--cm-rgb:24,119,242;" data-platform="facebook" data-price="150" onclick="toggleCM(this)">
-      <input type="checkbox" class="cm-chk" onclick="event.stopPropagation()">
-      <div class="cm-icon">🔵</div>
-      <div class="cm-platform">Facebook</div>
-      <div class="cm-price">150€</div>
-      <div class="cm-unit" data-i18n="perMonth">/ mes</div>
-    </div>
-    <div class="cm-card" id="cmp_tiktok" style="--cm-color:#ff0050;--cm-rgb:255,0,80;" data-platform="tiktok" data-price="200" onclick="toggleCM(this)">
-      <input type="checkbox" class="cm-chk" onclick="event.stopPropagation()">
-      <div class="cm-icon">🎵</div>
-      <div class="cm-platform">TikTok</div>
-      <div class="cm-price">200€</div>
-      <div class="cm-unit" data-i18n="perMonth">/ mes</div>
-    </div>
-    <div class="cm-card" id="cmp_email" style="--cm-color:#5b8cff;--cm-rgb:91,140,255;" data-platform="email" data-price="130" onclick="toggleCM(this)">
-      <input type="checkbox" class="cm-chk" onclick="event.stopPropagation()">
-      <div class="cm-icon">✉️</div>
-      <div class="cm-platform">Email</div>
-      <div class="cm-price">130€</div>
-      <div class="cm-unit" data-i18n="perMonth">/ mes</div>
-    </div>
-    <div class="cm-card" id="cmp_whatsapp" style="--cm-color:#25d366;--cm-rgb:37,211,102;" data-platform="whatsapp" data-price="160" onclick="toggleCM(this)">
-      <input type="checkbox" class="cm-chk" onclick="event.stopPropagation()">
-      <div class="cm-icon">💬</div>
-      <div class="cm-platform">WhatsApp</div>
-      <div class="cm-price">160€</div>
-      <div class="cm-unit" data-i18n="perMonth">/ mes</div>
-    </div>
-  </div>
-
-  <div class="cm-bundle-note" style="margin-top:14px;">
-    <strong data-i18n="cm_bundle_tag">Pack 5 canales:</strong>
-    <span data-i18n="cm_bundle_desc"> Activa los 5 canales y obtén un descuento automático del 10% sobre el total de Community Management.</span>
-  </div>
-  <div class="cm-bundle-active" id="cmBundleActive" data-i18n="cm_bundle_active">
-    ✦ Pack completo activo — 10% aplicado automáticamente
-  </div>
-
-  <!-- CM Service cards -->
-  <div style="margin-top: 20px;">
-    <div class="card-grid">
-      <div class="svc-card" style="--s-color:var(--c5);--s-rgb:var(--c5r);" data-svc="cm_answers" data-price="0" onclick="toggleSvc(this)">
-        <div class="card-header">
-          <div class="card-name" data-i18n="cm_answers_name">Respuestas & Comentarios</div>
-          <input type="checkbox" class="card-chk" onclick="event.stopPropagation()">
+        <p class="card-desc" data-i18n="email_roadmaps_desc">Comunicación estratégica con tu base de datos: presentación de novedades, lanzamientos de producto, cambios de servicio y comunicados corporativos. Redacción profesional con tono y diseño de tu marca.</p>
+        <div class="card-includes">
+          <div class="card-includes-title" data-i18n="includes">Incluye:</div>
+          <ul class="card-includes-list">
+            <li>Campañas de lanzamiento y novedades</li>
+            <li>Comunicados corporativos</li>
+            <li>Plantillas de marca personalizadas</li>
+          </ul>
         </div>
-        <p class="card-body" data-i18n="cm_answers_desc">Incluido en cada canal seleccionado. Gestión diaria de comentarios en publicaciones: respuestas en tono de marca, moderación de negativos y spam, e interacción proactiva para aumentar alcance orgánico.</p>
-        <div style="font-size:10px;color:var(--c5);padding:8px 0;font-family:var(--font-mono);" data-i18n="cm_included_note">✓ Incluido al seleccionar cualquier canal arriba</div>
+        <div class="card-footer"><div><span class="card-price">220€</span><span class="card-unit">/ mes</span></div><span class="card-badge">Mensual</span></div>
       </div>
-      <div class="svc-card" style="--s-color:var(--c5);--s-rgb:var(--c5r);" data-svc="cm_dm" data-price="0" onclick="toggleSvc(this)">
-        <div class="card-header">
-          <div class="card-name" data-i18n="cm_dm_name">DMs & Mensajes Directos</div>
-          <input type="checkbox" class="card-chk" onclick="event.stopPropagation()">
-        </div>
-        <p class="card-body" data-i18n="cm_dm_desc">Incluido en cada canal seleccionado. Gestión de mensajes directos: respuesta en menos de 24h laborables, identificación de leads, derivación de urgencias y mantenimiento de tono de marca en cada conversación.</p>
-        <div style="font-size:10px;color:var(--c5);padding:8px 0;font-family:var(--font-mono);" data-i18n="cm_included_note">✓ Incluido al seleccionar cualquier canal arriba</div>
+
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════ -->
+  <!-- 03 — ASISTENTE PERSONAL -->
+  <!-- ═══════════════════════════════════════════════ -->
+  <div class="pos-section" data-pos="3">
+    <div class="pos-header">
+      <div class="pos-dot" style="color:var(--c8);background:var(--c8);"></div>
+      <div>
+        <div class="pos-number" data-i18n="pos3num">03 — Asistente Personal</div>
+        <div class="pos-name" data-i18n="pos3name">Gestión diaria de tu operación digital</div>
       </div>
-      <div class="svc-card" style="--s-color:var(--c5);--s-rgb:var(--c5r);" data-svc="cm_faqs" data-price="150" onclick="toggleSvc(this)">
-        <div class="card-header">
-          <div class="card-name" data-i18n="cm_faqs_name">Base de FAQs Profesional</div>
-          <input type="checkbox" class="card-chk" onclick="event.stopPropagation()">
+      <div class="pos-desc" data-i18n="pos3desc">Base de datos, links y mensajes diarios gestionados</div>
+    </div>
+    <div class="service-grid">
+
+      <!-- Database -->
+      <div class="card" style="--accent:var(--c8);--accent-rgb:167,139,250;" data-pos="3" data-svc="pa_database" data-base-price="220" onclick="toggleCard(this)">
+        <div class="card-top"><span class="card-title" data-i18n="pa_database_title">Gestión de Base de Datos</span><input type="checkbox" class="card-check" onclick="event.stopPropagation()"></div>
+        <p class="card-desc" data-i18n="pa_database_desc">Organización y mantenimiento continuo de tu base de datos de clientes: limpieza, segmentación por comportamiento, etiquetado y actualización de contactos. Tu base siempre lista, usable y optimizada para cada campaña.</p>
+        <div class="card-includes">
+          <div class="card-includes-title" data-i18n="includes">Incluye:</div>
+          <ul class="card-includes-list">
+            <li>Limpieza y deduplicación mensual</li>
+            <li>Segmentación y etiquetado de contactos</li>
+            <li>Actualización y mantenimiento continuo</li>
+          </ul>
         </div>
-        <p class="card-body" data-i18n="cm_faqs_desc">Creación y mantenimiento de una base de preguntas frecuentes personalizada para tu negocio. Respuestas pre-aprobadas, protocolo de tono de marca y guía de escalado para situaciones complejas.</p>
-        <ul class="card-feat-list">
-          <li data-i18n="cm_faqs_f1">50+ FAQs documentadas</li>
-          <li data-i18n="cm_faqs_f2">Protocolo de escalado</li>
-          <li data-i18n="cm_faqs_f3">Actualización mensual</li>
-        </ul>
-        <div class="card-footer">
-          <div class="card-price-wrap">
-            <div class="card-price">150€</div>
-            <div class="card-price-unit" data-i18n="perMonth">/ mes</div>
+        <div class="card-footer"><div><span class="card-price">220€</span><span class="card-unit">/ mes</span></div><span class="card-badge">Diario</span></div>
+      </div>
+
+      <!-- Links -->
+      <div class="card" style="--accent:var(--c8);--accent-rgb:167,139,250;" data-pos="3" data-svc="pa_links" data-base-price="150" onclick="toggleCard(this)">
+        <div class="card-top"><span class="card-title" data-i18n="pa_links_title">Gestión de Links & Recursos</span><input type="checkbox" class="card-check" onclick="event.stopPropagation()"></div>
+        <p class="card-desc" data-i18n="pa_links_desc">Organización y mantenimiento de todos tus enlaces digitales: bio de redes, landing pages, formularios, recursos descargables y enlaces de seguimiento. Todo actualizado, funcionando y fácil de gestionar.</p>
+        <div class="card-includes">
+          <div class="card-includes-title" data-i18n="includes">Incluye:</div>
+          <ul class="card-includes-list">
+            <li>Bio links y landings actualizados</li>
+            <li>Monitoreo de enlaces rotos</li>
+            <li>Organización de recursos digitales</li>
+          </ul>
+        </div>
+        <div class="card-footer"><div><span class="card-price">150€</span><span class="card-unit">/ mes</span></div><span class="card-badge">Diario</span></div>
+      </div>
+
+      <!-- Daily Messages -->
+      <div class="card" style="--accent:var(--c8);--accent-rgb:167,139,250;" data-pos="3" data-svc="pa_messages" data-base-price="280" onclick="toggleCard(this)">
+        <div class="card-top"><span class="card-title" data-i18n="pa_messages_title">Mensajes Diarios</span><input type="checkbox" class="card-check" onclick="event.stopPropagation()"></div>
+        <p class="card-desc" data-i18n="pa_messages_desc">Gestión de mensajes diarios en tu nombre: seguimientos, confirmaciones, respuestas de soporte y comunicación proactiva con clientes. Presencia constante y profesional sin que inviertas tu tiempo.</p>
+        <div class="card-includes">
+          <div class="card-includes-title" data-i18n="includes">Incluye:</div>
+          <ul class="card-includes-list">
+            <li>Respuesta en menos de 4h laborables</li>
+            <li>Voz de marca consistente</li>
+            <li>Identificación y escalado de urgencias</li>
+          </ul>
+        </div>
+        <div class="card-footer"><div><span class="card-price">280€</span><span class="card-unit">/ mes</span></div><span class="card-badge">Diario</span></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════ -->
+  <!-- 04 — DISEÑO GRÁFICO (COUNTER) -->
+  <!-- ═══════════════════════════════════════════════ -->
+  <div class="pos-section" data-pos="4">
+    <div class="pos-header">
+      <div class="pos-dot" style="color:var(--c3);background:var(--c3);"></div>
+      <div>
+        <div class="pos-number" data-i18n="pos4num">04 — Diseño Gráfico</div>
+        <div class="pos-name" data-i18n="pos4name">Elige exactamente cuántas piezas necesitas</div>
+      </div>
+      <div class="pos-desc" data-i18n="pos4desc">x3 stories semanales · 4 posts mensuales · descuentos por volumen</div>
+    </div>
+
+    <div class="design-counter-card" id="designCounterCard">
+      <div class="dcc-header">
+        <div>
+          <div class="dcc-title" data-i18n="dg_title">Configura tu pack de diseño mensual</div>
+          <div class="dcc-desc" style="margin-top:5px;" data-i18n="dg_desc">Ajusta la cantidad de cada pieza. El precio se calcula en tiempo real con descuentos automáticos por volumen.</div>
+        </div>
+      </div>
+
+      <!-- Stories -->
+      <div class="counter-row" id="cr_stories">
+        <div class="counter-row-info">
+          <div class="counter-row-name">📱 <span data-i18n="dg_stories_name">Historias (Stories)</span></div>
+          <div class="counter-row-sub">
+            <span>14€ c/u</span>
+            <span class="discount-tag" id="dt_stories">−10% a partir de 30</span>
           </div>
-          <div class="card-tier" data-i18n="tier_monthly">Mensual</div>
         </div>
+        <div class="counter-controls">
+          <button class="counter-btn" onclick="adjustCounter('stories',-1)">−</button>
+          <div class="counter-value" id="cv_stories">0</div>
+          <button class="counter-btn" onclick="adjustCounter('stories',1)">+</button>
+        </div>
+        <div class="counter-row-price zero" id="cp_stories">0€</div>
+      </div>
+
+      <!-- Posts Feed -->
+      <div class="counter-row" id="cr_feedposts">
+        <div class="counter-row-info">
+          <div class="counter-row-name">🖼️ <span data-i18n="dg_feedposts_name">Posts de Feed</span></div>
+          <div class="counter-row-sub">
+            <span>38€ c/u</span>
+          </div>
+        </div>
+        <div class="counter-controls">
+          <button class="counter-btn" onclick="adjustCounter('feedposts',-1)">−</button>
+          <div class="counter-value" id="cv_feedposts">0</div>
+          <button class="counter-btn" onclick="adjustCounter('feedposts',1)">+</button>
+        </div>
+        <div class="counter-row-price zero" id="cp_feedposts">0€</div>
+      </div>
+
+      <!-- Carruseles -->
+      <div class="counter-row" id="cr_carousels">
+        <div class="counter-row-info">
+          <div class="counter-row-name">🎠 <span data-i18n="dg_carousels_name">Pack Carruseles</span></div>
+          <div class="counter-row-sub">
+            <span>55€ c/u</span>
+            <span class="discount-tag" id="dt_carousels">−12% a partir de 6</span>
+          </div>
+        </div>
+        <div class="counter-controls">
+          <button class="counter-btn" onclick="adjustCounter('carousels',-1)">−</button>
+          <div class="counter-value" id="cv_carousels">0</div>
+          <button class="counter-btn" onclick="adjustCounter('carousels',1)">+</button>
+        </div>
+        <div class="counter-row-price zero" id="cp_carousels">0€</div>
+      </div>
+
+      <!-- Reels / TikTok -->
+      <div class="counter-row" id="cr_reels">
+        <div class="counter-row-info">
+          <div class="counter-row-name">🎬 <span data-i18n="dg_reels_name">Portadas Reels / TikTok</span></div>
+          <div class="counter-row-sub"><span>22€ c/u</span></div>
+        </div>
+        <div class="counter-controls">
+          <button class="counter-btn" onclick="adjustCounter('reels',-1)">−</button>
+          <div class="counter-value" id="cv_reels">0</div>
+          <button class="counter-btn" onclick="adjustCounter('reels',1)">+</button>
+        </div>
+        <div class="counter-row-price zero" id="cp_reels">0€</div>
+      </div>
+
+      <!-- Banners -->
+      <div class="counter-row" id="cr_banners">
+        <div class="counter-row-info">
+          <div class="counter-row-name">📣 <span data-i18n="dg_banners_name">Banners & Piezas de Ads</span></div>
+          <div class="counter-row-sub"><span>40€ c/u — todos los formatos</span></div>
+        </div>
+        <div class="counter-controls">
+          <button class="counter-btn" onclick="adjustCounter('banners',-1)">−</button>
+          <div class="counter-value" id="cv_banners">0</div>
+          <button class="counter-btn" onclick="adjustCounter('banners',1)">+</button>
+        </div>
+        <div class="counter-row-price zero" id="cp_banners">0€</div>
+      </div>
+
+      <!-- Email graphics -->
+      <div class="counter-row" id="cr_emailgfx">
+        <div class="counter-row-info">
+          <div class="counter-row-name">✉️ <span data-i18n="dg_emailgfx_name">Gráficos para Email</span></div>
+          <div class="counter-row-sub"><span>28€ c/u — header + banner + CTA</span></div>
+        </div>
+        <div class="counter-controls">
+          <button class="counter-btn" onclick="adjustCounter('emailgfx',-1)">−</button>
+          <div class="counter-value" id="cv_emailgfx">0</div>
+          <button class="counter-btn" onclick="adjustCounter('emailgfx',1)">+</button>
+        </div>
+        <div class="counter-row-price zero" id="cp_emailgfx">0€</div>
+      </div>
+
+      <div class="dcc-total-row">
+        <div class="dcc-total-label" data-i18n="dg_total">Total Diseño Mensual</div>
+        <div class="dcc-total-price" id="dcc_total">0€</div>
       </div>
     </div>
   </div>
+
+  <!-- ═══════════════════════════════════════════════ -->
+  <!-- 05 — COMMUNITY MANAGEMENT -->
+  <!-- ═══════════════════════════════════════════════ -->
+  <div class="pos-section" data-pos="5">
+    <div class="pos-header">
+      <div class="pos-dot" style="color:var(--c6);background:var(--c6);"></div>
+      <div>
+        <div class="pos-number" data-i18n="pos5num">05 — Community Management</div>
+        <div class="pos-name" data-i18n="pos5name">Respuestas, DMs y FAQs en cada canal</div>
+      </div>
+      <div class="pos-desc" data-i18n="pos5desc">Selecciona los canales — cada uno es independiente</div>
+    </div>
+
+    <!-- Platform selector -->
+    <div class="sub-section-label" data-i18n="platformLabel">Selecciona los canales a gestionar:</div>
+    <div class="platform-grid">
+      <div class="platform-card" style="--p-color:#e1306c;--p-rgb:225,48,108;" data-platform="instagram" data-price="180" onclick="togglePlatform(this)">
+        <input type="checkbox" class="platform-check" onclick="event.stopPropagation()">
+        <div class="platform-icon">📸</div>
+        <div class="platform-name">Instagram</div>
+        <div class="platform-price">180€</div>
+        <div class="platform-price-sub">/ mes</div>
+      </div>
+      <div class="platform-card" style="--p-color:#1877f2;--p-rgb:24,119,242;" data-platform="facebook" data-price="150" onclick="togglePlatform(this)">
+        <input type="checkbox" class="platform-check" onclick="event.stopPropagation()">
+        <div class="platform-icon">🔵</div>
+        <div class="platform-name">Facebook</div>
+        <div class="platform-price">150€</div>
+        <div class="platform-price-sub">/ mes</div>
+      </div>
+      <div class="platform-card" style="--p-color:#ff0050;--p-rgb:255,0,80;" data-platform="tiktok" data-price="200" onclick="togglePlatform(this)">
+        <input type="checkbox" class="platform-check" onclick="event.stopPropagation()">
+        <div class="platform-icon">🎵</div>
+        <div class="platform-name">TikTok</div>
+        <div class="platform-price">200€</div>
+        <div class="platform-price-sub">/ mes</div>
+      </div>
+      <div class="platform-card" style="--p-color:#7b61ff;--p-rgb:123,97,255;" data-platform="email_cm" data-price="130" onclick="togglePlatform(this)">
+        <input type="checkbox" class="platform-check" onclick="event.stopPropagation()">
+        <div class="platform-icon">✉️</div>
+        <div class="platform-name">Email</div>
+        <div class="platform-price">130€</div>
+        <div class="platform-price-sub">/ mes</div>
+      </div>
+      <div class="platform-card" style="--p-color:#25d366;--p-rgb:37,211,102;" data-platform="whatsapp_cm" data-price="160" onclick="togglePlatform(this)">
+        <input type="checkbox" class="platform-check" onclick="event.stopPropagation()">
+        <div class="platform-icon">💬</div>
+        <div class="platform-name">WhatsApp</div>
+        <div class="platform-price">160€</div>
+        <div class="platform-price-sub">/ mes</div>
+      </div>
+    </div>
+
+    <!-- What's included in CM -->
+    <div style="margin:12px 0;padding:14px 18px;background:rgba(255,45,120,.04);border:1px solid rgba(255,45,120,.12);border-radius:8px;font-size:11px;color:var(--text-dim);line-height:1.7;">
+      <span style="color:#ff2d78;font-weight:700;">Cada canal incluye:</span>
+      &nbsp;Respuestas a comentarios · Gestión de DMs · Moderación de mensajes · Identificación de leads · Protocolo de voz de marca.
+      &nbsp;|&nbsp; <span style="color:#ff2d78;font-weight:700;">Pack completo (5 canales):</span> <strong style="color:#ff2d78;">10% de descuento automático</strong> sobre el total de Community Management.
+    </div>
+    <div id="cmBundleDiscountRow" style="display:none;margin-top:6px;padding:9px 16px;background:rgba(255,45,120,.1);border:1px solid rgba(255,45,120,.35);border-radius:8px;font-size:11px;color:#ff2d78;font-weight:700;text-align:center;">
+      🎉 Pack completo activo — 10% de descuento aplicado sobre Community Management
+    </div>
+
+    <!-- FAQs card -->
+    <div style="margin-top:16px;" class="service-grid">
+      <div class="card" style="--accent:var(--c6);--accent-rgb:255,45,120;" data-pos="5" data-svc="cm_faqs" data-base-price="150" onclick="toggleCard(this)">
+        <div class="card-top"><span class="card-title">Base de FAQs Profesional</span><input type="checkbox" class="card-check" onclick="event.stopPropagation()"></div>
+        <p class="card-desc">Creación y mantenimiento de una base de preguntas frecuentes personalizada para tu negocio. Respuestas pre-aprobadas con protocolo de tono de marca y guía de escalado para situaciones complejas.</p>
+        <div class="card-includes">
+          <div class="card-includes-title">Incluye:</div>
+          <ul class="card-includes-list">
+            <li>50+ FAQs documentadas y actualizadas</li>
+            <li>Protocolo de escalado de incidencias</li>
+            <li>Revisión y actualización mensual</li>
+          </ul>
+        </div>
+        <div class="card-footer"><div><span class="card-price">150€</span><span class="card-unit">/ mes</span></div><span class="card-badge">Mensual</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════ -->
+  <!-- 06 — DIRECCIÓN CREATIVA -->
+  <!-- ═══════════════════════════════════════════════ -->
+  <div class="pos-section" data-pos="6">
+    <div class="pos-header">
+      <div class="pos-dot" style="color:var(--c5);background:var(--c5);"></div>
+      <div>
+        <div class="pos-number" data-i18n="pos6num">06 — Dirección Creativa & Web</div>
+        <div class="pos-name" data-i18n="pos6name">Estrategia visual, website y photoshoots</div>
+      </div>
+      <div class="pos-desc" data-i18n="pos6desc">Análisis, actualizaciones y dirección artística de alto nivel</div>
+    </div>
+    <div class="service-grid">
+
+      <!-- Website -->
+      <div class="card" style="--accent:var(--c5);--accent-rgb:255,204,0;" data-pos="6" data-svc="creative_web" data-base-price="380" onclick="toggleCard(this)">
+        <div class="card-top"><span class="card-title">Website — Ajustes & Updates</span><input type="checkbox" class="card-check" onclick="event.stopPropagation()"></div>
+        <p class="card-desc">Mantenimiento activo y mejoras continuas de tu web: actualizaciones de contenido, ajustes de diseño, optimización de velocidad, mejoras de conversión y revisiones técnicas mensuales para que siempre esté al nivel.</p>
+        <div class="card-includes">
+          <div class="card-includes-title">Incluye:</div>
+          <ul class="card-includes-list">
+            <li>Actualizaciones de contenido y textos</li>
+            <li>Ajustes de diseño y UX</li>
+            <li>Optimización de rendimiento y SEO técnico</li>
+            <li>Análisis de conversión mensual</li>
+          </ul>
+        </div>
+        <div class="card-footer"><div><span class="card-price">380€</span><span class="card-unit">/ mes</span></div><span class="card-badge">Mensual</span></div>
+      </div>
+
+      <!-- Photoshoots -->
+      <div class="card" style="--accent:var(--c5);--accent-rgb:255,204,0;" data-pos="6" data-svc="creative_photo" data-base-price="450" onclick="toggleCard(this)">
+        <div class="card-top"><span class="card-title">Dirección Creativa — Photoshoots</span><input type="checkbox" class="card-check" onclick="event.stopPropagation()"></div>
+        <p class="card-desc">Dirección artística completa de tus sesiones fotográficas: concepto visual, moodboard, selección de localizaciones, coordinación con fotógrafo y dirección en set. Fotos que comunican exactamente lo que tu marca representa.</p>
+        <div class="card-includes">
+          <div class="card-includes-title">Incluye:</div>
+          <ul class="card-includes-list">
+            <li>Concepto visual y moodboard</li>
+            <li>Coordinación con fotógrafo</li>
+            <li>Dirección artística en set</li>
+            <li>Selección y briefing de post-producción</li>
+          </ul>
+        </div>
+        <div class="card-footer"><div><span class="card-price">450€</span><span class="card-unit">/ mes</span></div><span class="card-badge">Mensual</span></div>
+      </div>
+
+      <!-- Análisis -->
+      <div class="card" style="--accent:var(--c5);--accent-rgb:255,204,0;" data-pos="6" data-svc="analytics" data-base-price="280" onclick="toggleCard(this)">
+        <div class="card-top"><span class="card-title">Análisis & Reporting</span><input type="checkbox" class="card-check" onclick="event.stopPropagation()"></div>
+        <p class="card-desc">Reporte mensual completo de todas las métricas de tu negocio digital: redes, web, email y conversiones. Identificación de tendencias, puntos de fuga y recomendaciones de mejora basadas en datos reales.</p>
+        <div class="card-includes">
+          <div class="card-includes-title">Incluye:</div>
+          <ul class="card-includes-list">
+            <li>Dashboard mensual de métricas clave</li>
+            <li>Análisis de redes + web + email</li>
+            <li>Recomendaciones accionables de mejora</li>
+          </ul>
+        </div>
+        <div class="card-footer"><div><span class="card-price">280€</span><span class="card-unit">/ mes</span></div><span class="card-badge">Mensual</span></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════ -->
+  <!-- 07 — GOOGLE MY BUSINESS -->
+  <!-- ═══════════════════════════════════════════════ -->
+  <div class="pos-section" data-pos="7">
+    <div class="pos-header">
+      <div class="pos-dot" style="color:#4285f4;background:#4285f4;"></div>
+      <div>
+        <div class="pos-number">07 — Google My Business</div>
+        <div class="pos-name">Presencia activa en Google Search & Maps</div>
+      </div>
+      <div class="pos-desc">Exclusivamente Google — no incluye otras redes sociales</div>
+    </div>
+    <div class="service-grid">
+      <div class="card" style="--accent:#4285f4;--accent-rgb:66,133,244;" data-pos="7" data-svc="gmb" data-base-price="150" onclick="toggleCard(this)">
+        <div class="card-top"><span class="card-title">Google My Business — Mantenimiento</span><input type="checkbox" class="card-check" onclick="event.stopPropagation()"></div>
+        <div class="covers-row">
+          <span class="cover-badge" style="color:#4285f4;border-color:rgba(66,133,244,.3);background:rgba(66,133,244,.08);">🔍 Google Search</span>
+          <span class="cover-badge" style="color:#4285f4;border-color:rgba(66,133,244,.3);background:rgba(66,133,244,.08);">🗺️ Google Maps</span>
+        </div>
+        <p class="card-desc">Mantenimiento activo de tu perfil en Google: publicaciones semanales, respuesta a reseñas (positivas y negativas), actualización de información, fotos y gestión de la reputación en búsqueda local.</p>
+        <div class="card-includes">
+          <div class="card-includes-title">Incluye:</div>
+          <ul class="card-includes-list">
+            <li>4 publicaciones semanales en GMB</li>
+            <li>Respuesta a reseñas y preguntas</li>
+            <li>Actualización de datos, horarios e imágenes</li>
+            <li>Monitoreo de posicionamiento local</li>
+          </ul>
+        </div>
+        <div class="card-footer"><div><span class="card-price">150€</span><span class="card-unit">/ mes</span></div><span class="card-badge">Semanal</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════ -->
+  <!-- 08 — REPOSTING & RESHARING -->
+  <!-- ═══════════════════════════════════════════════ -->
+  <div class="pos-section" data-pos="8">
+    <div class="pos-header">
+      <div class="pos-dot" style="color:var(--c3);background:var(--c3);"></div>
+      <div>
+        <div class="pos-number">08 — Reposting & Resharing</div>
+        <div class="pos-name">Amplificación de contenido en canales específicos</div>
+      </div>
+      <div class="pos-desc">TikTok y Facebook como canales dedicados — no se mezclan con otros servicios</div>
+    </div>
+    <div class="service-grid">
+
+      <!-- TikTok Resharing -->
+      <div class="card" style="--accent:#ff0050;--accent-rgb:255,0,80;" data-pos="8" data-svc="repost_tiktok" data-base-price="180" onclick="toggleCard(this)">
+        <div class="card-top"><span class="card-title">TikTok Resharing</span><input type="checkbox" class="card-check" onclick="event.stopPropagation()"></div>
+        <div class="covers-row">
+          <span class="cover-badge" style="color:#ff0050;border-color:rgba(255,0,80,.3);background:rgba(255,0,80,.08);">🎵 TikTok exclusivo</span>
+        </div>
+        <p class="card-desc">Redistribución estratégica de tu contenido en TikTok: adaptación de piezas existentes al formato TikTok, optimización de descripciones, hashtags y calendario de publicación para maximizar el alcance orgánico en esta plataforma.</p>
+        <div class="card-includes">
+          <div class="card-includes-title">Incluye:</div>
+          <ul class="card-includes-list">
+            <li>Adaptación al formato y tendencias TikTok</li>
+            <li>Optimización de hashtags y descripciones</li>
+            <li>Calendario de publicación estratégico</li>
+            <li>Análisis de rendimiento mensual</li>
+          </ul>
+        </div>
+        <div class="card-footer"><div><span class="card-price">180€</span><span class="card-unit">/ mes</span></div><span class="card-badge" style="background:#ff0050;">TikTok</span></div>
+      </div>
+
+      <!-- Facebook Resharing -->
+      <div class="card" style="--accent:#1877f2;--accent-rgb:24,119,242;" data-pos="8" data-svc="repost_facebook" data-base-price="160" onclick="toggleCard(this)">
+        <div class="card-top"><span class="card-title">Facebook Resharing</span><input type="checkbox" class="card-check" onclick="event.stopPropagation()"></div>
+        <div class="covers-row">
+          <span class="cover-badge" style="color:#1877f2;border-color:rgba(24,119,242,.3);background:rgba(24,119,242,.08);">🔵 Facebook exclusivo</span>
+        </div>
+        <p class="card-desc">Redistribución estratégica de tu contenido en Facebook: adaptación al feed y stories de Facebook, optimización para el algoritmo de Meta y gestión de publicaciones en tu página de negocio.</p>
+        <div class="card-includes">
+          <div class="card-includes-title">Incluye:</div>
+          <ul class="card-includes-list">
+            <li>Adaptación al formato Facebook</li>
+            <li>Gestión de página de negocio</li>
+            <li>Publicación en feed, reels y stories FB</li>
+          </ul>
+        </div>
+        <div class="card-footer"><div><span class="card-price">160€</span><span class="card-unit">/ mes</span></div><span class="card-badge" style="background:#1877f2;">Facebook</span></div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- BREAKDOWN -->
+  <div class="breakdown">
+    <div class="breakdown-header">
+      <h2 data-i18n="breakdownTitle">Resumen del Proyecto</h2>
+      <p data-i18n="breakdownSub">Tu inversión mensual exacta en marketing y comunicación</p>
+    </div>
+    <div class="breakdown-card">
+      <div class="breakdown-list" id="breakdownList">
+        <p class="breakdown-empty" id="breakdownEmpty">Selecciona los servicios que necesitas para construir tu propuesta personalizada.</p>
+      </div>
+      <div class="breakdown-totals">
+        <div class="bt-row"><span class="bt-label">Subtotal</span><span class="bt-val" id="subtotal" data-raw="0">0,00€</span></div>
+        <div class="bt-row discount" id="discountRow" style="display:none;"><span class="bt-label">Descuento aplicado</span><span class="bt-val" id="discountAmount" data-raw="0">0,00€</span></div>
+        <div class="bt-row"><span class="bt-label">IVA (21%)</span><span class="bt-val" id="vatAmount" data-raw="0">0,00€</span></div>
+        <div class="bt-sep"></div>
+        <div class="bt-row final"><span class="bt-label">Inversión Total Mensual</span><span class="bt-val" id="finalTotal" data-raw="0">0,00€</span></div>
+      </div>
+    </div>
+    <div class="actions">
+      <button class="btn btn-primary" onclick="generatePDF()">Descargar Presupuesto PDF</button>
+      <button class="btn btn-outline" onclick="sendByEmail()">Enviar por Email</button>
+      <button class="btn btn-reset" onclick="resetAll()">Limpiar Selección</button>
+    </div>
+  </div>
+
+  <div class="footer-line">
+    <p><strong>HYBRYD</strong> &nbsp;·&nbsp; <span>Tu equipo de marketing completo sin contratar a nadie.</span></p>
+  </div>
+
 </div>
-
-<!-- ═══════════════════════════════════════════════════════ -->
-<!-- S6 — REPOSTING -->
-<!-- ═══════════════════════════════════════════════════════ -->
-<div class="section">
-  <div class="section-head" style="--s-color:var(--c6);">
-    <div class="section-head-num" data-i18n="s6num">06</div>
-    <div class="section-head-text">
-      <div class="section-head-label" data-i18n="s6label">Reposting & Resharing</div>
-      <div class="section-head-sub" data-i18n="s6sub">Amplificación de contenido en canales específicos</div>
-    </div>
-    <div class="section-head-note" data-i18n="s6note">TikTok y Facebook como canales dedicados de redistribución</div>
-  </div>
-  <div class="card-grid">
-
-    <div class="svc-card" style="--s-color:var(--c6);--s-rgb:var(--c6r);" data-svc="repost_tiktok" data-price="180" onclick="toggleSvc(this)">
-      <div class="card-header">
-        <div class="card-name" data-i18n="repost_tiktok_name">TikTok Resharing</div>
-        <input type="checkbox" class="card-chk" onclick="event.stopPropagation()">
-      </div>
-      <div class="card-covers">
-        <span class="cover-tag" style="--s-color:var(--c6);--s-rgb:var(--c6r);">TikTok exclusivo</span>
-      </div>
-      <p class="card-body" data-i18n="repost_tiktok_desc">Redistribución estratégica de tu contenido en TikTok: adaptación de piezas existentes al formato TikTok, optimización de descripciones y hashtags, y gestión del calendar de publicación para maximizar el alcance en esta plataforma.</p>
-      <ul class="card-feat-list">
-        <li data-i18n="repost_tiktok_f1">Adaptación al formato TikTok</li>
-        <li data-i18n="repost_tiktok_f2">Optimización de hashtags</li>
-        <li data-i18n="repost_tiktok_f3">Calendario de publicación</li>
-        <li data-i18n="repost_tiktok_f4">Análisis de rendimiento</li>
-      </ul>
-      <div class="card-footer">
-        <div class="card-price-wrap">
-          <div class="card-price">180€</div>
-          <div class="card-price-unit" data-i18n="perMonth">/ mes</div>
-        </div>
-        <div class="card-tier">TikTok</div>
-      </div>
-    </div>
-
-    <div class="svc-card" style="--s-color:var(--c6);--s-rgb:var(--c6r);" data-svc="repost_facebook" data-price="160" onclick="toggleSvc(this)">
-      <div class="card-header">
-        <div class="card-name" data-i18n="repost_facebook_name">Facebook Resharing</div>
-        <input type="checkbox" class="card-chk" onclick="event.stopPropagation()">
-      </div>
-      <div class="card-covers">
-        <span class="cover-tag" style="--s-color:var(--c6);--s-rgb:var(--c6r);">Facebook exclusivo</span>
-      </div>
-      <p class="card-body" data-i18n="repost_facebook_desc">Redistribución estratégica de tu contenido en Facebook: adaptación de piezas al feed y stories de Facebook, grupos si aplica, optimización para el algoritmo y gestión de publicaciones en página de negocio.</p>
-      <ul class="card-feat-list">
-        <li data-i18n="repost_facebook_f1">Adaptación al formato Facebook</li>
-        <li data-i18n="repost_facebook_f2">Gestión de página de negocio</li>
-        <li data-i18n="repost_facebook_f3">Publicación en feed y reels FB</li>
-      </ul>
-      <div class="card-footer">
-        <div class="card-price-wrap">
-          <div class="card-price">160€</div>
-          <div class="card-price-unit" data-i18n="perMonth">/ mes</div>
-        </div>
-        <div class="card-tier">Facebook</div>
-      </div>
-    </div>
-
-  </div>
-</div>
-
-<!-- ═══════════════════════════════════════════════════════ -->
-<!-- S7 — CREATIVE DIRECTION & WEB -->
-<!-- ═══════════════════════════════════════════════════════ -->
-<div class="section">
-  <div class="section-head" style="--s-color:var(--c7);">
-    <div class="section-head-num" data-i18n="s7num">07</div>
-    <div class="section-head-text">
-      <div class="section-head-label" data-i18n="s7label">Dirección Creativa & Web</div>
-      <div class="section-head-sub" data-i18n="s7sub">Website, photoshoots, análisis y Google My Business</div>
-    </div>
-    <div class="section-head-note" data-i18n="s7note">Estrategia visual de alto nivel y presencia en Google</div>
-  </div>
-  <div class="card-grid">
-
-    <div class="svc-card" style="--s-color:var(--c7);--s-rgb:var(--c7r);" data-svc="creative_web" data-price="380" onclick="toggleSvc(this)">
-      <div class="card-header">
-        <div class="card-name" data-i18n="creative_web_name">Website — Ajustes & Updates</div>
-        <input type="checkbox" class="card-chk" onclick="event.stopPropagation()">
-      </div>
-      <p class="card-body" data-i18n="creative_web_desc">Mantenimiento activo y mejoras continuas de tu web: actualizaciones de contenido, ajustes de diseño, optimización de velocidad, mejoras de conversión y revisiones técnicas mensuales.</p>
-      <ul class="card-feat-list">
-        <li data-i18n="creative_web_f1">Actualizaciones de contenido</li>
-        <li data-i18n="creative_web_f2">Ajustes de diseño y UX</li>
-        <li data-i18n="creative_web_f3">Optimización de velocidad y SEO técnico</li>
-        <li data-i18n="creative_web_f4">Análisis de conversión</li>
-      </ul>
-      <div class="card-footer">
-        <div class="card-price-wrap">
-          <div class="card-price">380€</div>
-          <div class="card-price-unit" data-i18n="perMonth">/ mes</div>
-        </div>
-        <div class="card-tier" data-i18n="tier_monthly">Mensual</div>
-      </div>
-    </div>
-
-    <div class="svc-card" style="--s-color:var(--c7);--s-rgb:var(--c7r);" data-svc="creative_photo" data-price="450" onclick="toggleSvc(this)">
-      <div class="card-header">
-        <div class="card-name" data-i18n="creative_photo_name">Dirección Creativa — Photoshoots</div>
-        <input type="checkbox" class="card-chk" onclick="event.stopPropagation()">
-      </div>
-      <p class="card-body" data-i18n="creative_photo_desc">Dirección artística completa de tus sesiones fotográficas: concepto visual, moodboard, selección de localizaciones, coordinación con fotógrafo y dirección en set. El resultado: fotos que comunican exactamente lo que tu marca representa.</p>
-      <ul class="card-feat-list">
-        <li data-i18n="creative_photo_f1">Concepto visual y moodboard</li>
-        <li data-i18n="creative_photo_f2">Coordinación con fotógrafo</li>
-        <li data-i18n="creative_photo_f3">Dirección en set</li>
-        <li data-i18n="creative_photo_f4">Selección y briefing de post-producción</li>
-      </ul>
-      <div class="card-footer">
-        <div class="card-price-wrap">
-          <div class="card-price">450€</div>
-          <div class="card-price-unit" data-i18n="perMonth">/ mes</div>
-        </div>
-        <div class="card-tier" data-i18n="tier_monthly">Mensual</div>
-      </div>
-    </div>
-
-    <div class="svc-card" style="--s-color:var(--c7);--s-rgb:var(--c7r);" data-svc="analytics" data-price="280" onclick="toggleSvc(this)">
-      <div class="card-header">
-        <div class="card-name" data-i18n="analytics_name">Análisis & Reporting</div>
-        <input type="checkbox" class="card-chk" onclick="event.stopPropagation()">
-      </div>
-      <p class="card-body" data-i18n="analytics_desc">Reporte mensual completo de todas las métricas de tu negocio digital: redes, web, email, conversiones. Identificación de tendencias, puntos de fuga y recomendaciones de mejora basadas en datos reales.</p>
-      <ul class="card-feat-list">
-        <li data-i18n="analytics_f1">Dashboard mensual de métricas</li>
-        <li data-i18n="analytics_f2">Análisis de redes + web + email</li>
-        <li data-i18n="analytics_f3">Recomendaciones accionables</li>
-      </ul>
-      <div class="card-footer">
-        <div class="card-price-wrap">
-          <div class="card-price">280€</div>
-          <div class="card-price-unit" data-i18n="perMonth">/ mes</div>
-        </div>
-        <div class="card-tier" data-i18n="tier_monthly">Mensual</div>
-      </div>
-    </div>
-
-    <div class="svc-card" style="--s-color:var(--c7);--s-rgb:var(--c7r);" data-svc="gmb" data-price="150" onclick="toggleSvc(this)">
-      <div class="card-header">
-        <div class="card-name" data-i18n="gmb_name">Google My Business</div>
-        <input type="checkbox" class="card-chk" onclick="event.stopPropagation()">
-      </div>
-      <div class="card-covers">
-        <span class="cover-tag" style="--s-color:var(--c7);--s-rgb:var(--c7r);">Google exclusivo</span>
-      </div>
-      <p class="card-body" data-i18n="gmb_desc">Mantenimiento activo de tu perfil de Google My Business: publicaciones semanales, respuesta a reseñas, actualización de información, fotos y gestión de la reputación en Google Maps y búsqueda local.</p>
-      <ul class="card-feat-list">
-        <li data-i18n="gmb_f1">Publicaciones semanales en GMB</li>
-        <li data-i18n="gmb_f2">Respuesta a reseñas (positivas y negativas)</li>
-        <li data-i18n="gmb_f3">Actualización de datos e imágenes</li>
-      </ul>
-      <div class="card-footer">
-        <div class="card-price-wrap">
-          <div class="card-price">150€</div>
-          <div class="card-price-unit" data-i18n="perMonth">/ mes</div>
-        </div>
-        <div class="card-tier">Google</div>
-      </div>
-    </div>
-
-  </div>
-</div>
-
-<!-- DIVIDER -->
-<div class="divider"></div>
-
-<!-- ═══════════════════════════════════════════════════════ -->
-<!-- BREAKDOWN -->
-<!-- ═══════════════════════════════════════════════════════ -->
-<div class="breakdown-wrap">
-  <div class="breakdown-title-row">
-    <h2 data-i18n="bd_title">Resumen del Proyecto</h2>
-    <p data-i18n="bd_sub">Tu inversión mensual exacta en marketing y comunicación</p>
-  </div>
-  <div class="breakdown-box">
-    <div class="bd-list" id="bdList">
-      <div class="bd-empty" id="bdEmpty" data-i18n="bd_empty">Selecciona los servicios que necesitas para construir tu propuesta.</div>
-    </div>
-    <div class="bd-totals">
-      <div class="bd-row"><span class="bd-label" data-i18n="bd_sub_label">Subtotal</span><span class="bd-val" id="bdSub" data-raw="0">0,00€</span></div>
-      <div class="bd-row disc" id="bdDiscRow" style="display:none;"><span class="bd-label" data-i18n="bd_disc">Descuento</span><span class="bd-val" id="bdDisc" data-raw="0">0,00€</span></div>
-      <div class="bd-row"><span class="bd-label" data-i18n="bd_vat">IVA (21%)</span><span class="bd-val" id="bdVat" data-raw="0">0,00€</span></div>
-      <div class="bd-sep"></div>
-      <div class="bd-row final"><span class="bd-label" data-i18n="bd_total">Inversión Total Mensual</span><span class="bd-val" id="bdTotal" data-raw="0">0,00€</span></div>
-    </div>
-  </div>
-  <div class="bd-actions">
-    <button class="btn btn-primary" onclick="genPDF()" data-i18n="btn_pdf">Descargar PDF</button>
-    <button class="btn btn-ghost" onclick="genEmail()" data-i18n="btn_email">Enviar por Email</button>
-    <button class="btn btn-danger" onclick="resetAll()" data-i18n="btn_reset">Limpiar todo</button>
-  </div>
-</div>
-
-<div class="footer">
-  <p><strong>HYBRYD</strong> &nbsp;·&nbsp; <span data-i18n="footer">Tu equipo de marketing completo, sin contratar a nadie.</span></p>
-</div>
-
-</div><!-- /container -->
-</div><!-- /page -->
+</section>
 
 <!-- STICKY PILL -->
-<div class="sticky-pill-wrap" id="stickyWrap" style="display:none;">
+<div class="summary-sticky" id="summarySticky" style="display:none;">
   <div class="container">
-    <div class="sticky-pill">
-      <div class="pill-services" id="pillServices"></div>
-      <div class="pill-sep"></div>
-      <div class="pill-total-wrap">
-        <span class="pill-total-label" data-i18n="pill_label">Inversión Mensual</span>
-        <span class="pill-total" id="pillTotal">0,00€</span>
+    <div class="summary-pill">
+      <div class="summary-counts" id="summaryCounts"></div>
+      <div class="summary-sep"></div>
+      <div class="summary-total-wrap">
+        <span class="summary-total-label">Inversión Mensual</span>
+        <span class="summary-total-num" id="pillTotal">0,00€</span>
       </div>
     </div>
   </div>
@@ -1141,458 +920,370 @@ body::after {
 <div class="toast" id="toast"></div>
 
 <script>
-// ─────────────────────────────────────────────────────────────
-// TRANSLATIONS
-// ─────────────────────────────────────────────────────────────
-const LANG = {
-es:{
-  eyebrow:"Agencia de Marketing Digital — HYBRYD",
-  heroSub:"Cada servicio es independiente. Tú decides qué incluyes, cuántas piezas necesitas y cuándo empezar. Nosotros ejecutamos con precisión profesional mientras tú te enfocas en tus clientes.",
-  heroTagline:"Tu equipo completo de marketing, sin contratar a nadie",
-  s1num:"01",s1label:"Operaciones Mensuales",s1sub:"Roadmap estratégico y actualizaciones continuas",s1note:"Planificación editorial, estrategia de contenido y actualizaciones del proyecto",
-  s2num:"02",s2label:"Email & WhatsApp Marketing",s2sub:"Campañas semanales de alto impacto",s2note:"Cubre exclusivamente Email y WhatsApp como canales de comunicación directa",
-  s3num:"03",s3label:"Asistente Personal",s3sub:"Gestión diaria de base de datos, links y mensajes",s3note:"Soporte operativo diario para que no tengas que gestionar nada",
-  s4num:"04",s4label:"Diseño Gráfico",s4sub:"Elige exactamente cuántas piezas necesitas cada mes",s4note:"Descuento automático: +6 carruseles o +30 stories",
-  s5num:"05",s5label:"Community Management",s5sub:"Respuestas, DMs y FAQs — selecciona los canales",s5note:"Cada canal es independiente. Pack completo (5 canales) = 10% descuento",
-  s6num:"06",s6label:"Reposting & Resharing",s6sub:"Amplificación de contenido en canales específicos",s6note:"TikTok y Facebook como canales dedicados de redistribución",
-  s7num:"07",s7label:"Dirección Creativa & Web",s7sub:"Website, photoshoots, análisis y Google My Business",s7note:"Estrategia visual de alto nivel y presencia en Google",
-  perMonth:"/ mes",
-  dg_title:"Configura tu pack de diseño",
-  dg_sub:"Ajusta la cantidad de cada pieza. El precio se calcula en tiempo real. Descuentos automáticos por volumen.",
-  dg_stories:"Historias (Stories)",dg_stories_unit:"15€ c/u — Descuento 10% a partir de 30",
-  dg_feedposts:"Posts de Feed",dg_feedposts_unit:"35€ c/u — Imagen estática o carrusel simple",
-  dg_carousels:"Pack Carruseles",dg_carousels_unit:"55€ c/u — Descuento 12% a partir de 6",
-  dg_reels:"Portadas Reels / TikTok",dg_reels_unit:"22€ c/u — Miniatura + overlay de texto",
-  dg_banners:"Banners & Piezas de Ads",dg_banners_unit:"40€ c/u — Todos los formatos digitales",
-  dg_emailgfx:"Gráficos para Email",dg_emailgfx_unit:"28€ c/u — Header + cuerpo + CTA",
-  dg_total:"Total Diseño Mensual",
-  cm_bundle_tag:"Pack 5 canales:",
-  cm_bundle_desc:" Activa los 5 canales y obtén un descuento automático del 10% sobre el total de Community Management.",
-  cm_bundle_active:"✦ Pack completo activo — 10% aplicado automáticamente",
-  cm_included_note:"✓ Incluido al seleccionar cualquier canal arriba",
-  monthly_roadmap_name:"Roadmap Mensual (días 1–7)",monthly_roadmap_desc:"Planificación editorial y estratégica de todo el mes.",
-  monthly_roadmap_f1:"Calendar editorial mensual",monthly_roadmap_f2:"Definición de objetivos y KPIs",monthly_roadmap_f3:"Briefing de contenido y diseño",monthly_roadmap_f4:"Coordinación de prioridades",
-  monthly_content_name:"Producción de Contenido (días 7–14)",monthly_content_desc:"Ejecución de todo el contenido planificado.",
-  monthly_content_f1:"Copies para redes",monthly_content_f2:"Guiones para vídeos",monthly_content_f3:"Textos de comunicación",monthly_content_f4:"Revisión y aprobación",
-  monthly_updates_name:"Actualizaciones de Contenido",monthly_updates_desc:"Ajustes y optimizaciones del contenido durante el mes.",
-  monthly_updates_f1:"Modificaciones en contenido activo",monthly_updates_f2:"Actualización de información",monthly_updates_f3:"Optimización por rendimiento",
-  email_reminders_name:"Recordatorios Semanales",email_reminders_desc:"Envío semanal de recordatorios por Email y WhatsApp.",
-  email_reminders_f1:"4 envíos mensuales por canal",email_reminders_f2:"Diseño y copy incluidos",email_reminders_f3:"Segmentación de audiencia",
-  email_roadmaps_name:"Roadmaps & Comunicados",email_roadmaps_desc:"Comunicación estratégica con tu base de datos.",
-  email_roadmaps_f1:"Campañas de lanzamiento",email_roadmaps_f2:"Comunicados corporativos",email_roadmaps_f3:"Plantillas de marca",email_roadmaps_f4:"Análisis de apertura y clics",
-  pa_database_name:"Gestión de Base de Datos",pa_database_desc:"Organización y mantenimiento de tu base de clientes.",
-  pa_database_f1:"Limpieza y deduplicación",pa_database_f2:"Segmentación por comportamiento",pa_database_f3:"Actualización continua",
-  pa_links_name:"Gestión de Links & Recursos",pa_links_desc:"Organización de todos tus links y recursos digitales.",
-  pa_links_f1:"Bio links actualizados",pa_links_f2:"Monitoreo de enlaces rotos",pa_links_f3:"Organización de recursos",
-  pa_messages_name:"Mensajes Diarios",pa_messages_desc:"Gestión de mensajes diarios en nombre tuyo.",
-  pa_messages_f1:"Respuesta en < 4h laborables",pa_messages_f2:"Voz de marca consistente",pa_messages_f3:"Escalado de urgencias",
-  cm_answers_name:"Respuestas & Comentarios",cm_answers_desc:"Gestión diaria de comentarios en publicaciones.",
-  cm_dm_name:"DMs & Mensajes Directos",cm_dm_desc:"Gestión de mensajes directos en los canales seleccionados.",
-  cm_faqs_name:"Base de FAQs Profesional",cm_faqs_desc:"Creación y mantenimiento de preguntas frecuentes.",
-  cm_faqs_f1:"50+ FAQs documentadas",cm_faqs_f2:"Protocolo de escalado",cm_faqs_f3:"Actualización mensual",
-  repost_tiktok_name:"TikTok Resharing",repost_tiktok_desc:"Redistribución estratégica en TikTok exclusivamente.",
-  repost_tiktok_f1:"Adaptación al formato TikTok",repost_tiktok_f2:"Optimización de hashtags",repost_tiktok_f3:"Calendario de publicación",repost_tiktok_f4:"Análisis de rendimiento",
-  repost_facebook_name:"Facebook Resharing",repost_facebook_desc:"Redistribución estratégica en Facebook exclusivamente.",
-  repost_facebook_f1:"Adaptación al formato Facebook",repost_facebook_f2:"Gestión de página de negocio",repost_facebook_f3:"Publicación en feed y reels FB",
-  creative_web_name:"Website — Ajustes & Updates",creative_web_desc:"Mantenimiento activo y mejoras continuas de tu web.",
-  creative_web_f1:"Actualizaciones de contenido",creative_web_f2:"Ajustes de diseño y UX",creative_web_f3:"Optimización y SEO técnico",creative_web_f4:"Análisis de conversión",
-  creative_photo_name:"Dirección Creativa — Photoshoots",creative_photo_desc:"Dirección artística completa de tus sesiones.",
-  creative_photo_f1:"Concepto visual y moodboard",creative_photo_f2:"Coordinación con fotógrafo",creative_photo_f3:"Dirección en set",creative_photo_f4:"Selección de post-producción",
-  analytics_name:"Análisis & Reporting",analytics_desc:"Reporte mensual de todas las métricas digitales.",
-  analytics_f1:"Dashboard mensual",analytics_f2:"Análisis redes + web + email",analytics_f3:"Recomendaciones accionables",
-  gmb_name:"Google My Business",gmb_desc:"Mantenimiento activo de tu perfil en Google.",
-  gmb_f1:"Publicaciones semanales en GMB",gmb_f2:"Respuesta a reseñas",gmb_f3:"Actualización de datos e imágenes",
-  bd_title:"Resumen del Proyecto",bd_sub:"Tu inversión mensual exacta en marketing y comunicación",bd_empty:"Selecciona los servicios que necesitas para construir tu propuesta.",
-  bd_sub_label:"Subtotal",bd_disc:"Descuento",bd_vat:"IVA (21%)",bd_total:"Inversión Total Mensual",
-  btn_pdf:"Descargar PDF",btn_email:"Enviar por Email",btn_reset:"Limpiar todo",
-  pill_label:"Inversión Mensual",footer:"Tu equipo de marketing completo, sin contratar a nadie.",
-  tier_monthly:"Mensual",tier_weekly:"Semanal",tier_daily:"Diario",
-  toast_reset:"Selección limpiada.",toast_pdf:"Preparando PDF...",toast_email:"Cliente de email abierto.",toast_empty:"Selecciona al menos un servicio.",
-  svc_names:{
-    monthly_roadmap:"Roadmap Mensual",monthly_content:"Producción Contenido",monthly_updates:"Actualizaciones",
-    email_reminders:"Recordatorios Semanales",email_roadmaps:"Roadmaps & Comunicados",
-    pa_database:"Gestión BD",pa_links:"Links & Recursos",pa_messages:"Mensajes Diarios",
-    cm_answers:"CM Respuestas",cm_dm:"CM DMs",cm_faqs:"Base FAQs",
-    repost_tiktok:"TikTok Resharing",repost_facebook:"Facebook Resharing",
-    creative_web:"Website Updates",creative_photo:"Dir. Creativa Foto",analytics:"Análisis & Reporting",gmb:"Google My Business"
-  },
-  dg_names:{stories:"Historias",feedposts:"Posts de Feed",carousels:"Carruseles",reels:"Portadas Reels",banners:"Banners",emailgfx:"Gráficos Email"},
-  cm_names:{instagram:"CM Instagram",facebook:"CM Facebook",tiktok:"CM TikTok",email:"CM Email",whatsapp:"CM WhatsApp"},
-  sec_names:{1:"Operaciones",2:"Email/WA",3:"Asistente",4:"Diseño",5:"Community",6:"Reposting",7:"Creativo"}
-},
-en:{
-  eyebrow:"Digital Marketing Agency — HYBRYD",
-  heroSub:"Every service is independent. You decide what to include, how many pieces you need, and when to start. We execute with professional precision while you focus on your clients.",
-  heroTagline:"Your complete marketing team, without hiring anyone",
-  s1num:"01",s1label:"Monthly Operations",s1sub:"Strategic roadmap and continuous updates",s1note:"Editorial planning, content strategy and project updates",
-  s2num:"02",s2label:"Email & WhatsApp Marketing",s2sub:"High-impact weekly campaigns",s2note:"Covers Email and WhatsApp exclusively as direct communication channels",
-  s3num:"03",s3label:"Personal Assistant",s3sub:"Daily management of database, links and messages",s3note:"Daily operational support so you don't have to manage anything",
-  s4num:"04",s4label:"Graphic Design",s4sub:"Choose exactly how many pieces you need each month",s4note:"Automatic discount: 6+ carousels or 30+ stories",
-  s5num:"05",s5label:"Community Management",s5sub:"Replies, DMs and FAQs — select your channels",s5note:"Each channel is independent. Full pack (5 channels) = 10% discount",
-  s6num:"06",s6label:"Reposting & Resharing",s6sub:"Content amplification on specific channels",s6note:"TikTok and Facebook as dedicated resharing channels",
-  s7num:"07",s7label:"Creative Direction & Web",s7sub:"Website, photoshoots, analytics and Google My Business",s7note:"High-level visual strategy and Google presence",
-  perMonth:"/ month",
-  dg_title:"Build your design pack",dg_sub:"Adjust the quantity of each piece. Price is calculated in real time. Automatic volume discounts.",
-  dg_stories:"Stories",dg_stories_unit:"€15 each — 10% discount from 30+",
-  dg_feedposts:"Feed Posts",dg_feedposts_unit:"€35 each — Static image or simple carousel",
-  dg_carousels:"Carousel Pack",dg_carousels_unit:"€55 each — 12% discount from 6+",
-  dg_reels:"Reels / TikTok Covers",dg_reels_unit:"€22 each — Thumbnail + text overlay",
-  dg_banners:"Banners & Ad Pieces",dg_banners_unit:"€40 each — All digital formats",
-  dg_emailgfx:"Email Graphics",dg_emailgfx_unit:"€28 each — Header + body + CTA",
-  dg_total:"Total Monthly Design",
-  cm_bundle_tag:"5-channel pack:",cm_bundle_desc:" Activate all 5 channels and get an automatic 10% discount on total Community Management.",
-  cm_bundle_active:"✦ Full pack active — 10% applied automatically",
-  cm_included_note:"✓ Included when selecting any channel above",
-  bd_title:"Project Summary",bd_sub:"Your exact monthly investment in marketing and communication",bd_empty:"Select the services you need to build your proposal.",
-  bd_sub_label:"Subtotal",bd_disc:"Discount",bd_vat:"VAT (21%)",bd_total:"Total Monthly Investment",
-  btn_pdf:"Download PDF",btn_email:"Send by Email",btn_reset:"Clear all",
-  pill_label:"Monthly Investment",footer:"Your complete marketing team, without hiring anyone.",
-  tier_monthly:"Monthly",tier_weekly:"Weekly",tier_daily:"Daily",
-  toast_reset:"Selection cleared.",toast_pdf:"Preparing PDF...",toast_email:"Email client opened.",toast_empty:"Select at least one service.",
-  svc_names:{monthly_roadmap:"Monthly Roadmap",monthly_content:"Content Production",monthly_updates:"Content Updates",email_reminders:"Weekly Reminders",email_roadmaps:"Roadmaps & Comms",pa_database:"DB Management",pa_links:"Links & Resources",pa_messages:"Daily Messages",cm_answers:"CM Replies",cm_dm:"CM DMs",cm_faqs:"FAQs Base",repost_tiktok:"TikTok Resharing",repost_facebook:"Facebook Resharing",creative_web:"Website Updates",creative_photo:"Creative Dir. Photo",analytics:"Analytics & Reporting",gmb:"Google My Business"},
-  dg_names:{stories:"Stories",feedposts:"Feed Posts",carousels:"Carousels",reels:"Reels Covers",banners:"Banners",emailgfx:"Email Graphics"},
-  cm_names:{instagram:"CM Instagram",facebook:"CM Facebook",tiktok:"CM TikTok",email:"CM Email",whatsapp:"CM WhatsApp"},
-  sec_names:{1:"Operations",2:"Email/WA",3:"Assistant",4:"Design",5:"Community",6:"Reposting",7:"Creative"}
-}
-};
-// German/Swedish abbreviated
-LANG.de = {...LANG.en, eyebrow:"Digitale Marketingagentur — HYBRYD", heroTagline:"Ihr komplettes Marketing-Team, ohne jemanden einzustellen", btn_pdf:"PDF herunterladen", btn_email:"Per E-Mail senden", btn_reset:"Alles löschen", toast_reset:"Auswahl gelöscht.", toast_empty:"Wählen Sie mindestens einen Service.", footer:"Ihr komplettes Marketing-Team."};
-LANG.sv = {...LANG.en, eyebrow:"Digital Marknadsföringsbyrå — HYBRYD", heroTagline:"Ditt kompletta marknadsföringsteam, utan att anställa någon", btn_pdf:"Ladda ner PDF", btn_email:"Skicka via e-post", btn_reset:"Rensa allt", toast_reset:"Urval rensat.", toast_empty:"Välj minst en tjänst.", footer:"Ditt kompletta marknadsföringsteam."};
-
-// ─────────────────────────────────────────────────────────────
-// STATE
-// ─────────────────────────────────────────────────────────────
-let lang = 'es';
+// ─── CONFIG ───────────────────────────────────────────────────
 const VAT = 0.21;
-const svcSelected = new Map(); // svcId → price
-const cmSelected = new Map();  // platformId → price
-const COUNTERS = {
-  stories:  { val:0, unit:15, discountThreshold:30, discountRate:.10 },
-  feedposts:{ val:0, unit:35, discountThreshold:null, discountRate:0 },
-  carousels:{ val:0, unit:55, discountThreshold:6, discountRate:.12 },
-  reels:    { val:0, unit:22, discountThreshold:null, discountRate:0 },
-  banners:  { val:0, unit:40, discountThreshold:null, discountRate:0 },
-  emailgfx: { val:0, unit:28, discountThreshold:null, discountRate:0 }
+const POS_COLORS = {
+  1:'#00ff41', 2:'#7b61ff', 3:'#a78bfa', 4:'#00cfff',
+  5:'#ff2d78', 6:'#ffcc00', 7:'#4285f4', 8:'#00cfff'
 };
-const SEC_COLORS = {1:'#00ff85',2:'#5b8cff',3:'#bf5fff',4:'#ff9500',5:'#ff4d6d',6:'#00d4ff',7:'#ffcc00'};
-const SVC_POS = {monthly_roadmap:1,monthly_content:1,monthly_updates:1,email_reminders:2,email_roadmaps:2,pa_database:3,pa_links:3,pa_messages:3,cm_answers:5,cm_dm:5,cm_faqs:5,repost_tiktok:6,repost_facebook:6,creative_web:7,creative_photo:7,analytics:7,gmb:7};
+const POS_NAMES = {
+  1:'Mensual', 2:'Email/WA', 3:'Asistente', 4:'Diseño',
+  5:'Community', 6:'Creativo', 7:'Google', 8:'Reposting'
+};
 
-// ─────────────────────────────────────────────────────────────
-// LANG
-// ─────────────────────────────────────────────────────────────
-function setLang(l){
-  lang = l;
-  document.querySelectorAll('.lang-btn').forEach(b => b.classList.toggle('active', b.textContent.trim().toLowerCase()===l));
-  document.documentElement.lang = l;
-  applyI18n();
-  render();
-}
-function applyI18n(){
-  const t = LANG[lang] || LANG.es;
-  document.querySelectorAll('[data-i18n]').forEach(el => {
-    const k = el.dataset.i18n;
-    if(t[k]!==undefined) el.textContent = t[k];
-  });
-}
+// ─── STATE ────────────────────────────────────────────────────
+const selected = new Map();   // card el → {name, price, pos}
+const platforms = new Map();  // platformId → price
 
-// ─────────────────────────────────────────────────────────────
-// SERVICE TOGGLE
-// ─────────────────────────────────────────────────────────────
-function toggleSvc(card){
-  const cb = card.querySelector('.card-chk') || card.querySelector('.task-chk');
-  if(!cb) return;
+// Counter config: key → {val, unitPrice, discountThreshold, discountRate}
+const COUNTERS = {
+  stories:  { val:0, unitPrice:14, threshold:30, rate:.10 },
+  feedposts:{ val:0, unitPrice:38, threshold:null, rate:0 },
+  carousels:{ val:0, unitPrice:55, threshold:6,  rate:.12 },
+  reels:    { val:0, unitPrice:22, threshold:null, rate:0 },
+  banners:  { val:0, unitPrice:40, threshold:null, rate:0 },
+  emailgfx: { val:0, unitPrice:28, threshold:null, rate:0 }
+};
+
+// Counter display names for breakdown
+const COUNTER_NAMES = {
+  stories:'Historias', feedposts:'Posts de Feed', carousels:'Carruseles',
+  reels:'Portadas Reels', banners:'Banners', emailgfx:'Gráficos Email'
+};
+
+// ─── CARD TOGGLE ─────────────────────────────────────────────
+function toggleCard(card) {
+  const cb = card.querySelector('.card-check');
   const on = !cb.checked;
   cb.checked = on;
   card.classList.toggle('selected', on);
-  const id = card.dataset.svc;
-  const price = parseInt(card.dataset.price, 10) || 0;
-  if(on) svcSelected.set(id, price);
-  else svcSelected.delete(id);
+  const pos = parseInt(card.dataset.pos, 10);
+  const price = parseInt(card.dataset.basePrice || card.dataset.price || 0, 10);
+  const title = card.querySelector('.card-title').textContent.trim();
+  if (on) selected.set(card, { name: title, price, pos });
+  else selected.delete(card);
   render();
 }
 
-// ─────────────────────────────────────────────────────────────
-// CM TOGGLE
-// ─────────────────────────────────────────────────────────────
-function toggleCM(card){
-  const cb = card.querySelector('.cm-chk');
+// ─── PLATFORM TOGGLE ─────────────────────────────────────────
+function togglePlatform(card) {
+  const cb = card.querySelector('.platform-check');
   const on = !cb.checked;
   cb.checked = on;
   card.classList.toggle('selected', on);
   const pid = card.dataset.platform;
   const price = parseInt(card.dataset.price, 10);
-  if(on) cmSelected.set(pid, price);
-  else cmSelected.delete(pid);
-  const bundleEl = document.getElementById('cmBundleActive');
-  bundleEl.classList.toggle('show', cmSelected.size === 5);
+  if (on) platforms.set(pid, price);
+  else platforms.delete(pid);
+  const bundleRow = document.getElementById('cmBundleDiscountRow');
+  bundleRow.style.display = platforms.size === 5 ? 'block' : 'none';
   render();
 }
 
-// ─────────────────────────────────────────────────────────────
-// DESIGN COUNTER
-// ─────────────────────────────────────────────────────────────
-function adj(key, delta){
+// ─── DESIGN COUNTER ──────────────────────────────────────────
+function adjustCounter(key, delta) {
   const cfg = COUNTERS[key];
   cfg.val = Math.max(0, cfg.val + delta);
   const v = cfg.val;
-  const baseTotal = v * cfg.unit;
-  let discount = 0;
-  if(cfg.discountThreshold && v >= cfg.discountThreshold) discount = baseTotal * cfg.discountRate;
-  const final = baseTotal - discount;
 
+  // Animate number
   const valEl = document.getElementById('cv_' + key);
   valEl.textContent = v;
-  valEl.classList.remove('pop'); void valEl.offsetWidth; valEl.classList.add('pop');
+  valEl.classList.remove('bump'); void valEl.offsetWidth; valEl.classList.add('bump');
 
+  // Compute price with discount
+  const base = v * cfg.unitPrice;
+  const disc = (cfg.threshold && v >= cfg.threshold) ? base * cfg.rate : 0;
+  const final = base - disc;
+
+  // Update price display
   const priceEl = document.getElementById('cp_' + key);
   priceEl.textContent = v > 0 ? final + '€' : '0€';
   priceEl.classList.toggle('zero', v === 0);
 
-  const discEl = document.getElementById('cd_' + key);
-  if(discount > 0){
-    discEl.textContent = '−' + discount.toFixed(0) + '€ dto.';
-  } else {
-    discEl.textContent = '';
+  // Update row active
+  document.getElementById('cr_' + key).classList.toggle('active', v > 0);
+
+  // Update discount tag
+  const dtEl = document.getElementById('dt_' + key);
+  if (dtEl) {
+    if (cfg.threshold) {
+      if (v >= cfg.threshold) {
+        dtEl.textContent = '✓ ' + (cfg.rate * 100) + '% aplicado';
+        dtEl.className = 'active-discount-tag';
+      } else {
+        const needed = cfg.threshold - v;
+        dtEl.textContent = '−' + (cfg.rate * 100) + '% a partir de ' + cfg.threshold + ' (+' + needed + ')';
+        dtEl.className = 'discount-tag';
+      }
+    }
   }
 
-  document.getElementById('ci_' + key).classList.toggle('active', v > 0);
-  updateDesignTotal();
+  // Update total bar
+  const total = getDesignTotal();
+  document.getElementById('dcc_total').textContent = total + '€';
+  document.getElementById('designCounterCard').classList.toggle('has-selection', total > 0);
+
   render();
 }
 
-function updateDesignTotal(){
-  const total = getDesignTotal();
-  document.getElementById('dcc_total').textContent = total + '€';
-  document.getElementById('designCard').classList.toggle('active', total > 0);
+function getDesignTotal() {
+  return Object.values(COUNTERS).reduce((sum, cfg) => {
+    const base = cfg.val * cfg.unitPrice;
+    const disc = (cfg.threshold && cfg.val >= cfg.threshold) ? base * cfg.rate : 0;
+    return sum + (base - disc);
+  }, 0);
 }
 
-function getDesignTotal(){
-  let t = 0;
-  for(const [k, cfg] of Object.entries(COUNTERS)){
-    const base = cfg.val * cfg.unit;
-    let disc = 0;
-    if(cfg.discountThreshold && cfg.val >= cfg.discountThreshold) disc = base * cfg.discountRate;
-    t += base - disc;
-  }
-  return t;
-}
-function getDesignDiscount(){
-  let d = 0;
-  for(const cfg of Object.values(COUNTERS)){
-    const base = cfg.val * cfg.unit;
-    if(cfg.discountThreshold && cfg.val >= cfg.discountThreshold) d += base * cfg.discountRate;
-  }
-  return d;
+function getDesignDiscount() {
+  return Object.values(COUNTERS).reduce((sum, cfg) => {
+    const base = cfg.val * cfg.unitPrice;
+    return sum + ((cfg.threshold && cfg.val >= cfg.threshold) ? base * cfg.rate : 0);
+  }, 0);
 }
 
-// ─────────────────────────────────────────────────────────────
-// RENDER
-// ─────────────────────────────────────────────────────────────
-function render(){
-  const t = LANG[lang] || LANG.es;
-  const list = document.getElementById('bdList');
-  const empty = document.getElementById('bdEmpty');
-  list.querySelectorAll('.bd-item').forEach(e => e.remove());
+// ─── RENDER BREAKDOWN ────────────────────────────────────────
+function render() {
+  const list = document.getElementById('breakdownList');
+  const empty = document.getElementById('breakdownEmpty');
+  list.querySelectorAll('.b-item').forEach(e => e.remove());
 
-  const items = [];
+  const items = []; // {name, price, color}
 
-  // Services
-  svcSelected.forEach((price, id) => {
-    if(price <= 0) return;
-    const pos = SVC_POS[id] || 1;
-    items.push({ name: t.svc_names?.[id] || id, price, pos, color: SEC_COLORS[pos] });
+  // Regular service cards
+  selected.forEach(({ name, price, pos }) => {
+    if (price > 0) items.push({ name, price, color: POS_COLORS[pos] || '#00ff41' });
   });
 
-  // CM Platforms
+  // Platforms (CM) — list each
   let cmRaw = 0;
-  cmSelected.forEach((price, pid) => {
+  const CM_PLAT_NAMES = {instagram:'CM Instagram', facebook:'CM Facebook', tiktok:'CM TikTok', email_cm:'CM Email', whatsapp_cm:'CM WhatsApp'};
+  const CM_COLORS = {instagram:'#e1306c', facebook:'#1877f2', tiktok:'#ff0050', email_cm:'#7b61ff', whatsapp_cm:'#25d366'};
+  platforms.forEach((price, pid) => {
     cmRaw += price;
-    items.push({ name: t.cm_names?.[pid] || pid, price, pos: 5, color: SEC_COLORS[5] });
+    items.push({ name: CM_PLAT_NAMES[pid] || pid, price, color: CM_COLORS[pid] || '#ff2d78' });
   });
-  const cmDiscount = cmSelected.size === 5 ? cmRaw * 0.10 : 0;
+  const cmDiscount = platforms.size === 5 ? cmRaw * 0.10 : 0;
 
-  // Design
-  for(const [k, cfg] of Object.entries(COUNTERS)){
-    if(cfg.val <= 0) continue;
-    const base = cfg.val * cfg.unit;
-    const disc = (cfg.discountThreshold && cfg.val >= cfg.discountThreshold) ? base * cfg.discountRate : 0;
-    const final = base - disc;
-    items.push({ name: (t.dg_names?.[k] || k) + ' ×' + cfg.val, price: final, pos: 4, color: SEC_COLORS[4] });
-  }
+  // Design counters
+  Object.entries(COUNTERS).forEach(([k, cfg]) => {
+    if (cfg.val > 0) {
+      const base = cfg.val * cfg.unitPrice;
+      const disc = (cfg.threshold && cfg.val >= cfg.threshold) ? base * cfg.rate : 0;
+      const final = base - disc;
+      items.push({ name: COUNTER_NAMES[k] + ' ×' + cfg.val, price: final, color: '#00cfff' });
+    }
+  });
 
   // Render list
-  if(items.length === 0){
+  if (items.length === 0) {
     empty.style.display = 'block';
   } else {
     empty.style.display = 'none';
-    items.forEach(({name, price, color}) => {
+    items.forEach(({ name, price, color }) => {
       const row = document.createElement('div');
-      row.className = 'bd-item';
-      row.innerHTML = `<div class="bd-left"><div class="bd-dot" style="background:${color};box-shadow:0 0 5px ${color};"></div><span class="bd-name">${name}</span></div><span class="bd-price">${fmtE(price)}</span>`;
+      row.className = 'b-item';
+      row.innerHTML = `<div class="b-item-left"><div class="b-dot" style="background:${color};box-shadow:0 0 6px ${color};"></div><span class="b-name">${name}</span></div><span class="b-price">${fmt(price)}</span>`;
       list.appendChild(row);
     });
   }
 
   // Totals
   let sub = 0;
-  svcSelected.forEach(p => sub += p);
+  selected.forEach(({ price }) => { sub += price; });
   sub += cmRaw;
   sub += getDesignTotal();
 
   const designDisc = getDesignDiscount();
   const totalDisc = cmDiscount + designDisc;
-  const afterDisc = sub - totalDisc;
-  const vat = afterDisc * VAT;
-  const total = afterDisc + vat;
+  const afterDiscount = sub - totalDisc;
+  const vat = afterDiscount * VAT;
+  const total = afterDiscount + vat;
 
-  animVal('bdSub', sub);
-  const discRow = document.getElementById('bdDiscRow');
-  if(totalDisc > 0){
+  anim('subtotal', sub);
+  const discRow = document.getElementById('discountRow');
+  if (totalDisc > 0) {
     discRow.style.display = 'flex';
-    animVal('bdDisc', -totalDisc);
+    anim('discountAmount', -totalDisc);
   } else {
     discRow.style.display = 'none';
   }
-  animVal('bdVat', vat);
-  animVal('bdTotal', total);
+  anim('vatAmount', vat);
+  anim('finalTotal', total);
 
-  // Sticky
-  const stickyWrap = document.getElementById('stickyWrap');
-  if(items.length === 0){
-    stickyWrap.style.display = 'none';
+  // Sticky pill
+  const sticky = document.getElementById('summarySticky');
+  if (items.length === 0) {
+    sticky.style.display = 'none';
   } else {
-    stickyWrap.style.display = 'block';
+    sticky.style.display = 'block';
+    // Count by pos
     const counts = {};
-    items.forEach(({pos}) => counts[pos] = (counts[pos]||0)+1);
-    const pillSvc = document.getElementById('pillServices');
-    pillSvc.innerHTML = '';
-    Object.entries(counts).forEach(([pos, cnt]) => {
+    selected.forEach(({ pos }) => { counts[pos] = (counts[pos] || 0) + 1; });
+    if (platforms.size > 0) counts[5] = (counts[5] || 0) + platforms.size;
+    if (getDesignTotal() > 0) counts[4] = (counts[4] || 0);
+
+    const ce = document.getElementById('summaryCounts');
+    ce.innerHTML = '';
+    Object.entries(counts).sort((a,b) => a[0]-b[0]).forEach(([pos, cnt]) => {
+      if (!cnt) return;
       const d = document.createElement('div');
-      d.className = 'pill-svc';
-      d.innerHTML = `<span class="pill-svc-num" style="color:${SEC_COLORS[pos]}">${cnt}</span><span class="pill-svc-label">${t.sec_names?.[pos]||''}</span>`;
-      pillSvc.appendChild(d);
+      d.className = 'summary-count-item';
+      d.innerHTML = `<span class="summary-count-num" style="color:${POS_COLORS[pos]};text-shadow:0 0 8px ${POS_COLORS[pos]};">${cnt}</span><span class="summary-count-label">${POS_NAMES[pos]||''}</span>`;
+      ce.appendChild(d);
     });
-    document.getElementById('pillTotal').textContent = fmtE(total);
+    // Add design counter if active
+    const dt = getDesignTotal();
+    if (dt > 0) {
+      const d = document.createElement('div');
+      d.className = 'summary-count-item';
+      d.innerHTML = `<span class="summary-count-num" style="color:#00cfff;text-shadow:0 0 8px #00cfff;">${dt}€</span><span class="summary-count-label">Diseño</span>`;
+      ce.appendChild(d);
+    }
+    document.getElementById('pillTotal').textContent = fmt(total);
   }
 }
 
-// ─────────────────────────────────────────────────────────────
-// RESET
-// ─────────────────────────────────────────────────────────────
-function resetAll(){
-  document.querySelectorAll('.svc-card.selected').forEach(c => { c.classList.remove('selected'); const cb=c.querySelector('.card-chk'); if(cb) cb.checked=false; });
-  document.querySelectorAll('.cm-card.selected').forEach(c => { c.classList.remove('selected'); const cb=c.querySelector('.cm-chk'); if(cb) cb.checked=false; });
-  svcSelected.clear();
-  cmSelected.clear();
-  document.getElementById('cmBundleActive').classList.remove('show');
-  Object.keys(COUNTERS).forEach(k => {
-    COUNTERS[k].val = 0;
-    document.getElementById('cv_'+k).textContent = '0';
-    document.getElementById('cp_'+k).textContent = '0€';
-    document.getElementById('cp_'+k).classList.add('zero');
-    document.getElementById('cd_'+k).textContent = '';
-    document.getElementById('ci_'+k).classList.remove('active');
+// ─── RESET ────────────────────────────────────────────────────
+function resetAll() {
+  document.querySelectorAll('.card.selected').forEach(c => {
+    c.classList.remove('selected');
+    const cb = c.querySelector('.card-check');
+    if (cb) cb.checked = false;
+  });
+  document.querySelectorAll('.platform-card.selected').forEach(c => {
+    c.classList.remove('selected');
+    const cb = c.querySelector('.platform-check');
+    if (cb) cb.checked = false;
+  });
+  selected.clear();
+  platforms.clear();
+  document.getElementById('cmBundleDiscountRow').style.display = 'none';
+
+  Object.entries(COUNTERS).forEach(([k, cfg]) => {
+    cfg.val = 0;
+    const valEl = document.getElementById('cv_' + k);
+    if (valEl) valEl.textContent = '0';
+    const priceEl = document.getElementById('cp_' + k);
+    if (priceEl) { priceEl.textContent = '0€'; priceEl.classList.add('zero'); }
+    const rowEl = document.getElementById('cr_' + k);
+    if (rowEl) rowEl.classList.remove('active');
+    const dtEl = document.getElementById('dt_' + k);
+    if (dtEl && cfg.threshold) {
+      dtEl.textContent = '−' + (cfg.rate * 100) + '% a partir de ' + cfg.threshold;
+      dtEl.className = 'discount-tag';
+    }
   });
   document.getElementById('dcc_total').textContent = '0€';
-  document.getElementById('designCard').classList.remove('active');
+  document.getElementById('designCounterCard').classList.remove('has-selection');
+
   render();
-  showToast((LANG[lang]||LANG.es).toast_reset);
+  showToast('Selección limpiada.');
 }
 
-// ─────────────────────────────────────────────────────────────
-// UTILS
-// ─────────────────────────────────────────────────────────────
-function fmtE(n){
-  return new Intl.NumberFormat('de-DE',{minimumFractionDigits:2,maximumFractionDigits:2}).format(Math.abs(n)) + '€';
+// ─── UTILS ───────────────────────────────────────────────────
+function fmt(n) {
+  return new Intl.NumberFormat('de-DE', { minimumFractionDigits:2, maximumFractionDigits:2 }).format(Math.abs(n)) + '€';
 }
-function animVal(id, target){
+
+function anim(id, target) {
   const el = document.getElementById(id);
   el.classList.remove('counting'); void el.offsetWidth; el.classList.add('counting');
-  const dur = 380, start = Date.now(), from = parseFloat(el.dataset.raw||0);
+  const dur = 350, start = Date.now(), from = parseFloat(el.dataset.raw || 0);
   el.dataset.raw = target;
-  (function step(){
-    const t2 = Math.min((Date.now()-start)/dur,1), e = 1-Math.pow(1-t2,3);
-    el.textContent = fmtE(from+(target-from)*e);
-    if(t2<1) requestAnimationFrame(step); else el.textContent = fmtE(target);
+  (function step() {
+    const t2 = Math.min((Date.now()-start)/dur, 1), e = 1-Math.pow(1-t2, 3);
+    el.textContent = fmt(from + (target-from)*e);
+    if (t2 < 1) requestAnimationFrame(step); else el.textContent = fmt(target);
   })();
 }
-function showToast(msg){
+
+function showToast(msg) {
   const t = document.getElementById('toast');
   t.textContent = msg; t.classList.add('show');
   setTimeout(() => t.classList.remove('show'), 3400);
 }
 
-// ─────────────────────────────────────────────────────────────
-// PDF
-// ─────────────────────────────────────────────────────────────
-function genPDF(){
-  const t = LANG[lang]||LANG.es;
+// ─── PDF ─────────────────────────────────────────────────────
+function generatePDF() {
   const items = [];
-  svcSelected.forEach((price,id) => { if(price>0) items.push({name:t.svc_names?.[id]||id,price,pos:SVC_POS[id]||1}); });
-  let cmRaw=0;
-  cmSelected.forEach((price,pid) => { cmRaw+=price; items.push({name:t.cm_names?.[pid]||pid,price,pos:5}); });
-  const cmDisc = cmSelected.size===5 ? cmRaw*0.10 : 0;
-  for(const [k,cfg] of Object.entries(COUNTERS)){
-    if(cfg.val<=0) continue;
-    const base=cfg.val*cfg.unit, disc=(cfg.discountThreshold&&cfg.val>=cfg.discountThreshold)?base*cfg.discountRate:0;
-    items.push({name:(t.dg_names?.[k]||k)+' ×'+cfg.val, price:base-disc, pos:4});
-  }
-  if(items.length===0){showToast(t.toast_empty);return;}
-  let sub=items.reduce((s,i)=>s+i.price,0);
-  const designDisc=getDesignDiscount(), totalDisc=cmDisc+designDisc;
-  const afterDisc=sub-totalDisc, vat=afterDisc*VAT, total=afterDisc+vat;
-  const byPos={};
-  items.forEach(({name,price,pos})=>{if(!byPos[pos])byPos[pos]=[];byPos[pos].push({name,price});});
-  let rows='';
-  Object.entries(byPos).forEach(([pos,it])=>{
-    rows+=`<tr><td colspan="2" style="padding:12px 0 5px;font-size:8px;letter-spacing:.2em;text-transform:uppercase;color:${SEC_COLORS[pos]};border-bottom:1px solid ${SEC_COLORS[pos]}33;">${(t.sec_names?.[pos]||'').toUpperCase()}</td></tr>`;
-    it.forEach(({name,price})=>{ rows+=`<tr><td style="padding:7px 0;border-bottom:1px solid #142018;color:#a8bfb4;font-size:12px;">${name}</td><td style="padding:7px 0;border-bottom:1px solid #142018;color:#f0f7f3;font-weight:600;text-align:right;font-size:12px;">${fmtE(price)}</td></tr>`; });
+  selected.forEach(({ name, price, pos }) => { if (price > 0) items.push({ name, price, pos }); });
+  const CM_PLAT_NAMES = {instagram:'CM Instagram',facebook:'CM Facebook',tiktok:'CM TikTok',email_cm:'CM Email',whatsapp_cm:'CM WhatsApp'};
+  let cmRaw = 0;
+  platforms.forEach((price, pid) => { cmRaw += price; items.push({ name: CM_PLAT_NAMES[pid]||pid, price, pos:5 }); });
+  const cmDiscount = platforms.size === 5 ? cmRaw * 0.10 : 0;
+  Object.entries(COUNTERS).forEach(([k, cfg]) => {
+    if (cfg.val > 0) {
+      const base = cfg.val * cfg.unitPrice;
+      const disc = (cfg.threshold && cfg.val >= cfg.threshold) ? base * cfg.rate : 0;
+      items.push({ name: COUNTER_NAMES[k] + ' ×' + cfg.val, price: base-disc, pos: 4 });
+    }
   });
-  const date = new Date().toLocaleDateString(lang==='de'?'de-DE':lang==='sv'?'sv-SE':'es-ES',{year:'numeric',month:'long',day:'numeric'});
-  const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>HYBRYD</title><style>body{font-family:'Segoe UI',sans-serif;background:#04080a;color:#a8bfb4;padding:60px 44px;max-width:700px;margin:0 auto}h1{color:#00ff85;font-size:30px;font-weight:800;margin:0 0 4px}sub{color:#3d5247;font-size:9px;text-transform:uppercase;letter-spacing:.2em;display:block;margin-bottom:44px}table{width:100%;border-collapse:collapse}.tr td{padding:11px 0;border-top:1px solid #00ff8522;font-size:13px}.disc td{color:#ff9500}.fin td{font-size:24px;font-weight:800;color:#00ff85;padding:14px 0;border-top:2px solid #00ff85}</style></head><body><h1>HYBRYD</h1><sub>${date}</sub><table><tbody>${rows}<tr class="tr"><td>${t.bd_sub_label}</td><td style="text-align:right">${fmtE(sub)}</td></tr>${totalDisc>0?`<tr class="tr disc"><td>${t.bd_disc}</td><td style="text-align:right">${fmtE(-totalDisc)}</td></tr>`:''}<tr class="tr"><td>${t.bd_vat}</td><td style="text-align:right">${fmtE(vat)}</td></tr><tr class="fin"><td>${t.bd_total}</td><td style="text-align:right">${fmtE(total)}</td></tr></tbody></table></body></html>`;
-  const w=window.open('','_blank');
-  if(w){w.document.write(html);w.document.close();w.onload=()=>w.print();}
-  showToast(t.toast_pdf);
+  if (items.length === 0) { showToast('Selecciona al menos un servicio.'); return; }
+
+  let sub = items.reduce((s, i) => s + i.price, 0);
+  const totalDisc = cmDiscount + getDesignDiscount();
+  const afterDisc = sub - totalDisc;
+  const vat = afterDisc * VAT, total = afterDisc + vat;
+  const date = new Date().toLocaleDateString('es-ES', { year:'numeric', month:'long', day:'numeric' });
+
+  const byPos = {};
+  items.forEach(({ name, price, pos }) => { if (!byPos[pos]) byPos[pos] = []; byPos[pos].push({ name, price }); });
+  let rows = '';
+  Object.entries(byPos).forEach(([pos, it]) => {
+    rows += `<tr><td colspan="2" style="padding:12px 0 5px;font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:${POS_COLORS[pos]||'#00ff41'};border-bottom:1px solid ${POS_COLORS[pos]||'#00ff41'}44;">${POS_NAMES[pos]||'Servicios'}</td></tr>`;
+    it.forEach(({ name, price }) => { rows += `<tr><td style="padding:7px 0;border-bottom:1px solid #142018;color:#c8d6cc;font-size:12px;">${name}</td><td style="padding:7px 0;border-bottom:1px solid #142018;color:#fff;font-weight:600;text-align:right;font-size:12px;">${fmt(price)}</td></tr>`; });
+  });
+
+  const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>HYBRYD</title><style>body{font-family:'Segoe UI',sans-serif;background:#050a07;color:#c8d6cc;padding:60px 44px;max-width:700px;margin:0 auto}h1{color:#00ff41;font-size:30px;font-weight:800;margin:0 0 4px}.d{color:#4e6657;font-size:9px;text-transform:uppercase;letter-spacing:.2em;display:block;margin-bottom:44px}table{width:100%;border-collapse:collapse}.tr td{padding:11px 0;border-top:1px solid rgba(0,255,65,.12);font-size:13px}.disc td{color:#ff6b35}.fin td{font-size:24px;font-weight:800;color:#00ff41;padding:14px 0;border-top:2px solid #00ff41}</style></head><body><h1>HYBRYD</h1><span class="d">${date}</span><table><tbody>${rows}<tr class="tr"><td>Subtotal</td><td style="text-align:right">${fmt(sub)}</td></tr>${totalDisc>0?`<tr class="tr disc"><td>Descuento aplicado</td><td style="text-align:right">${fmt(-totalDisc)}</td></tr>`:''}<tr class="tr"><td>IVA (21%)</td><td style="text-align:right">${fmt(vat)}</td></tr><tr class="fin"><td>Inversión Total Mensual</td><td style="text-align:right">${fmt(total)}</td></tr></tbody></table></body></html>`;
+
+  const win = window.open('', '_blank');
+  if (win) { win.document.write(html); win.document.close(); win.onload = () => win.print(); }
+  showToast('Presupuesto listo — Imprimir > Guardar como PDF.');
 }
 
-// ─────────────────────────────────────────────────────────────
-// EMAIL
-// ─────────────────────────────────────────────────────────────
-function genEmail(){
-  const t = LANG[lang]||LANG.es;
-  const items=[];
-  svcSelected.forEach((price,id)=>{if(price>0) items.push({name:t.svc_names?.[id]||id,price,pos:SVC_POS[id]||1});});
-  let cmRaw=0;
-  cmSelected.forEach((price,pid)=>{cmRaw+=price;items.push({name:t.cm_names?.[pid]||pid,price,pos:5});});
-  const cmDisc=cmSelected.size===5?cmRaw*0.10:0;
-  for(const [k,cfg] of Object.entries(COUNTERS)){
-    if(cfg.val<=0) continue;
-    const base=cfg.val*cfg.unit, disc=(cfg.discountThreshold&&cfg.val>=cfg.discountThreshold)?base*cfg.discountRate:0;
-    items.push({name:(t.dg_names?.[k]||k)+' ×'+cfg.val,price:base-disc,pos:4});
-  }
-  if(items.length===0){showToast(t.toast_empty);return;}
-  let sub=items.reduce((s,i)=>s+i.price,0);
-  const designDisc=getDesignDiscount(),totalDisc=cmDisc+designDisc;
-  const afterDisc=sub-totalDisc,vat=afterDisc*VAT,total=afterDisc+vat;
-  let body='HYBRYD%0A%0A';
-  const byPos={};
-  items.forEach(({name,price,pos})=>{if(!byPos[pos])byPos[pos]=[];byPos[pos].push({name,price});});
-  Object.entries(byPos).forEach(([pos,it])=>{
-    body+=(t.sec_names?.[pos]||'').toUpperCase()+'%0A';
-    it.forEach(({name,price})=>{body+=`\u2014 ${name}: ${fmtE(price)}%0A`;});
-    body+='%0A';
+// ─── EMAIL ───────────────────────────────────────────────────
+function sendByEmail() {
+  const items = [];
+  selected.forEach(({ name, price, pos }) => { if (price > 0) items.push({ name, price, pos }); });
+  const CM_PLAT_NAMES = {instagram:'CM Instagram',facebook:'CM Facebook',tiktok:'CM TikTok',email_cm:'CM Email',whatsapp_cm:'CM WhatsApp'};
+  let cmRaw = 0;
+  platforms.forEach((price, pid) => { cmRaw += price; items.push({ name: CM_PLAT_NAMES[pid]||pid, price, pos:5 }); });
+  const cmDiscount = platforms.size === 5 ? cmRaw * 0.10 : 0;
+  Object.entries(COUNTERS).forEach(([k, cfg]) => {
+    if (cfg.val > 0) {
+      const base = cfg.val * cfg.unitPrice;
+      const disc = (cfg.threshold && cfg.val >= cfg.threshold) ? base * cfg.rate : 0;
+      items.push({ name: COUNTER_NAMES[k] + ' ×' + cfg.val, price: base-disc, pos: 4 });
+    }
   });
-  body+=`${t.bd_sub_label}: ${fmtE(sub)}%0A`;
-  if(totalDisc>0) body+=`${t.bd_disc}: ${fmtE(-totalDisc)}%0A`;
-  body+=`${t.bd_vat}: ${fmtE(vat)}%0A${t.bd_total}: ${fmtE(total)}`;
-  window.location.href='mailto:?subject=HYBRYD&body='+body;
-  showToast(t.toast_email);
+  if (items.length === 0) { showToast('Selecciona al menos un servicio.'); return; }
+
+  let sub = items.reduce((s, i) => s + i.price, 0);
+  const totalDisc = cmDiscount + getDesignDiscount();
+  const afterDisc = sub - totalDisc;
+  const vat = afterDisc * VAT, total = afterDisc + vat;
+
+  const byPos = {};
+  items.forEach(({ name, price, pos }) => { if (!byPos[pos]) byPos[pos] = []; byPos[pos].push({ name, price }); });
+  let body = 'HYBRYD%0A%0A';
+  Object.entries(byPos).forEach(([pos, it]) => {
+    body += (POS_NAMES[pos]||'Servicios').toUpperCase() + '%0A';
+    it.forEach(({ name, price }) => { body += `\u2014 ${name}: ${fmt(price)}%0A`; });
+    body += '%0A';
+  });
+  body += `Subtotal: ${fmt(sub)}%0A`;
+  if (totalDisc > 0) body += `Descuento: ${fmt(-totalDisc)}%0A`;
+  body += `IVA (21%): ${fmt(vat)}%0A` + `Inversión Total Mensual: ${fmt(total)}`;
+
+  window.location.href = 'mailto:?subject=HYBRYD — Presupuesto Mensual&body=' + body;
+  showToast('Cliente de email abierto.');
 }
 
-// ─────────────────────────────────────────────────────────────
-// INIT
-// ─────────────────────────────────────────────────────────────
-applyI18n();
+// lang switcher stub (visual only since content is static ES)
+function setLang(l) {
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.toggle('active', b.textContent.trim().toLowerCase() === l));
+}
 </script>
 </body>
 </html>
