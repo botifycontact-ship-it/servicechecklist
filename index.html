@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>HYBRYD — Budget Builder</title>
+  <title>HYBRYD — Presupuesto Mensual</title>
   <style>
     :root {
       --neon: #00ff41; --neon-dim: rgba(0,255,65,.1);
       --neon-glow: 0 0 8px #00ff41, 0 0 24px rgba(0,255,65,.4);
       --bg: #050a07; --surface: rgba(255,255,255,.03); --surface-2: rgba(255,255,255,.055);
       --border: rgba(0,255,65,.15); --border-hl: rgba(0,255,65,.5);
-      --text: #c8d6cc; --text-dim: #4e6657; --white: #eaf0ec;
+      --text: #c8d6cc; --text-dim: #4e6657; --white: #ffffff;
       --grid-color: rgba(0,255,65,.045); --r: 10px;
       --font: 'Inter','Segoe UI',system-ui,sans-serif;
       --c1:#00ff41; --c2:#7b61ff; --c3:#00cfff; --c4:#ff6b35; --c5:#ffcc00;
@@ -45,15 +45,23 @@
     .eyebrow { font-size:9.5px; letter-spacing:.26em; text-transform:uppercase; color:var(--neon); margin-bottom:20px; display:block; }
     .section-title { font-size:clamp(26px,4vw,44px); font-weight:800; color:var(--white); letter-spacing:-.025em; line-height:1.12; margin-bottom:18px; }
     .section-title span { color:var(--neon); text-shadow:var(--neon-glow); }
-    .section-subtitle { font-size:14.5px; color:var(--text-dim); max-width:560px; margin:0 auto; line-height:1.75; }
+    .section-subtitle { font-size:14.5px; color:var(--text-dim); max-width:640px; margin:0 auto; line-height:1.75; }
 
-    /* ── BUDGET DIAL ── */
-    .budget-dial-wrap { display:flex; justify-content:center; gap:10px; flex-wrap:wrap; margin-bottom:64px; align-items:center; }
-    .dial-ref { font-size:10px; letter-spacing:.18em; text-transform:uppercase; color:var(--text-dim); margin-right:4px; }
-    .dial-btn { padding:9px 20px; border-radius:30px; font-size:11px; font-weight:700; letter-spacing:.14em; text-transform:uppercase;
-      cursor:pointer; border:1.5px solid var(--border-hl); background:transparent; color:var(--text-dim); font-family:var(--font); transition:all .2s; }
-    .dial-btn:hover { color:var(--neon); border-color:var(--neon); background:var(--neon-dim); }
-    .dial-btn.active { color:var(--bg); background:var(--neon); border-color:var(--neon); box-shadow:0 0 14px rgba(0,255,65,.4); }
+    /* ── VALUE PROP ── */
+    .value-prop { max-width:820px; margin:0 auto 64px; padding:24px 28px; background:var(--surface);
+      border:1px solid var(--border); border-radius:var(--r); text-align:center; }
+    .value-prop-title { font-size:13px; letter-spacing:.2em; text-transform:uppercase; color:var(--neon); margin-bottom:12px; }
+    .value-prop-text { font-size:14px; color:var(--text); line-height:1.75; }
+
+    /* ── MARKET REFERENCE ── */
+    .market-ref { max-width:820px; margin:0 auto 64px; padding:24px 28px; background:var(--surface);
+      border:1px solid var(--border); border-radius:var(--r); }
+    .market-ref-title { font-size:11px; letter-spacing:.2em; text-transform:uppercase; color:var(--neon); margin-bottom:12px; }
+    .market-ref-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:16px; }
+    .market-ref-item { font-size:12px; color:var(--text); line-height:1.6; padding:8px 0; border-bottom:1px solid rgba(255,255,255,.05); }
+    .market-ref-item:last-child { border-bottom:none; }
+    .market-ref-label { color:var(--text-dim); display:block; font-size:10px; text-transform:uppercase; letter-spacing:.1em; margin-bottom:2px; }
+    .market-ref-value { color:var(--white); font-weight:600; }
 
     /* ── POSITION SECTION ── */
     .pos-section { margin-bottom:60px; }
@@ -61,7 +69,7 @@
     .pos-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; box-shadow:0 0 10px currentColor; }
     .pos-number { font-size:9px; letter-spacing:.22em; color:var(--text-dim); text-transform:uppercase; }
     .pos-name { font-size:15px; font-weight:700; color:var(--white); }
-    .pos-desc { font-size:12px; color:var(--text-dim); margin-left:auto; max-width:360px; text-align:right; line-height:1.5; }
+    .pos-desc { font-size:12px; color:var(--text-dim); margin-left:auto; max-width:460px; text-align:right; line-height:1.5; }
 
     /* ── SERVICE GRID ── */
     .service-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:14px; align-items:start; }
@@ -88,6 +96,13 @@
     .card-check:checked { border-color:var(--accent,var(--neon)); box-shadow:0 0 8px rgba(var(--accent-rgb,0,255,65),.5); }
     .card-check:checked::after { opacity:1; transform:scale(1); }
     .card-desc { font-size:12px; color:var(--text-dim); line-height:1.65; margin-bottom:14px; flex:1; }
+
+    .card-includes { margin-bottom:12px; padding:10px; background:rgba(0,255,65,.04); border-radius:6px; border:1px solid var(--border); }
+    .card-includes-title { font-size:9px; letter-spacing:.14em; text-transform:uppercase; color:var(--neon); margin-bottom:6px; }
+    .card-includes-list { list-style:none; padding:0; margin:0; }
+    .card-includes-list li { font-size:11px; color:var(--text); padding:3px 0; padding-left:14px; position:relative; }
+    .card-includes-list li::before { content:'✓'; position:absolute; left:0; color:var(--neon); font-weight:700; }
+
     .card-footer { display:flex; align-items:center; justify-content:space-between; margin-top:auto; }
     .card-price { font-size:17px; font-weight:700; color:var(--accent,var(--neon)); text-shadow:0 0 12px rgba(var(--accent-rgb,0,255,65),.5); }
     .card-unit { font-size:10px; color:var(--text-dim); margin-left:3px; font-weight:400; }
@@ -132,6 +147,9 @@
     .bt-row:last-child { margin-bottom:0; }
     .bt-label { font-size:11.5px; color:var(--text-dim); text-transform:uppercase; letter-spacing:.1em; }
     .bt-val { font-size:14px; color:var(--text); font-weight:500; }
+    .bt-row.discount { color:#ff6b35; }
+    .bt-row.discount .bt-label { color:#ff6b35; }
+    .bt-row.discount .bt-val { color:#ff6b35; font-weight:700; }
     .bt-row.final .bt-label { font-size:13px; font-weight:700; color:var(--white); letter-spacing:.12em; }
     .bt-row.final .bt-val { font-size:30px; font-weight:800; color:var(--neon); text-shadow:var(--neon-glow); }
     .bt-sep { height:1px; background:var(--border); margin:14px 0; }
@@ -183,209 +201,327 @@
 
     <!-- HEADER -->
     <div class="section-header">
-      <span class="eyebrow" data-i18n="eyebrow"></span>
-      <h1 class="section-title"><span>HYBRYD</span> &mdash; <span data-i18n="title"></span></h1>
-      <p class="section-subtitle" data-i18n="subtitle"></p>
+      <span class="eyebrow" data-i18n="eyebrow">Servicio Integral de Marketing y Comunicación</span>
+      <h1 class="section-title"><span>HYBRYD</span> — <span data-i18n="title">Construye tu Presupuesto Mensual</span></h1>
+      <p class="section-subtitle" data-i18n="subtitle">Cada servicio está diseñado para que te enfoques exclusivamente en el trato personal con tus clientes, mientras nosotros gestionamos toda la operación de marketing, comunicación y crecimiento digital de tu negocio.</p>
     </div>
 
-    <!-- BUDGET DIAL -->
-    <div class="budget-dial-wrap">
-      <span class="dial-ref" data-i18n="dialRef"></span>
-      <button class="dial-btn" data-budget="1500" onclick="applyDial(1500,this)">~1.500€</button>
-      <button class="dial-btn" data-budget="2000" onclick="applyDial(2000,this)">~2.000€</button>
-      <button class="dial-btn" data-budget="2500" onclick="applyDial(2500,this)">~2.500€</button>
-      <button class="dial-btn" data-budget="3000" onclick="applyDial(3000,this)">~3.000€</button>
-      <button class="dial-btn" data-budget="4000" onclick="applyDial(4000,this)">~4.000€</button>
-      <button class="dial-btn" data-budget="6000" onclick="applyDial(6000,this)" data-i18n-text="fullStack"></button>
+    <!-- VALUE PROP -->
+    <div class="value-prop">
+      <div class="value-prop-title" data-i18n="valueTitle">Tu único trabajo: cuidar a tus clientes</div>
+      <p class="value-prop-text" data-i18n="valueText">Nos encargamos de que tu negocio crezca en digital mientras tú te dedicas a lo que mejor haces: construir relaciones reales con cada persona que confía en ti. Marketing, redes, campañas, análisis, producción — todo cubierto.</p>
     </div>
 
-    <!-- POS 01 -->
+    <!-- MARKET REFERENCE -->
+    <div class="market-ref">
+      <div class="market-ref-title" data-i18n="refTitle">Referencias de mercado España 2026 (coste mensual de contratar estas posiciones por separado)</div>
+      <div class="market-ref-grid">
+        <div class="market-ref-item">
+          <span class="market-ref-label" data-i18n="refCMLabel">Community Manager in-house</span>
+          <span class="market-ref-value">1.400€ - 2.200€</span>
+        </div>
+        <div class="market-ref-item">
+          <span class="market-ref-label" data-i18n="refDesignLabel">Diseñador gráfico in-house</span>
+          <span class="market-ref-value">1.300€ - 2.000€</span>
+        </div>
+        <div class="market-ref-item">
+          <span class="market-ref-label" data-i18n="refEmailLabel">Email marketing manager</span>
+          <span class="market-ref-value">1.200€ - 1.800€</span>
+        </div>
+        <div class="market-ref-item">
+          <span class="market-ref-label" data-i18n="refAdsLabel">Paid ads specialist</span>
+          <span class="market-ref-value">1.500€ - 2.500€</span>
+        </div>
+        <div class="market-ref-item">
+          <span class="market-ref-label" data-i18n="refProdLabel">Content producer / coordinator</span>
+          <span class="market-ref-value">1.400€ - 2.000€</span>
+        </div>
+        <div class="market-ref-item">
+          <span class="market-ref-label" data-i18n="refAnalystLabel">Digital analyst</span>
+          <span class="market-ref-value">1.300€ - 2.200€</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 1: CONTENT & SOCIAL -->
     <div class="pos-section" data-pos="1">
       <div class="pos-header">
         <div class="pos-dot" style="color:var(--c1);background:var(--c1);"></div>
         <div>
-          <div class="pos-number" data-i18n="pos" data-pos-n="01"></div>
-          <div class="pos-name" data-i18n-key="p1name"></div>
+          <div class="pos-number" data-i18n="pos1">01 — Gestión de Contenido y Redes Sociales</div>
+          <div class="pos-name" data-i18n="p1name">Tu presencia digital sin que toques nada</div>
         </div>
-        <div class="pos-desc" data-i18n-key="p1desc"></div>
+        <div class="pos-desc" data-i18n="p1desc">Publicación constante, respuestas diarias, comunidad activa</div>
       </div>
       <div class="service-grid">
-        <div class="card" style="--accent:var(--c1);--accent-rgb:0,255,65;" data-price="350" data-svc="p1s1" data-pos="1" onclick="toggleCard(this)">
-          <div class="card-top"><span class="card-title" data-i18n-key="p1s1title"></span><input type="checkbox" class="card-check" onclick="event.stopPropagation()"></div>
-          <p class="card-desc" data-i18n-key="p1s1desc"></p>
-          <div class="card-footer"><div><span class="card-price">350€</span><span class="card-unit" data-i18n-key="perMonth"></span></div><span class="card-badge" data-i18n-key="base"></span></div>
+
+        <!-- Feed Posts -->
+        <div class="card" style="--accent:var(--c1);--accent-rgb:0,255,65;" data-pos="1" data-svc="social_feed" data-base-price="320" onclick="toggleCard(this)">
+          <div class="card-top"><span class="card-title" data-i18n="social_feed_title">Publicaciones en Feed (4/mes)</span><input type="checkbox" class="card-check" onclick="event.stopPropagation()"></div>
+          <p class="card-desc" data-i18n="social_feed_desc">Cada mes se publican 4 posts planificados estratégicamente en tu feed de Instagram/Facebook. Incluye concepto, diseño, copy y programación. Sin esto, tu cuenta parece inactiva y pierdes oportunidades de llegar a nuevas personas cada semana.</p>
+          <div class="card-includes">
+            <div class="card-includes-title" data-i18n="includes">Incluye:</div>
+            <ul class="card-includes-list">
+              <li data-i18n="social_feed_i1">Estrategia de contenido mensual</li>
+              <li data-i18n="social_feed_i2">Diseño gráfico de cada post</li>
+              <li data-i18n="social_feed_i3">Redacción de copies optimizados</li>
+              <li data-i18n="social_feed_i4">Programación y publicación</li>
+            </ul>
+          </div>
+          <div class="card-footer"><div><span class="card-price" data-price-display>320€</span><span class="card-unit" data-i18n="perMonth">/ mes</span></div></div>
         </div>
-        <div class="card" style="--accent:var(--c1);--accent-rgb:0,255,65;" data-price="450" data-svc="p1s2" data-pos="1" onclick="toggleCard(this)">
-          <div class="card-top"><span class="card-title" data-i18n-key="p1s2title"></span><input type="checkbox" class="card-check" onclick="event.stopPropagation()"></div>
-          <p class="card-desc" data-i18n-key="p1s2desc"></p>
-          <div class="card-footer"><div><span class="card-price">450€</span><span class="card-unit" data-i18n-key="perMonth"></span></div></div>
+
+        <!-- Stories -->
+        <div class="card" style="--accent:var(--c1);--accent-rgb:0,255,65;" data-pos="1" data-svc="social_stories" data-base-price="280" onclick="toggleCard(this)">
+          <div class="card-top"><span class="card-title" data-i18n="social_stories_title">Stories Semanales (12/mes)</span><input type="checkbox" class="card-check" onclick="event.stopPropagation()"></div>
+          <p class="card-desc" data-i18n="social_stories_desc">3 stories por semana (12 al mes) con contenido dinámico: actualizaciones, encuestas, recordatorios, detrás de cámaras. Las stories mantienen tu marca en la mente de tu audiencia cada día. Sin publicación constante de stories, tu cuenta desaparece del top de la app y pierdes visibilidad orgánica.</p>
+          <div class="card-includes">
+            <div class="card-includes-title" data-i18n="includes">Incluye:</div>
+            <ul class="card-includes-list">
+              <li data-i18n="social_stories_i1">Diseño de plantillas editables</li>
+              <li data-i18n="social_stories_i2">Contenido variado (encuestas, Q&A, anuncios)</li>
+              <li data-i18n="social_stories_i3">Publicación semanal programada</li>
+            </ul>
+          </div>
+          <div class="card-footer"><div><span class="card-price" data-price-display>280€</span><span class="card-unit" data-i18n="perMonth">/ mes</span></div></div>
         </div>
-        <div class="card" style="--accent:var(--c1);--accent-rgb:0,255,65;" data-price="300" data-svc="p1s3" data-pos="1" onclick="toggleCard(this)">
-          <div class="card-top"><span class="card-title" data-i18n-key="p1s3title"></span><input type="checkbox" class="card-check" onclick="event.stopPropagation()"></div>
-          <p class="card-desc" data-i18n-key="p1s3desc"></p>
-          <div class="card-footer"><div><span class="card-price">300€</span><span class="card-unit" data-i18n-key="perMonth"></span></div></div>
+
+        <!-- Community Management -->
+        <div class="card" style="--accent:var(--c1);--accent-rgb:0,255,65;" data-pos="1" data-svc="social_community" data-base-price="380" onclick="toggleCard(this)">
+          <div class="card-top"><span class="card-title" data-i18n="social_community_title">Gestión de Comentarios y DMs</span><input type="checkbox" class="card-check" onclick="event.stopPropagation()"></div>
+          <p class="card-desc" data-i18n="social_community_desc">Respuesta diaria a todos los mensajes directos y comentarios en tus publicaciones. Moderación activa, identificación de leads y mantenimiento del tono de tu marca en cada conversación. Si nadie responde, los clientes potenciales se van sin hacer ruido.</p>
+          <div class="card-includes">
+            <div class="card-includes-title" data-i18n="includes">Incluye:</div>
+            <ul class="card-includes-list">
+              <li data-i18n="social_community_i1">Respuesta en menos de 24h laborables</li>
+              <li data-i18n="social_community_i2">Moderación de spam y comentarios negativos</li>
+              <li data-i18n="social_community_i3">Identificación y etiquetado de leads</li>
+              <li data-i18n="social_community_i4">Protocolo de voz de marca</li>
+            </ul>
+          </div>
+          <div class="card-footer"><div><span class="card-price" data-price-display>380€</span><span class="card-unit" data-i18n="perMonth">/ mes</span></div></div>
         </div>
-        <div class="card" style="--accent:var(--c1);--accent-rgb:0,255,65;" data-price="500" data-svc="p1s4" data-pos="1" onclick="toggleCard(this)">
-          <div class="card-top"><span class="card-title" data-i18n-key="p1s4title"></span><input type="checkbox" class="card-check" onclick="event.stopPropagation()"></div>
-          <p class="card-desc" data-i18n-key="p1s4desc"></p>
-          <div class="card-footer"><div><span class="card-price">500€</span><span class="card-unit" data-i18n-key="perMonth"></span></div><span class="card-badge" data-i18n-key="full"></span></div>
+
+        <!-- WhatsApp Community -->
+        <div class="card" style="--accent:var(--c1);--accent-rgb:0,255,65;" data-pos="1" data-svc="social_whatsapp" data-base-price="420" onclick="toggleCard(this)">
+          <div class="card-top"><span class="card-title" data-i18n="social_whatsapp_title">Gestión de Comunidad en WhatsApp</span><input type="checkbox" class="card-check" onclick="event.stopPropagation()"></div>
+          <p class="card-desc" data-i18n="social_whatsapp_desc">Migramos, organizamos y dinamizamos tu comunidad en WhatsApp. Esto incluye envíos estratégicos, respuesta a consultas, segmentación de contactos y mantenimiento activo del grupo o lista de difusión. Una comunidad en WhatsApp bien gestionada convierte más que cualquier otro canal porque es personal y directo.</p>
+          <div class="card-includes">
+            <div class="card-includes-title" data-i18n="includes">Incluye:</div>
+            <ul class="card-includes-list">
+              <li data-i18n="social_whatsapp_i1">Migración y configuración inicial</li>
+              <li data-i18n="social_whatsapp_i2">Dinamización semanal de la comunidad</li>
+              <li data-i18n="social_whatsapp_i3">Respuesta a consultas y dudas</li>
+              <li data-i18n="social_whatsapp_i4">Segmentación y etiquetado</li>
+            </ul>
+          </div>
+          <div class="card-footer"><div><span class="card-price" data-price-display>420€</span><span class="card-unit" data-i18n="perMonth">/ mes</span></div></div>
         </div>
+
       </div>
     </div>
 
-    <!-- POS 02 -->
+    <!-- SECTION 2: COMMUNICATION & AUTOMATION -->
     <div class="pos-section" data-pos="2">
       <div class="pos-header">
         <div class="pos-dot" style="color:var(--c2);background:var(--c2);"></div>
         <div>
-          <div class="pos-number" data-i18n="pos" data-pos-n="02"></div>
-          <div class="pos-name" data-i18n-key="p2name"></div>
+          <div class="pos-number" data-i18n="pos2">02 — Comunicación y Automatización</div>
+          <div class="pos-name" data-i18n="p2name">Mensajes que llegan en el momento correcto</div>
         </div>
-        <div class="pos-desc" data-i18n-key="p2desc"></div>
+        <div class="pos-desc" data-i18n="p2desc">Email y WhatsApp trabajando juntos para fidelizar y activar</div>
       </div>
       <div class="service-grid">
-        <div class="card" style="--accent:var(--c2);--accent-rgb:123,97,255;" data-price="400" data-svc="p2s1" data-pos="2" onclick="toggleCard(this)">
-          <div class="card-top"><span class="card-title" data-i18n-key="p2s1title"></span><input type="checkbox" class="card-check" onclick="event.stopPropagation()"></div>
-          <p class="card-desc" data-i18n-key="p2s1desc"></p>
-          <div class="card-footer"><div><span class="card-price">400€</span><span class="card-unit" data-i18n-key="perMonth"></span></div><span class="card-badge" data-i18n-key="base"></span></div>
+
+        <!-- Strategic WhatsApp -->
+        <div class="card" style="--accent:var(--c2);--accent-rgb:123,97,255;" data-pos="2" data-svc="comm_whatsapp" data-base-price="350" onclick="toggleCard(this)">
+          <div class="card-top"><span class="card-title" data-i18n="comm_whatsapp_title">Gestión Estratégica de WhatsApp</span><input type="checkbox" class="card-check" onclick="event.stopPropagation()"></div>
+          <p class="card-desc" data-i18n="comm_whatsapp_desc">WhatsApp Business configurado, automatizado y usado estratégicamente como canal de conversión. Envío de mensajes transaccionales, confirmaciones, recordatorios y seguimiento post-compra. Cada mensaje está diseñado para construir confianza y mover al cliente al siguiente paso.</p>
+          <div class="card-includes">
+            <div class="card-includes-title" data-i18n="includes">Incluye:</div>
+            <ul class="card-includes-list">
+              <li data-i18n="comm_whatsapp_i1">Configuración de WhatsApp Business</li>
+              <li data-i18n="comm_whatsapp_i2">Automatización de respuestas frecuentes</li>
+              <li data-i18n="comm_whatsapp_i3">Mensajes transaccionales y confirmaciones</li>
+              <li data-i18n="comm_whatsapp_i4">Seguimiento post-compra</li>
+            </ul>
+          </div>
+          <div class="card-footer"><div><span class="card-price" data-price-display>350€</span><span class="card-unit" data-i18n="perMonth">/ mes</span></div></div>
         </div>
-        <div class="card" style="--accent:var(--c2);--accent-rgb:123,97,255;" data-price="650" data-svc="p2s2" data-pos="2" onclick="toggleCard(this)">
-          <div class="card-top"><span class="card-title" data-i18n-key="p2s2title"></span><input type="checkbox" class="card-check" onclick="event.stopPropagation()"></div>
-          <p class="card-desc" data-i18n-key="p2s2desc"></p>
-          <div class="card-footer"><div><span class="card-price">650€</span><span class="card-unit" data-i18n-key="perMonth"></span></div><span class="card-badge" data-i18n-key="pro"></span></div>
+
+        <!-- Email Marketing -->
+        <div class="card" style="--accent:var(--c2);--accent-rgb:123,97,255;" data-pos="2" data-svc="comm_email" data-base-price="380" onclick="toggleCard(this)">
+          <div class="card-top"><span class="card-title" data-i18n="comm_email_title">Gestión de Email Marketing</span><input type="checkbox" class="card-check" onclick="event.stopPropagation()"></div>
+          <p class="card-desc" data-i18n="comm_email_desc">Gestión completa de tu base de datos de emails: limpieza, segmentación y estrategia de envío. Configuración en Mailchimp, Klaviyo o la plataforma que uses. El email sigue siendo el canal con mejor ROI de todos los canales digitales, pero solo si se usa correctamente.</p>
+          <div class="card-includes">
+            <div class="card-includes-title" data-i18n="includes">Incluye:</div>
+            <ul class="card-includes-list">
+              <li data-i18n="comm_email_i1">Limpieza y segmentación de base de datos</li>
+              <li data-i18n="comm_email_i2">Configuración de plataforma (Mailchimp/Klaviyo)</li>
+              <li data-i18n="comm_email_i3">Diseño de plantillas de marca</li>
+              <li data-i18n="comm_email_i4">Análisis de métricas post-envío</li>
+            </ul>
+          </div>
+          <div class="card-footer"><div><span class="card-price" data-price-display>380€</span><span class="card-unit" data-i18n="perMonth">/ mes</span></div></div>
         </div>
-        <div class="card" style="--accent:var(--c2);--accent-rgb:123,97,255;" data-price="350" data-svc="p2s3" data-pos="2" onclick="toggleCard(this)">
-          <div class="card-top"><span class="card-title" data-i18n-key="p2s3title"></span><input type="checkbox" class="card-check" onclick="event.stopPropagation()"></div>
-          <p class="card-desc" data-i18n-key="p2s3desc"></p>
-          <div class="card-footer"><div><span class="card-price">350€</span><span class="card-unit" data-i18n-key="perMonth"></span></div></div>
+
+        <!-- Weekly Campaigns -->
+        <div class="card" style="--accent:var(--c2);--accent-rgb:123,97,255;" data-pos="2" data-svc="comm_campaigns" data-base-price="450" onclick="toggleCard(this)">
+          <div class="card-top"><span class="card-title" data-i18n="comm_campaigns_title">Campañas Semanales (Email + WhatsApp)</span><input type="checkbox" class="card-check" onclick="event.stopPropagation()"></div>
+          <p class="card-desc" data-i18n="comm_campaigns_desc">Cada semana se envía una campaña combinada por Email y WhatsApp a tu base de datos. Contenido orientado a fidelización, activación de usuarios inactivos y captación de nuevas oportunidades. Envíos consistentes mantienen tu marca presente y generan ventas recurrentes sin esfuerzo manual.</p>
+          <div class="card-includes">
+            <div class="card-includes-title" data-i18n="includes">Incluye:</div>
+            <ul class="card-includes-list">
+              <li data-i18n="comm_campaigns_i1">4 campañas de email al mes</li>
+              <li data-i18n="comm_campaigns_i2">4 envíos de WhatsApp coordinados</li>
+              <li data-i18n="comm_campaigns_i3">Diseño, copy y segmentación</li>
+              <li data-i18n="comm_campaigns_i4">Análisis de resultados y optimización</li>
+            </ul>
+          </div>
+          <div class="card-footer"><div><span class="card-price" data-price-display>450€</span><span class="card-unit" data-i18n="perMonth">/ mes</span></div></div>
         </div>
-        <div class="card" style="--accent:var(--c2);--accent-rgb:123,97,255;" data-price="450" data-svc="p2s4" data-pos="2" onclick="toggleCard(this)">
-          <div class="card-top"><span class="card-title" data-i18n-key="p2s4title"></span><input type="checkbox" class="card-check" onclick="event.stopPropagation()"></div>
-          <p class="card-desc" data-i18n-key="p2s4desc"></p>
-          <div class="card-footer"><div><span class="card-price">450€</span><span class="card-unit" data-i18n-key="perMonth"></span></div></div>
-        </div>
-        <div class="card" style="--accent:var(--c2);--accent-rgb:123,97,255;" data-price="300" data-svc="p2s5" data-pos="2" onclick="toggleCard(this)">
-          <div class="card-top"><span class="card-title" data-i18n-key="p2s5title"></span><input type="checkbox" class="card-check" onclick="event.stopPropagation()"></div>
-          <p class="card-desc" data-i18n-key="p2s5desc"></p>
-          <div class="card-footer"><div><span class="card-price">300€</span><span class="card-unit" data-i18n-key="perCampaign"></span></div></div>
-        </div>
+
       </div>
     </div>
 
-    <!-- POS 03 -->
+    <!-- SECTION 3: DESIGN & WEB -->
     <div class="pos-section" data-pos="3">
       <div class="pos-header">
         <div class="pos-dot" style="color:var(--c3);background:var(--c3);"></div>
         <div>
-          <div class="pos-number" data-i18n="pos" data-pos-n="03"></div>
-          <div class="pos-name" data-i18n-key="p3name"></div>
+          <div class="pos-number" data-i18n="pos3">03 — Diseño y Web</div>
+          <div class="pos-name" data-i18n="p3name">Todo lo visual que necesitas</div>
         </div>
-        <div class="pos-desc" data-i18n-key="p3desc"></div>
+        <div class="pos-desc" data-i18n="p3desc">Gráficos profesionales y web siempre actualizada</div>
       </div>
       <div class="service-grid">
-        <div class="card" style="--accent:var(--c3);--accent-rgb:0,207,255;" data-price="300" data-svc="p3s1" data-pos="3" onclick="toggleCard(this)">
-          <div class="card-top"><span class="card-title" data-i18n-key="p3s1title"></span><input type="checkbox" class="card-check" onclick="event.stopPropagation()"></div>
-          <p class="card-desc" data-i18n-key="p3s1desc"></p>
-          <div class="card-footer"><div><span class="card-price">300€</span><span class="card-unit" data-i18n-key="perMonth"></span></div><span class="card-badge" data-i18n-key="base"></span></div>
+
+        <!-- Graphic Design -->
+        <div class="card" style="--accent:var(--c3);--accent-rgb:0,207,255;" data-pos="3" data-svc="design_graphics" data-base-price="420" onclick="toggleCard(this)">
+          <div class="card-top"><span class="card-title" data-i18n="design_graphics_title">Diseño Gráfico de Contenidos</span><input type="checkbox" class="card-check" onclick="event.stopPropagation()"></div>
+          <p class="card-desc" data-i18n="design_graphics_desc">Todas las piezas gráficas que necesitas para redes, campañas, emails y materiales promocionales. Diseño coherente con tu marca, optimizado para cada plataforma. Sin un diseñador dedicado, tu contenido se ve improvisado y pierde credibilidad frente a la competencia.</p>
+          <div class="card-includes">
+            <div class="card-includes-title" data-i18n="includes">Incluye:</div>
+            <ul class="card-includes-list">
+              <li data-i18n="design_graphics_i1">Diseño para posts y stories</li>
+              <li data-i18n="design_graphics_i2">Gráficos para campañas de email</li>
+              <li data-i18n="design_graphics_i3">Piezas promocionales (banners, flyers digitales)</li>
+              <li data-i18n="design_graphics_i4">Adaptación a distintos formatos</li>
+            </ul>
+          </div>
+          <div class="card-footer"><div><span class="card-price" data-price-display>420€</span><span class="card-unit" data-i18n="perMonth">/ mes</span></div></div>
         </div>
-        <div class="card" style="--accent:var(--c3);--accent-rgb:0,207,255;" data-price="250" data-svc="p3s2" data-pos="3" onclick="toggleCard(this)">
-          <div class="card-top"><span class="card-title" data-i18n-key="p3s2title"></span><input type="checkbox" class="card-check" onclick="event.stopPropagation()"></div>
-          <p class="card-desc" data-i18n-key="p3s2desc"></p>
-          <div class="card-footer"><div><span class="card-price">250€</span><span class="card-unit" data-i18n-key="perMonth"></span></div></div>
+
+        <!-- Web Adjustments -->
+        <div class="card" style="--accent:var(--c3);--accent-rgb:0,207,255;" data-pos="3" data-svc="design_web" data-base-price="280" onclick="toggleCard(this)">
+          <div class="card-top"><span class="card-title" data-i18n="design_web_title">Ajustes y Modificaciones Web</span><input type="checkbox" class="card-check" onclick="event.stopPropagation()"></div>
+          <p class="card-desc" data-i18n="design_web_desc">Modificaciones técnicas en tu web cuando sea necesario: actualización de textos, cambios en formularios, ajustes de diseño, optimización de velocidad y mejoras en la conversión. Una web desactualizada hace que pierdas clientes antes de que te contacten.</p>
+          <div class="card-includes">
+            <div class="card-includes-title" data-i18n="includes">Incluye:</div>
+            <ul class="card-includes-list">
+              <li data-i18n="design_web_i1">Actualizaciones de contenido</li>
+              <li data-i18n="design_web_i2">Ajustes de diseño y layout</li>
+              <li data-i18n="design_web_i3">Optimización de rendimiento</li>
+              <li data-i18n="design_web_i4">Revisiones técnicas mensuales</li>
+            </ul>
+          </div>
+          <div class="card-footer"><div><span class="card-price" data-price-display>280€</span><span class="card-unit" data-i18n="perMonth">/ mes</span></div></div>
         </div>
-        <div class="card" style="--accent:var(--c3);--accent-rgb:0,207,255;" data-price="350" data-svc="p3s3" data-pos="3" onclick="toggleCard(this)">
-          <div class="card-top"><span class="card-title" data-i18n-key="p3s3title"></span><input type="checkbox" class="card-check" onclick="event.stopPropagation()"></div>
-          <p class="card-desc" data-i18n-key="p3s3desc"></p>
-          <div class="card-footer"><div><span class="card-price">350€</span><span class="card-unit" data-i18n-key="perMonth"></span></div></div>
-        </div>
-        <div class="card" style="--accent:var(--c3);--accent-rgb:0,207,255;" data-price="400" data-svc="p3s4" data-pos="3" onclick="toggleCard(this)">
-          <div class="card-top"><span class="card-title" data-i18n-key="p3s4title"></span><input type="checkbox" class="card-check" onclick="event.stopPropagation()"></div>
-          <p class="card-desc" data-i18n-key="p3s4desc"></p>
-          <div class="card-footer"><div><span class="card-price">400€</span><span class="card-unit" data-i18n-key="perMonth"></span></div><span class="card-badge" data-i18n-key="pro"></span></div>
-        </div>
+
       </div>
     </div>
 
-    <!-- POS 04 -->
+    <!-- SECTION 4: PRODUCTION -->
     <div class="pos-section" data-pos="4">
       <div class="pos-header">
         <div class="pos-dot" style="color:var(--c4);background:var(--c4);"></div>
         <div>
-          <div class="pos-number" data-i18n="pos" data-pos-n="04"></div>
-          <div class="pos-name" data-i18n-key="p4name"></div>
+          <div class="pos-number" data-i18n="pos4">04 — Producción</div>
+          <div class="pos-name" data-i18n="p4name">De la idea al contenido listo para publicar</div>
         </div>
-        <div class="pos-desc" data-i18n-key="p4desc"></div>
+        <div class="pos-desc" data-i18n="p4desc">Scripts, coordinación y organización total de grabaciones</div>
       </div>
       <div class="service-grid">
-        <div class="card" style="--accent:var(--c4);--accent-rgb:255,107,53;" data-price="350" data-svc="p4s1" data-pos="4" onclick="toggleCard(this)">
-          <div class="card-top"><span class="card-title" data-i18n-key="p4s1title"></span><input type="checkbox" class="card-check" onclick="event.stopPropagation()"></div>
-          <p class="card-desc" data-i18n-key="p4s1desc"></p>
-          <div class="card-footer"><div><span class="card-price">350€</span><span class="card-unit" data-i18n-key="perMonth"></span></div><span class="card-badge" data-i18n-key="base"></span></div>
+
+        <!-- Production Org -->
+        <div class="card" style="--accent:var(--c4);--accent-rgb:255,107,53;" data-pos="4" data-svc="prod_org" data-base-price="380" onclick="toggleCard(this)">
+          <div class="card-top"><span class="card-title" data-i18n="prod_org_title">Organización de Producción de Contenido</span><input type="checkbox" class="card-check" onclick="event.stopPropagation()"></div>
+          <p class="card-desc" data-i18n="prod_org_desc">Coordinación completa de tus jornadas de grabación: planificación de fechas, briefing de contenidos a grabar, orden de ejecución y checklist de materiales necesarios. Sin organización previa, las grabaciones se alargan, se pierden tomas importantes y el material final no es aprovechable.</p>
+          <div class="card-includes">
+            <div class="card-includes-title" data-i18n="includes">Incluye:</div>
+            <ul class="card-includes-list">
+              <li data-i18n="prod_org_i1">Calendario mensual de grabaciones</li>
+              <li data-i18n="prod_org_i2">Briefing detallado de cada sesión</li>
+              <li data-i18n="prod_org_i3">Checklist de materiales y equipo</li>
+              <li data-i18n="prod_org_i4">Coordinación con equipo de grabación</li>
+            </ul>
+          </div>
+          <div class="card-footer"><div><span class="card-price" data-price-display>380€</span><span class="card-unit" data-i18n="perMonth">/ mes</span></div></div>
         </div>
-        <div class="card" style="--accent:var(--c4);--accent-rgb:255,107,53;" data-price="500" data-svc="p4s2" data-pos="4" onclick="toggleCard(this)">
-          <div class="card-top"><span class="card-title" data-i18n-key="p4s2title"></span><input type="checkbox" class="card-check" onclick="event.stopPropagation()"></div>
-          <p class="card-desc" data-i18n-key="p4s2desc"></p>
-          <div class="card-footer"><div><span class="card-price">500€</span><span class="card-unit" data-i18n-key="perMonth"></span></div></div>
+
+        <!-- Scripts -->
+        <div class="card" style="--accent:var(--c4);--accent-rgb:255,107,53;" data-pos="4" data-svc="prod_scripts" data-base-price="420" onclick="toggleCard(this)">
+          <div class="card-top"><span class="card-title" data-i18n="prod_scripts_title">Desarrollo de Scripts para Grabaciones</span><input type="checkbox" class="card-check" onclick="event.stopPropagation()"></div>
+          <p class="card-desc" data-i18n="prod_scripts_desc">Cada vídeo que grabes tiene un guion estructurado con narrativa clara, gancho inicial, desarrollo de contenido y llamada a la acción. Los scripts aseguran coherencia de marca, optimización para retención y eficiencia en grabación. Sin guion, los vídeos son improvisados, largos y sin dirección estratégica.</p>
+          <div class="card-includes">
+            <div class="card-includes-title" data-i18n="includes">Incluye:</div>
+            <ul class="card-includes-list">
+              <li data-i18n="prod_scripts_i1">Scripts completos con estructura narrativa</li>
+              <li data-i18n="prod_scripts_i2">Ganchos optimizados para retención</li>
+              <li data-i18n="prod_scripts_i3">CTAs estratégicos por objetivo</li>
+              <li data-i18n="prod_scripts_i4">Adaptación al tono de tu marca</li>
+            </ul>
+          </div>
+          <div class="card-footer"><div><span class="card-price" data-price-display>420€</span><span class="card-unit" data-i18n="perMonth">/ mes</span></div></div>
         </div>
-        <div class="card" style="--accent:var(--c4);--accent-rgb:255,107,53;" data-price="450" data-svc="p4s3" data-pos="4" onclick="toggleCard(this)">
-          <div class="card-top"><span class="card-title" data-i18n-key="p4s3title"></span><input type="checkbox" class="card-check" onclick="event.stopPropagation()"></div>
-          <p class="card-desc" data-i18n-key="p4s3desc"></p>
-          <div class="card-footer"><div><span class="card-price">450€</span><span class="card-unit" data-i18n-key="perMonth"></span></div></div>
-        </div>
-        <div class="card" style="--accent:var(--c4);--accent-rgb:255,107,53;" data-price="700" data-svc="p4s4" data-pos="4" onclick="toggleCard(this)">
-          <div class="card-top"><span class="card-title" data-i18n-key="p4s4title"></span><input type="checkbox" class="card-check" onclick="event.stopPropagation()"></div>
-          <p class="card-desc" data-i18n-key="p4s4desc"></p>
-          <div class="card-footer"><div><span class="card-price">700€</span><span class="card-unit" data-i18n-key="perMonth"></span></div><span class="card-badge" data-i18n-key="pro"></span></div>
-        </div>
-        <div class="card" style="--accent:var(--c4);--accent-rgb:255,107,53;" data-price="950" data-svc="p4s5" data-pos="4" onclick="toggleCard(this)">
-          <div class="card-top"><span class="card-title" data-i18n-key="p4s5title"></span><input type="checkbox" class="card-check" onclick="event.stopPropagation()"></div>
-          <p class="card-desc" data-i18n-key="p4s5desc"></p>
-          <div class="card-footer"><div><span class="card-price">950€</span><span class="card-unit" data-i18n-key="perMonth"></span></div><span class="card-badge" data-i18n-key="full"></span></div>
-        </div>
-        <div class="card" style="--accent:var(--c4);--accent-rgb:255,107,53;" data-price="600" data-svc="p4s6" data-pos="4" onclick="toggleCard(this)">
-          <div class="card-top"><span class="card-title" data-i18n-key="p4s6title"></span><input type="checkbox" class="card-check" onclick="event.stopPropagation()"></div>
-          <p class="card-desc" data-i18n-key="p4s6desc"></p>
-          <div class="card-footer"><div><span class="card-price">600€</span><span class="card-unit" data-i18n-key="perMonth"></span></div></div>
-        </div>
+
       </div>
     </div>
 
-    <!-- POS 05 -->
+    <!-- SECTION 5: ANALYTICS & PERFORMANCE -->
     <div class="pos-section" data-pos="5">
       <div class="pos-header">
         <div class="pos-dot" style="color:var(--c5);background:var(--c5);"></div>
         <div>
-          <div class="pos-number" data-i18n="pos" data-pos-n="05"></div>
-          <div class="pos-name" data-i18n-key="p5name"></div>
+          <div class="pos-number" data-i18n="pos5">05 — Analítica y Performance</div>
+          <div class="pos-name" data-i18n="p5name">Decisiones basadas en datos, no en intuición</div>
         </div>
-        <div class="pos-desc" data-i18n-key="p5desc"></div>
+        <div class="pos-desc" data-i18n="p5desc">Métricas, optimización de ads y mejora continua</div>
       </div>
       <div class="service-grid">
-        <div class="card" style="--accent:var(--c5);--accent-rgb:255,204,0;" data-price="400" data-svc="p5s1" data-pos="5" onclick="toggleCard(this)">
-          <div class="card-top"><span class="card-title" data-i18n-key="p5s1title"></span><input type="checkbox" class="card-check" onclick="event.stopPropagation()"></div>
-          <p class="card-desc" data-i18n-key="p5s1desc"></p>
-          <div class="card-footer"><div><span class="card-price">400€</span><span class="card-unit" data-i18n-key="perMonth"></span></div><span class="card-badge" data-i18n-key="base"></span></div>
+
+        <!-- App Analytics -->
+        <div class="card" style="--accent:var(--c5);--accent-rgb:255,204,0;" data-pos="5" data-svc="perf_analytics" data-base-price="350" onclick="toggleCard(this)">
+          <div class="card-top"><span class="card-title" data-i18n="perf_analytics_title">Análisis de Métricas de la App</span><input type="checkbox" class="card-check" onclick="event.stopPropagation()"></div>
+          <p class="card-desc" data-i18n="perf_analytics_desc">Revisión mensual de todas las métricas clave de tu aplicación: usuarios activos, conversiones, retención, puntos de fuga y comportamiento de usuario. Se comparan versiones antiguas vs. nuevas para detectar mejoras o problemas. Sin análisis continuo, no sabes qué está funcionando ni dónde estás perdiendo dinero.</p>
+          <div class="card-includes">
+            <div class="card-includes-title" data-i18n="includes">Incluye:</div>
+            <ul class="card-includes-list">
+              <li data-i18n="perf_analytics_i1">Reporte mensual de métricas clave</li>
+              <li data-i18n="perf_analytics_i2">Comparativa de versiones de la app</li>
+              <li data-i18n="perf_analytics_i3">Identificación de puntos de fuga</li>
+              <li data-i18n="perf_analytics_i4">Recomendaciones accionables de mejora</li>
+            </ul>
+          </div>
+          <div class="card-footer"><div><span class="card-price" data-price-display>350€</span><span class="card-unit" data-i18n="perMonth">/ mes</span></div></div>
         </div>
-        <div class="card" style="--accent:var(--c5);--accent-rgb:255,204,0;" data-price="350" data-svc="p5s2" data-pos="5" onclick="toggleCard(this)">
-          <div class="card-top"><span class="card-title" data-i18n-key="p5s2title"></span><input type="checkbox" class="card-check" onclick="event.stopPropagation()"></div>
-          <p class="card-desc" data-i18n-key="p5s2desc"></p>
-          <div class="card-footer"><div><span class="card-price">350€</span><span class="card-unit" data-i18n-key="perMonth"></span></div></div>
+
+        <!-- Paid Ads -->
+        <div class="card" style="--accent:var(--c5);--accent-rgb:255,204,0;" data-pos="5" data-svc="perf_ads" data-base-price="480" onclick="toggleCard(this)">
+          <div class="card-top"><span class="card-title" data-i18n="perf_ads_title">Gestión y Optimización de Ads Pagos</span><input type="checkbox" class="card-check" onclick="event.stopPropagation()"></div>
+          <p class="card-desc" data-i18n="perf_ads_desc">Gestión completa de campañas de publicidad de pago en Meta (Facebook/Instagram) y Google Ads: configuración, segmentación, creación de anuncios, optimización diaria y análisis de ROI. El presupuesto publicitario que inviertes va aparte. Este honorario cubre solo la gestión estratégica y técnica para que cada euro invertido genere el máximo retorno posible.</p>
+          <div class="card-includes">
+            <div class="card-includes-title" data-i18n="includes">Incluye:</div>
+            <ul class="card-includes-list">
+              <li data-i18n="perf_ads_i1">Configuración de campañas en Meta y Google</li>
+              <li data-i18n="perf_ads_i2">Segmentación de audiencias</li>
+              <li data-i18n="perf_ads_i3">Creación de anuncios y copies</li>
+              <li data-i18n="perf_ads_i4">Optimización diaria y análisis de ROI</li>
+            </ul>
+          </div>
+          <div class="card-footer"><div><span class="card-price" data-price-display>480€</span><span class="card-unit" data-i18n="perMonth">/ mes</span></div></div>
         </div>
-        <div class="card" style="--accent:var(--c5);--accent-rgb:255,204,0;" data-price="300" data-svc="p5s3" data-pos="5" onclick="toggleCard(this)">
-          <div class="card-top"><span class="card-title" data-i18n-key="p5s3title"></span><input type="checkbox" class="card-check" onclick="event.stopPropagation()"></div>
-          <p class="card-desc" data-i18n-key="p5s3desc"></p>
-          <div class="card-footer"><div><span class="card-price">300€</span><span class="card-unit" data-i18n-key="perMonth"></span></div></div>
-        </div>
-        <div class="card" style="--accent:var(--c5);--accent-rgb:255,204,0;" data-price="350" data-svc="p5s4" data-pos="5" onclick="toggleCard(this)">
-          <div class="card-top"><span class="card-title" data-i18n-key="p5s4title"></span><input type="checkbox" class="card-check" onclick="event.stopPropagation()"></div>
-          <p class="card-desc" data-i18n-key="p5s4desc"></p>
-          <div class="card-footer"><div><span class="card-price">350€</span><span class="card-unit" data-i18n-key="perMonth"></span></div></div>
-        </div>
-        <div class="card" style="--accent:var(--c5);--accent-rgb:255,204,0;" data-price="500" data-svc="p5s5" data-pos="5" onclick="toggleCard(this)">
-          <div class="card-top"><span class="card-title" data-i18n-key="p5s5title"></span><input type="checkbox" class="card-check" onclick="event.stopPropagation()"></div>
-          <p class="card-desc" data-i18n-key="p5s5desc"></p>
-          <div class="card-footer"><div><span class="card-price">500€</span><span class="card-unit" data-i18n-key="perMonth"></span></div><span class="card-badge" data-i18n-key="pro"></span></div>
-        </div>
+
       </div>
     </div>
 
@@ -394,29 +530,30 @@
     <!-- BREAKDOWN -->
     <div class="breakdown">
       <div class="breakdown-header">
-        <h2 data-i18n-key="breakdownTitle"></h2>
-        <p data-i18n-key="breakdownSub"></p>
+        <h2 data-i18n="breakdownTitle">Resumen del Presupuesto Mensual</h2>
+        <p data-i18n="breakdownSub">Inversión total en marketing, comunicación y gestión digital</p>
       </div>
       <div class="breakdown-card">
         <div class="breakdown-list" id="breakdownList">
-          <p class="breakdown-empty" id="breakdownEmpty" data-i18n-key="empty"></p>
+          <p class="breakdown-empty" id="breakdownEmpty" data-i18n="empty">Selecciona los servicios que necesitas arriba para construir tu presupuesto.</p>
         </div>
         <div class="breakdown-totals">
-          <div class="bt-row"><span class="bt-label" data-i18n-key="subtotal"></span><span class="bt-val" id="subtotal" data-raw="0">0,00€</span></div>
-          <div class="bt-row"><span class="bt-label" id="vatLabel" data-i18n-key="vat"></span><span class="bt-val" id="vatAmount" data-raw="0">0,00€</span></div>
+          <div class="bt-row"><span class="bt-label" data-i18n="subtotal">Subtotal</span><span class="bt-val" id="subtotal" data-raw="0">0,00€</span></div>
+          <div class="bt-row discount" id="discountRow" style="display:none;"><span class="bt-label" data-i18n="discount">Descuento aplicado</span><span class="bt-val" id="discountAmount" data-raw="0">0,00€</span></div>
+          <div class="bt-row"><span class="bt-label" id="vatLabel" data-i18n="vat">IVA (21%)</span><span class="bt-val" id="vatAmount" data-raw="0">0,00€</span></div>
           <div class="bt-sep"></div>
-          <div class="bt-row final"><span class="bt-label" data-i18n-key="totalVat"></span><span class="bt-val" id="finalTotal" data-raw="0">0,00€</span></div>
+          <div class="bt-row final"><span class="bt-label" data-i18n="totalVat">Inversión Total Mensual</span><span class="bt-val" id="finalTotal" data-raw="0">0,00€</span></div>
         </div>
       </div>
       <div class="actions">
-        <button class="btn btn-primary" onclick="generatePDF()" data-i18n-key="btnPdf"></button>
-        <button class="btn btn-outline" onclick="sendByEmail()" data-i18n-key="btnEmail"></button>
-        <button class="btn btn-reset" onclick="resetAll()" data-i18n-key="btnReset"></button>
+        <button class="btn btn-primary" onclick="generatePDF()" data-i18n="btnPdf">Descargar Presupuesto PDF</button>
+        <button class="btn btn-outline" onclick="sendByEmail()" data-i18n="btnEmail">Enviar por Email</button>
+        <button class="btn btn-reset" onclick="resetAll()" data-i18n="btnReset">Limpiar Selección</button>
       </div>
     </div>
 
     <div class="footer-line">
-      <p><strong>HYBRYD</strong> <span data-i18n-key="footerTag"></span></p>
+      <p><strong>HYBRYD</strong> <span data-i18n="footerTag">Tu equipo de marketing completo sin contratar a nadie.</span></p>
     </div>
 
   </div>
@@ -429,7 +566,7 @@
       <div class="summary-counts" id="summaryCounts"></div>
       <div class="summary-sep"></div>
       <div class="summary-total-wrap">
-        <span class="summary-total-label" data-i18n-key="pillLabel"></span>
+        <span class="summary-total-label" data-i18n="pillLabel">Inversión Mensual</span>
         <span class="summary-total-num" id="pillTotal">0,00€</span>
       </div>
     </div>
@@ -439,410 +576,51 @@
 <div class="toast" id="toast"></div>
 
 <script>
-// ─────────────────────────────────────────────────
-// TRANSLATIONS
-// ─────────────────────────────────────────────────
+// TRANSLATIONS (abbreviated)
 const T = {
   es: {
-    eyebrow: "Configuración de Servicios por Posición",
-    title: "Construye tu Presupuesto de Operaciones",
-    subtitle: "Cada casilla que marcas representa una tarea real que alguien ejecuta por ti todos los meses. Lee cada descripción, evalúa lo que necesitas y construye el presupuesto que refleja exactamente tu operación.",
-    dialRef: "Referencia:",
-    fullStack: "Full Stack",
-    pos: "Posición",
-    perMonth: "/ mes",
-    perCampaign: "/ campaña",
-    base: "Base", pro: "Pro", full: "Full",
-    breakdownTitle: "Resumen del Presupuesto",
-    breakdownSub: "Aquí se refleja exactamente en qué estás invirtiendo y cuánto representa cada euro del presupuesto total.",
-    empty: "Selecciona servicios arriba para construir tu presupuesto.",
-    subtotal: "Subtotal",
-    vat: "IVA (21%)",
-    totalVat: "Total con IVA",
-    btnPdf: "Generar Presupuesto PDF",
-    btnEmail: "Enviar por Email",
-    btnReset: "Limpiar",
-    pillLabel: "Total + IVA",
-    footerTag: "is built on structure. Now choose yours.",
-    toastSuggested: "Selección sugerida: ~{amt} / mes (sin IVA)",
-    toastReset: "Selección limpiada.",
-    toastPdf: "Presupuesto listo — Imprimir > Guardar como PDF.",
-    toastEmail: "Cliente de email abierto con la selección.",
-    toastEmpty: "Selecciona al menos un servicio.",
-    pdfTitle: "Propuesta de Servicios — Presupuesto Personalizado",
-    pdfDate: "Fecha",
-    emailSubject: "HYBRYD — Propuesta de Servicios",
-    emailHeader: "HYBRYD — Propuesta de Servicios",
-
-    p1name: "Community Management",
-    p1desc: "Todo lo que ocurre en tus redes después de publicar: quién responde, cómo se responde y qué imagen proyectas en cada interacción diaria.",
-    p1s1title: "Gestión de Contenido y Calendario",
-    p1s1desc: "Cada mes se define qué se publica, cuándo y con qué objetivo. Se crea un calendario editorial estructurado por semanas con los temas, formatos y fechas clave marcadas. Si no existe este sistema, el contenido se publica de forma reactiva y sin coherencia estratégica — lo que hace que la cuenta parezca inconsistente y sin dirección clara.",
-    p1s2title: "Gestión de DMs y Comentarios",
-    p1s2desc: "Alguien responde por ti, todos los días. Los mensajes directos se gestionan con protocolo, los comentarios se moderan para eliminar ruido y los leads reales se identifican y separan para seguimiento. Incluye mantenimiento activo del tono de marca en cada interacción. Sin esto, tu comunidad percibe que no hay nadie detrás de la cuenta — y los clientes potenciales se van en silencio.",
-    p1s3title: "Monitoreo y Escucha Social",
-    p1s3desc: "Se monitorizan en tiempo real las menciones de tu marca, los movimientos de tu competencia directa y cualquier conversación relevante en tu sector. Recibes alertas ante situaciones de riesgo reputacional y un reporte semanal que refleja cómo está siendo percibido tu contenido. Te permite reaccionar a tiempo en lugar de enterarte tarde de lo que se dice de ti.",
-    p1s4title: "Community Management Avanzado (Full)",
-    p1s4desc: "La gestión completa de tu presencia en redes: planificación editorial, respuesta de mensajes, moderación de comentarios, monitoreo de marca y reportes semanales, todo incluido. Presencia activa 6 días a la semana. Es la opción para quien quiere delegar por completo esta posición sin preocuparse de ningún detalle operativo.",
-
-    p2name: "Diseño Gráfico",
-    p2desc: "Lo que se ve determina si la gente para a leer. Aquí se decide el volumen, el formato y la calidad visual de todo lo que publicas cada mes.",
-    p2s1title: "Pack Carruseles (8 / mes)",
-    p2s1desc: "8 carruseles al mes diseñados para posicionarte como referente en tu sector. Cada pieza tiene estructura narrativa propia: portada de impacto, desarrollo de contenido real y cierre con llamada a la acción. Son el formato que más guarda, comparte y genera seguidores cualificados en Instagram. Si no los tienes, tu perfil solo acumula views — sin convertir.",
-    p2s2title: "Pack Carruseles (12 / mes)",
-    p2s2desc: "12 carruseles al mes para quienes necesitan mayor frecuencia de publicación y quieren saturar su nicho con contenido de valor constante. A este volumen, el algoritmo te premia, tu audiencia te asocia directamente con tu área de expertise y la curva de crecimiento orgánico se acelera de forma visible. Recomendado si estás en una fase activa de crecimiento o lanzamiento.",
-    p2s3title: "Sistema de Stories (Templates diarias)",
-    p2s3desc: "Las stories son el canal más directo con tu audiencia diaria y el primero que ven cuando abren la app. Se crea un sistema de plantillas editables con diferentes formatos: encuestas, preguntas, contenido de valor, detrás de cámaras y llamadas a la acción. Incluye guía mensual de uso para que cualquier persona del equipo pueda publicarlas correctamente sin romper la estética de marca.",
-    p2s4title: "Edición de Reels (4 / mes)",
-    p2s4desc: "4 reels editados por mes con tratamiento profesional completo: corrección de color, subtítulos animados sincronizados, selección musical estratégica y ritmo de edición adaptado al formato corto. Los reels son el principal motor de alcance orgánico en Instagram y TikTok. Con este servicio tu contenido de vídeo deja de parecer improvisado y empieza a competir visualmente con cuentas de mucho mayor tamaño.",
-    p2s5title: "Piezas de Campaña y Eventos",
-    p2s5desc: "Cuando tienes un evento, un lanzamiento o una campaña especial, necesitas piezas visuales que comuniquen urgencia, exclusividad y coherencia de marca. Se diseñan hasta 10 artes adaptadas a distintos formatos (feed, stories, portada, banner) con lenguaje visual unificado. Evita el error habitual de publicar campañas con diseños improvisados que restan credibilidad al producto.",
-
-    p3name: "Gestión de Base de Datos",
-    p3desc: "El orden interno que nadie ve pero que hace que todo funcione: archivos, listas de contactos, métricas y datos estructurados para tomar decisiones.",
-    p3s1title: "Gestión Drive y Activos Digitales",
-    p3s1desc: "Si tienes carpetas en Drive con nombres como \"final\", \"final2\" o \"definitivo_v3\", este servicio es para ti. Se organiza toda la estructura de archivos digitales — contenido, artes, vídeos, documentos — con un sistema de nomenclatura claro, carpetas bien jerarquizadas y permisos de acceso correctamente configurados. El equipo deja de perder tiempo buscando archivos y empieza a trabajar con orden real.",
-    p3s2title: "Sistema de Archivo de Contenido",
-    p3s2desc: "Todo el contenido que se produce queda archivado con su versión, fecha, canal y métrica de rendimiento asociada. Esto permite saber qué funciona, reutilizar piezas de alto impacto y tener un historial completo del trabajo realizado. Sin este sistema, el contenido se produce, se publica y desaparece — sin aprendizaje acumulado ni posibilidad de escalar lo que ya funciona.",
-    p3s3title: "Base de Datos de Contactos y Leads",
-    p3s3desc: "Una base de datos sucia es dinero perdido. Este servicio incluye la limpieza periódica de contactos duplicados o inactivos, la segmentación por perfiles de interés o etapa del embudo, y la preparación de listas limpias listas para usar en cada campaña. La calidad de tus resultados en email marketing y publicidad de pago depende directamente de cuán bien esté segmentada tu base de datos.",
-    p3s4title: "Reportes y Dashboards de Rendimiento",
-    p3s4desc: "Se crean dashboards visuales que consolidan en un solo lugar todas las métricas relevantes: alcance, engagement, apertura de emails, conversiones, crecimiento de seguidores y estado de los objetivos del mes. Sin esto, cada reunión empieza buscando números en sitios distintos. Con esto, la toma de decisiones se basa en datos reales actualizados — no en intuición.",
-
-    p4name: "Email Marketing & Estrategia",
-    p4desc: "Desde enviar emails a tu lista hasta tener a alguien que piensa y dirige toda la estrategia de marketing de tu negocio. Elige el nivel que necesitas.",
-    p4s1title: "Email Marketing Mensual (4 campañas)",
-    p4s1desc: "El email sigue siendo el canal con mayor retorno de inversión de todos los canales digitales. Se gestionan 4 envíos mensuales completos: redacción del copy, diseño de la plantilla, segmentación de la lista y análisis de apertura y clics post-envío. Si ya tienes una lista pero no la estás usando de forma consistente, estás dejando caducar uno de tus activos más valiosos.",
-    p4s2title: "Automatizaciones y Secuencias de Email",
-    p4s2desc: "Las automatizaciones trabajan mientras tú duermes. Se diseñan e implementan flujos que se activan automáticamente según el comportamiento del usuario: secuencia de bienvenida para nuevos suscriptores, flujo de nutrición para leads fríos, recuperación de contactos inactivos y seguimiento post-evento o post-lanzamiento. Una vez configurados, estos flujos generan ventas y retención de forma continua sin intervención manual.",
-    p4s3title: "Redacción de Scripts y Copys",
-    p4s3desc: "Todo lo que David o Xavi comunican en cámara o por escrito tiene que sonar auténtico, claro y con intención de venta. Se redactan los scripts de los vídeos con estructura narrativa, los copys de los anuncios para Meta y Google, y los textos de landing pages o secuencias de venta. La voz siempre está adaptada al tono de marca — no suena a texto genérico ni a promoción agresiva.",
-    p4s4title: "Dirección Estratégica (Monthly)",
-    p4s4desc: "Una persona con visión estratégica que supervisa que todo lo que se produce y publica esté alineado con el posicionamiento de la marca y los objetivos del mes. Incluye la definición de la narrativa mensual, revisión del rendimiento y dos sesiones de alineación. Ideal si ya tienes equipo operativo pero necesitas alguien que garantice coherencia y dirección en todo lo que sale al mercado.",
-    p4s5title: "CMO Fraccionado (Marketing Completo)",
-    p4s5desc: "HYBRYD actúa como tu Director de Marketing externo. Se gestiona la estrategia global, la coordinación de todos los servicios activos, las decisiones de posicionamiento y la supervisión de resultados — todo ello sin que necesites contratar un CMO interno. Pagas la capacidad de un departamento completo por una fracción del coste. Es la opción para quien quiere escalar de forma seria sin inflar la estructura.",
-    p4s6title: "Paid Ads (Meta / Google)",
-    p4s6desc: "Se configuran y gestionan las campañas de publicidad de pago en Meta (Facebook e Instagram) y Google Ads: estructura de campaña, definición de públicos, redacción de copies y optimización continua según rendimiento. El presupuesto publicitario que inviertes directamente en las plataformas va aparte y es tuyo. Este honorario cubre exclusivamente la estrategia, configuración y gestión profesional de ese presupuesto.",
-
-    p5name: "Customer Service Support",
-    p5desc: "Quien cuida a tus clientes después de que compran y quien mantiene al equipo coordinado día a día. La posición que sostiene todo lo demás.",
-    p5s1title: "Atención al Cliente (Mensajes y Consultas)",
-    p5s1desc: "Toda persona que contacta con tu marca esperando una respuesta es un cliente potencial o un cliente activo que necesita sentirse atendido. Se gestionan todas las consultas entrantes por email, mensajes directos y WhatsApp con protocolo de respuesta definido y tiempos máximos de 24 horas. Cada interacción sigue el tono y los protocolos de tu marca. Sin esto, los leads se enfrían y los clientes existentes perciben desorden.",
-    p5s2title: "Soporte Operativo Diario (WhatsApp)",
-    p5s2desc: "El punto de contacto directo entre tú y el equipo para que la operación fluya sin cuellos de botella. Coordinación diaria por WhatsApp en días laborables: resolución de dudas en tiempo real, gestión de imprevistos, confirmación de entregas y alineación de prioridades. Elimina los hilos interminables de mensajes sin respuesta y garantiza que nada se quede bloqueado por falta de comunicación.",
-    p5s3title: "Seguimiento Post-Venta y Retención",
-    p5s3desc: "El momento en que alguien compra o se inscribe es solo el principio. Este servicio gestiona el contacto posterior al cierre con una secuencia estructurada: mensaje de bienvenida, confirmación de expectativas, check-in a los 7 días y puntos de contacto programados para garantizar satisfacción y detectar oportunidades de upgrade o referido. Los clientes que se sienten atendidos después de comprar son los que más repiten y más recomiendan.",
-    p5s4title: "Reuniones de Seguimiento Semanales (4/mes)",
-    p5s4desc: "4 reuniones mensuales estructuradas — una por semana — con orden del día definido y actas de seguimiento. En cada sesión se revisan los resultados de la semana anterior, se identifican bloqueos, se toman decisiones basadas en datos y se establecen las prioridades de la próxima semana. Sin esta cadencia, los equipos trabajan sin visibilidad compartida y los problemas se detectan cuando ya es difícil corregirlos.",
-    p5s5title: "Gestión Comunidad Privada (Discord / Grupo)",
-    p5s5desc: "Si tienes un grupo privado de Discord, Telegram o WhatsApp con alumnos o clientes, su valor depende completamente de cuán activa esté la comunidad. Se gestionan la moderación diaria, las interacciones para mantener el nivel de actividad alto, la publicación de contenido exclusivo y la detección de miembros en riesgo de abandono. Una comunidad bien gestionada es tu mayor activo de retención y la fuente más potente de testimonios y referidos orgánicos.",
-
-    posNames: { 1:"Community Mgmt", 2:"Diseño Gráfico", 3:"Base de Datos", 4:"Email / Marketing", 5:"Customer Service" }
+    eyebrow: "Servicio Integral de Marketing y Comunicación",
+    title: "Construye tu Presupuesto Mensual",
+    subtitle: "Cada servicio está diseñado para que te enfoques exclusivamente en el trato personal con tus clientes, mientras nosotros gestionamos toda la operación de marketing, comunicación y crecimiento digital de tu negocio.",
+    valueTitle: "Tu único trabajo: cuidar a tus clientes",
+    valueText: "Nos encargamos de que tu negocio crezca en digital mientras tú te dedicas a lo que mejor haces: construir relaciones reales con cada persona que confía en ti. Marketing, redes, campañas, análisis, producción — todo cubierto.",
+    refTitle: "Referencias de mercado España 2026 (coste mensual de contratar estas posiciones por separado)",
+    refCMLabel:"Community Manager in-house", refDesignLabel:"Diseñador gráfico in-house", refEmailLabel:"Email marketing manager",
+    refAdsLabel:"Paid ads specialist", refProdLabel:"Content producer / coordinator", refAnalystLabel:"Digital analyst",
+    pos1:"01 — Gestión de Contenido y Redes Sociales", p1name:"Tu presencia digital sin que toques nada", p1desc:"Publicación constante, respuestas diarias, comunidad activa",
+    pos2:"02 — Comunicación y Automatización", p2name:"Mensajes que llegan en el momento correcto", p2desc:"Email y WhatsApp trabajando juntos para fidelizar y activar",
+    pos3:"03 — Diseño y Web", p3name:"Todo lo visual que necesitas", p3desc:"Gráficos profesionales y web siempre actualizada",
+    pos4:"04 — Producción", p4name:"De la idea al contenido listo para publicar", p4desc:"Scripts, coordinación y organización total de grabaciones",
+    pos5:"05 — Analítica y Performance", p5name:"Decisiones basadas en datos, no en intuición", p5desc:"Métricas, optimización de ads y mejora continua",
+    perMonth: "/ mes", includes: "Incluye:",
+    breakdownTitle: "Resumen del Presupuesto Mensual", breakdownSub: "Inversión total en marketing, comunicación y gestión digital",
+    empty: "Selecciona los servicios que necesitas arriba para construir tu presupuesto.",
+    subtotal: "Subtotal", discount: "Descuento aplicado", vat: "IVA (21%)", totalVat: "Inversión Total Mensual",
+    btnPdf: "Descargar Presupuesto PDF", btnEmail: "Enviar por Email", btnReset: "Limpiar Selección",
+    pillLabel: "Inversión Mensual", footerTag: "Tu equipo de marketing completo sin contratar a nadie.",
+    toastReset: "Selección limpiada.", toastPdf: "Presupuesto listo — Imprimir > Guardar como PDF.",
+    toastEmail: "Cliente de email abierto.", toastEmpty: "Selecciona al menos un servicio.",
+    social_feed_title:"Publicaciones en Feed (4/mes)", social_stories_title:"Stories Semanales (12/mes)",
+    social_community_title:"Gestión de Comentarios y DMs", social_whatsapp_title:"Gestión de Comunidad en WhatsApp",
+    comm_whatsapp_title:"Gestión Estratégica de WhatsApp", comm_email_title:"Gestión de Email Marketing",
+    comm_campaigns_title:"Campañas Semanales (Email + WhatsApp)",
+    design_graphics_title:"Diseño Gráfico de Contenidos", design_web_title:"Ajustes y Modificaciones Web",
+    prod_org_title:"Organización de Producción de Contenido", prod_scripts_title:"Desarrollo de Scripts para Grabaciones",
+    perf_analytics_title:"Análisis de Métricas de la App", perf_ads_title:"Gestión y Optimización de Ads Pagos",
+    posNames: { 1:"Redes", 2:"Comunicación", 3:"Diseño", 4:"Producción", 5:"Analítica" }
   },
-
-  en: {
-    eyebrow: "Service Configuration by Position",
-    title: "Build Your Custom Operations Budget",
-    subtitle: "Every box you check represents a real task someone executes for you every single month. Read each description carefully, assess what you need, and build a budget that reflects your operation exactly.",
-    dialRef: "Reference:",
-    fullStack: "Full Stack",
-    pos: "Position",
-    perMonth: "/ month",
-    perCampaign: "/ campaign",
-    base: "Base", pro: "Pro", full: "Full",
-    breakdownTitle: "Budget Summary",
-    breakdownSub: "This reflects exactly what you're investing in and what every euro of your total budget represents.",
-    empty: "Select services above to start building your budget.",
-    subtotal: "Subtotal",
-    vat: "VAT (21%)",
-    totalVat: "Total incl. VAT",
-    btnPdf: "Generate Budget PDF",
-    btnEmail: "Send via Email",
-    btnReset: "Clear",
-    pillLabel: "Total + VAT",
-    footerTag: "is built on structure. Now choose yours.",
-    toastSuggested: "Suggested selection: ~{amt} / month (excl. VAT)",
-    toastReset: "Selection cleared.",
-    toastPdf: "Budget ready — Print > Save as PDF.",
-    toastEmail: "Email client opened with your selection.",
-    toastEmpty: "Please select at least one service.",
-    pdfTitle: "Service Proposal — Custom Budget",
-    pdfDate: "Date",
-    emailSubject: "HYBRYD — Service Proposal",
-    emailHeader: "HYBRYD — Service Proposal",
-
-    p1name: "Community Management",
-    p1desc: "Everything that happens on your social channels after you publish: who replies, how they reply, and what image you project in every daily interaction.",
-    p1s1title: "Content & Calendar Management",
-    p1s1desc: "Each month defines what gets published, when, and with what goal. A structured editorial calendar is built by week, with topics, formats, and key dates mapped out. Without this system, content is published reactively with no strategic coherence — making the account appear inconsistent and directionless.",
-    p1s2title: "DM & Comment Management",
-    p1s2desc: "Someone responds on your behalf, every single day. Direct messages are handled with a defined protocol, comments are moderated to remove noise, and real leads are identified and flagged for follow-up. Includes active maintenance of your brand voice in every interaction. Without this, your community perceives no one is behind the account — and potential clients leave in silence.",
-    p1s3title: "Social Listening & Monitoring",
-    p1s3desc: "Real-time tracking of your brand mentions, competitor movements, and relevant conversations in your industry. You receive alerts when reputational risks arise and a weekly sentiment report showing how your content is being perceived. This lets you react in time instead of finding out too late what people are saying about you.",
-    p1s4title: "Advanced Community Management (Full)",
-    p1s4desc: "Complete management of your social presence: editorial planning, message responses, comment moderation, brand monitoring, and weekly reports — all included. Active presence 6 days a week. The option for those who want to fully delegate this position without worrying about a single operational detail.",
-
-    p2name: "Graphic Design",
-    p2desc: "What people see determines whether they stop to read. This is where the volume, format, and visual quality of everything you publish each month is decided.",
-    p2s1title: "Carousel Pack (8 / month)",
-    p2s1desc: "8 carousels per month designed to position you as an authority in your sector. Each piece has its own narrative structure: high-impact cover, real content development, and a closing call to action. This is the format that generates the most saves, shares, and qualified followers on Instagram. Without them, your profile only accumulates views — without converting.",
-    p2s2title: "Carousel Pack (12 / month)",
-    p2s2desc: "12 carousels per month for those who need higher publishing frequency and want to saturate their niche with constant valuable content. At this volume, the algorithm rewards you, your audience directly associates you with your area of expertise, and the organic growth curve accelerates visibly. Recommended if you're in an active growth or launch phase.",
-    p2s3title: "Stories System (Daily Templates)",
-    p2s3desc: "Stories are the most direct channel with your daily audience — the first thing they see when they open the app. A system of editable templates is created in different formats: polls, questions, value content, behind the scenes, and calls to action. Includes a monthly usage guide so anyone on the team can post them correctly without breaking your brand aesthetic.",
-    p2s4title: "Reel Editing (4 / month)",
-    p2s4desc: "4 professionally edited reels per month: color grading, synchronized animated subtitles, strategic music selection, and edit rhythm adapted to short-form content. Reels are the primary driver of organic reach on Instagram and TikTok. With this service, your video content stops looking improvised and starts competing visually with accounts many times your size.",
-    p2s5title: "Campaign & Event Visuals",
-    p2s5desc: "When you have an event, launch, or special campaign, you need visuals that communicate urgency, exclusivity, and brand coherence. Up to 10 pieces adapted to different formats (feed, stories, cover, banner) with a unified visual language. This prevents the common mistake of publishing campaigns with improvised designs that undermine the product's credibility.",
-
-    p3name: "Database Management",
-    p3desc: "The internal order no one sees but that makes everything work: files, contact lists, metrics, and structured data to make real decisions.",
-    p3s1title: "Drive & Digital Asset Management",
-    p3s1desc: "If your Drive has folders named 'final', 'final2', or 'definitive_v3', this service is for you. The entire digital file structure is organized — content, designs, videos, documents — with a clear naming system, properly hierarchized folders, and correctly configured access permissions. The team stops wasting time searching for files and starts working with real order.",
-    p3s2title: "Content Archiving System",
-    p3s2desc: "All produced content is archived with its version, date, channel, and associated performance metric. This makes it possible to know what works, reuse high-impact pieces, and maintain a complete history of work done. Without this system, content is produced, published, and disappears — with no accumulated learning or ability to scale what already works.",
-    p3s3title: "Contact & Lead Database",
-    p3s3desc: "A dirty database is money lost. This service includes periodic cleaning of duplicate or inactive contacts, segmentation by interest profiles or funnel stage, and preparation of clean lists ready to use in each campaign. The quality of your email marketing and paid advertising results depends directly on how well your database is segmented.",
-    p3s4title: "Performance Reports & Dashboards",
-    p3s4desc: "Visual dashboards are built that consolidate all relevant metrics in one place: reach, engagement, email open rates, conversions, follower growth, and monthly objective status. Without this, every meeting starts by searching for numbers in different places. With this, decision-making is based on real, up-to-date data — not intuition.",
-
-    p4name: "Email Marketing & Strategy",
-    p4desc: "From sending emails to your list to having someone who thinks and directs your entire marketing strategy. Choose the level you need.",
-    p4s1title: "Monthly Email Marketing (4 campaigns)",
-    p4s1desc: "Email remains the channel with the highest return on investment across all digital channels. 4 complete monthly sends are managed: copy writing, template design, list segmentation, and post-send open and click analysis. If you already have a list but aren't using it consistently, you're letting one of your most valuable assets expire.",
-    p4s2title: "Email Automations & Sequences",
-    p4s2desc: "Automations work while you sleep. Flows are designed and implemented that trigger automatically based on user behavior: welcome sequence for new subscribers, nurturing flow for cold leads, recovery of inactive contacts, and post-event or post-launch follow-up. Once configured, these flows generate sales and retention continuously without manual intervention.",
-    p4s3title: "Script & Copy Writing",
-    p4s3desc: "Everything David or Xavi communicate on camera or in writing needs to sound authentic, clear, and with sales intent. Video scripts are written with a narrative structure, ad copies for Meta and Google, and landing page texts or sales sequences. The voice is always adapted to the brand tone — it doesn't sound generic or aggressively promotional.",
-    p4s4title: "Monthly Strategic Direction",
-    p4s4desc: "A person with strategic vision who ensures everything produced and published is aligned with brand positioning and monthly objectives. Includes definition of the monthly narrative, performance review, and two alignment sessions. Ideal if you already have an operational team but need someone to guarantee coherence and direction in everything that goes to market.",
-    p4s5title: "Fractional CMO (Full Marketing)",
-    p4s5desc: "HYBRYD acts as your external Marketing Director. Global strategy, coordination of all active services, positioning decisions, and results oversight — all managed without needing to hire an internal CMO. You pay for the capacity of a full department at a fraction of the cost. The option for those who want to scale seriously without inflating their structure.",
-    p4s6title: "Paid Ads (Meta / Google)",
-    p4s6desc: "Paid advertising campaigns on Meta (Facebook and Instagram) and Google Ads are set up and managed: campaign structure, audience definition, copy writing, and continuous optimization based on performance. The advertising budget you invest directly in the platforms is separate and is yours. This fee covers exclusively the strategy, setup, and professional management of that budget.",
-
-    p5name: "Customer Service Support",
-    p5desc: "The person who takes care of your customers after they buy, and who keeps the team coordinated day to day. The position that holds everything else up.",
-    p5s1title: "Client Support (Messages & Inquiries)",
-    p5s1desc: "Every person who contacts your brand expecting a response is either a potential client or an active client who needs to feel attended to. All incoming inquiries via email, direct messages, and WhatsApp are managed with a defined response protocol and maximum 24-hour turnaround times. Every interaction follows your brand's tone and protocols. Without this, leads go cold and existing clients perceive disorder.",
-    p5s2title: "Daily Operational Support (WhatsApp)",
-    p5s2desc: "The direct point of contact between you and the team so operations flow without bottlenecks. Daily coordination via WhatsApp on working days: real-time query resolution, incident management, delivery confirmation, and priority alignment. Eliminates endless message threads without responses and guarantees nothing gets blocked due to lack of communication.",
-    p5s3title: "Post-Sale Follow-Up & Retention",
-    p5s3desc: "The moment someone buys or signs up is just the beginning. This service manages post-close contact with a structured sequence: welcome message, expectation confirmation, 7-day check-in, and scheduled touchpoints to ensure satisfaction and detect upgrade or referral opportunities. Clients who feel attended to after purchasing are the ones who buy again most often and recommend most actively.",
-    p5s4title: "Weekly Follow-Up Meetings (4/month)",
-    p5s4desc: "4 structured monthly meetings — one per week — with a defined agenda and follow-up minutes. Each session reviews the previous week's results, identifies blockers, makes data-based decisions, and sets priorities for the coming week. Without this cadence, teams work without shared visibility and problems are detected when they're already difficult to correct.",
-    p5s5title: "Private Community Management (Discord / Group)",
-    p5s5desc: "If you have a private Discord, Telegram, or WhatsApp group with students or clients, its value depends entirely on how active the community is. Daily moderation, interactions to maintain high activity levels, exclusive content publishing, and detection of members at risk of leaving are all managed. A well-managed community is your greatest retention asset and the most powerful source of organic testimonials and referrals.",
-
-    posNames: { 1:"Community Mgmt", 2:"Graphic Design", 3:"Database", 4:"Email / Marketing", 5:"Customer Service" }
-  },
-
-  de: {
-    eyebrow: "Dienstkonfiguration nach Position",
-    title: "Erstellen Sie Ihr individuelles Betriebsbudget",
-    subtitle: "Jede Checkbox, die Sie ankreuzen, steht für eine echte Aufgabe, die jeden Monat für Sie erledigt wird. Lesen Sie jede Beschreibung sorgfältig, bewerten Sie Ihren Bedarf und erstellen Sie das Budget, das Ihren Betrieb genau widerspiegelt.",
-    dialRef: "Referenz:",
-    fullStack: "Vollständig",
-    pos: "Position",
-    perMonth: "/ Monat",
-    perCampaign: "/ Kampagne",
-    base: "Basis", pro: "Pro", full: "Komplett",
-    breakdownTitle: "Budgetübersicht",
-    breakdownSub: "Hier sehen Sie genau, worin Sie investieren und was jeder Euro Ihres Gesamtbudgets darstellt.",
-    empty: "Wählen Sie oben Dienste aus, um Ihr Budget zu erstellen.",
-    subtotal: "Zwischensumme",
-    vat: "MwSt. (21%)",
-    totalVat: "Gesamtbetrag inkl. MwSt.",
-    btnPdf: "Angebot als PDF erstellen",
-    btnEmail: "Per E-Mail senden",
-    btnReset: "Zurücksetzen",
-    pillLabel: "Gesamt + MwSt.",
-    footerTag: "ist auf Struktur aufgebaut. Wählen Sie jetzt Ihre.",
-    toastSuggested: "Empfohlene Auswahl: ~{amt} / Monat (ohne MwSt.)",
-    toastReset: "Auswahl zurückgesetzt.",
-    toastPdf: "Angebot bereit — Drucken > Als PDF speichern.",
-    toastEmail: "E-Mail-Client mit Ihrer Auswahl geöffnet.",
-    toastEmpty: "Bitte wählen Sie mindestens einen Dienst.",
-    pdfTitle: "Dienstleistungsangebot — Individuelles Budget",
-    pdfDate: "Datum",
-    emailSubject: "HYBRYD — Dienstleistungsangebot",
-    emailHeader: "HYBRYD — Dienstleistungsangebot",
-
-    p1name: "Community Management",
-    p1desc: "Alles, was nach dem Veröffentlichen in Ihren sozialen Netzwerken passiert: wer antwortet, wie geantwortet wird und welches Bild Sie bei jeder täglichen Interaktion projizieren.",
-    p1s1title: "Inhalts- und Kalenderverwaltung",
-    p1s1desc: "Jeden Monat wird festgelegt, was veröffentlicht wird, wann und mit welchem Ziel. Ein wochenweise strukturierter Redaktionskalender wird mit Themen, Formaten und markierten Schlüsselterminen erstellt. Ohne dieses System werden Inhalte reaktiv und ohne strategische Kohärenz veröffentlicht — was dazu führt, dass der Account inkonsistent und ohne klare Richtung wirkt.",
-    p1s2title: "DM- und Kommentarverwaltung",
-    p1s2desc: "Jemand antwortet täglich in Ihrem Namen. Direktnachrichten werden protokollgemäß bearbeitet, Kommentare werden moderiert, um Lärm zu entfernen, und echte Leads werden identifiziert und zur Nachverfolgung gekennzeichnet. Beinhaltet aktive Pflege des Markentons in jeder Interaktion. Ohne dies nimmt Ihre Community wahr, dass niemand hinter dem Account steht — und potenzielle Kunden gehen still verloren.",
-    p1s3title: "Social Listening & Monitoring",
-    p1s3desc: "Echtzeit-Verfolgung von Markenerwähnungen, Wettbewerberbewegungen und relevanten Gesprächen in Ihrer Branche. Sie erhalten Warnmeldungen bei reputationsgefährdenden Situationen und einen wöchentlichen Stimmungsbericht. So können Sie rechtzeitig reagieren, anstatt zu spät zu erfahren, was über Sie gesagt wird.",
-    p1s4title: "Erweitertes Community Management (Komplett)",
-    p1s4desc: "Vollständiges Management Ihrer Social-Media-Präsenz: Redaktionsplanung, Nachrichtenantworten, Kommentarmoderation, Marken-Monitoring und Wochenberichte — alles inklusive. Aktive Präsenz 6 Tage die Woche. Die Option für alle, die diese Position vollständig delegieren möchten, ohne sich um operative Details zu kümmern.",
-
-    p2name: "Grafikdesign",
-    p2desc: "Was die Leute sehen, bestimmt, ob sie aufhören zu scrollen. Hier wird Volumen, Format und visuelle Qualität all dessen festgelegt, was Sie monatlich veröffentlichen.",
-    p2s1title: "Karussell-Paket (8 / Monat)",
-    p2s1desc: "8 monatliche Karussells, die Sie als Autorität in Ihrer Branche positionieren. Jedes Stück hat eine eigene narrative Struktur: wirkungsvolles Cover, echte Inhaltsentwicklung und ein Abschluss mit Handlungsaufforderung. Dies ist das Format, das auf Instagram die meisten Speicherungen, Teilungen und qualifizierten Follower generiert. Ohne sie sammelt Ihr Profil nur Views — ohne Konversion.",
-    p2s2title: "Karussell-Paket (12 / Monat)",
-    p2s2desc: "12 Karussells pro Monat für diejenigen, die eine höhere Veröffentlichungsfrequenz benötigen und ihre Nische mit konstantem Mehrwert sättigen wollen. Bei diesem Volumen belohnt der Algorithmus Sie, Ihr Publikum assoziiert Sie direkt mit Ihrem Fachgebiet, und die organische Wachstumskurve beschleunigt sich sichtbar. Empfohlen in aktiven Wachstums- oder Launch-Phasen.",
-    p2s3title: "Stories-System (Tägliche Vorlagen)",
-    p2s3desc: "Stories sind der direkteste Kanal zu Ihrem täglichen Publikum — das Erste, was es sieht, wenn es die App öffnet. Ein System editierbarer Vorlagen wird in verschiedenen Formaten erstellt: Umfragen, Fragen, Mehrwertinhalte, Behind-the-Scenes und Handlungsaufforderungen. Beinhaltet eine monatliche Nutzungsanleitung, damit jeder im Team sie korrekt veröffentlichen kann.",
-    p2s4title: "Reel-Bearbeitung (4 / Monat)",
-    p2s4desc: "4 professionell bearbeitete Reels pro Monat: Farbkorrektur, synchronisierte animierte Untertitel, strategische Musikauswahl und Schnittrythmus für Kurzformate. Reels sind der wichtigste Treiber der organischen Reichweite auf Instagram und TikTok. Mit diesem Service wirkt Ihr Videoinhalt nicht mehr improvisioniert.",
-    p2s5title: "Kampagnen- und Event-Grafiken",
-    p2s5desc: "Bei Events, Launches oder Sonderkampagnen benötigen Sie Grafiken, die Dringlichkeit, Exklusivität und Markenkohärenz kommunizieren. Bis zu 10 Formate (Feed, Stories, Cover, Banner) mit einheitlicher Bildsprache. Vermeidet den häufigen Fehler, Kampagnen mit improvisierten Designs zu veröffentlichen, die die Produktglaubwürdigkeit untergraben.",
-
-    p3name: "Datenbankverwaltung",
-    p3desc: "Die interne Ordnung, die niemand sieht, aber die alles funktionieren lässt: Dateien, Kontaktlisten, Kennzahlen und strukturierte Daten für fundierte Entscheidungen.",
-    p3s1title: "Drive & digitales Asset-Management",
-    p3s1desc: "Wenn Ihr Drive Ordner namens 'final', 'final2' oder 'definitiv_v3' enthält, ist dieser Service für Sie. Die gesamte digitale Dateistruktur wird organisiert — Inhalte, Designs, Videos, Dokumente — mit einem klaren Benennungssystem und korrekt konfigurierten Zugriffsrechten. Das Team hört auf, Zeit mit der Dateisuche zu verschwenden.",
-    p3s2title: "Content-Archivierungssystem",
-    p3s2desc: "Alle produzierten Inhalte werden mit Version, Datum, Kanal und zugehöriger Performance-Kennzahl archiviert. Dies ermöglicht es zu wissen, was funktioniert, wirkungsstarke Stücke wiederzuverwenden und eine vollständige Arbeitshistorie zu führen. Ohne dieses System werden Inhalte produziert, veröffentlicht und verschwinden — ohne kumuliertes Lernen.",
-    p3s3title: "Kontakt- und Lead-Datenbank",
-    p3s3desc: "Eine unsaubere Datenbank ist verlorenes Geld. Dieser Service umfasst die regelmäßige Bereinigung doppelter oder inaktiver Kontakte, Segmentierung nach Interessenprofilen oder Funnel-Stufe und Vorbereitung sauberer Listen für jede Kampagne. Die Qualität Ihrer E-Mail-Marketing- und Paid-Advertising-Ergebnisse hängt direkt davon ab, wie gut Ihre Datenbank segmentiert ist.",
-    p3s4title: "Performance-Berichte & Dashboards",
-    p3s4desc: "Visuelle Dashboards werden erstellt, die alle relevanten Kennzahlen an einem Ort konsolidieren: Reichweite, Engagement, E-Mail-Öffnungsraten, Konversionen, Follower-Wachstum und monatlichen Zielstatus. Ohne dies beginnt jedes Meeting mit der Suche nach Zahlen. Damit basiert die Entscheidungsfindung auf echten, aktuellen Daten.",
-
-    p4name: "E-Mail-Marketing & Strategie",
-    p4desc: "Von E-Mails an Ihre Liste bis hin zu einer Person, die Ihre gesamte Marketingstrategie denkt und leitet. Wählen Sie das Niveau, das Sie benötigen.",
-    p4s1title: "Monatliches E-Mail-Marketing (4 Kampagnen)",
-    p4s1desc: "E-Mail bleibt der Kanal mit dem höchsten Return on Investment aller digitalen Kanäle. 4 vollständige monatliche Versendungen werden verwaltet: Texterstellung, Template-Design, Listensegmentierung und Post-Send-Analyse. Wenn Sie bereits eine Liste haben, sie aber nicht konsequent nutzen, lassen Sie eines Ihrer wertvollsten Assets verfallen.",
-    p4s2title: "E-Mail-Automatisierungen & Sequenzen",
-    p4s2desc: "Automatisierungen arbeiten, während Sie schlafen. Flows werden entworfen und implementiert, die automatisch basierend auf dem Nutzerverhalten ausgelöst werden: Willkommenssequenz für neue Abonnenten, Nurturing-Flow für kalte Leads, Reaktivierung inaktiver Kontakte und Post-Event-Follow-up. Einmal konfiguriert, generieren diese Flows kontinuierlich Verkäufe ohne manuellen Eingriff.",
-    p4s3title: "Script- und Copywriting",
-    p4s3desc: "Alles, was David oder Xavi vor der Kamera oder schriftlich kommunizieren, muss authentisch, klar und mit Verkaufsabsicht klingen. Videoscripts mit narrativer Struktur, Ad-Copies für Meta und Google sowie Landingpage-Texte werden verfasst. Die Stimme ist immer an den Markenton angepasst.",
-    p4s4title: "Monatliche strategische Leitung",
-    p4s4desc: "Eine Person mit strategischer Vision stellt sicher, dass alles, was produziert und veröffentlicht wird, mit der Markenpositionierung und den monatlichen Zielen übereinstimmt. Beinhaltet die Definition der monatlichen Narrative, Performance-Review und zwei Abstimmungssitzungen. Ideal für Teams, die bereits operativ sind, aber jemanden brauchen, der Kohärenz und Richtung garantiert.",
-    p4s5title: "Fraktionierter CMO (Vollständiges Marketing)",
-    p4s5desc: "HYBRYD agiert als Ihr externer Marketingdirektor. Globale Strategie, Koordination aller aktiven Dienste, Positionierungsentscheidungen und Ergebnisüberwachung — alles verwaltet, ohne dass Sie einen internen CMO einstellen müssen. Sie zahlen für die Kapazität einer ganzen Abteilung zu einem Bruchteil der Kosten.",
-    p4s6title: "Paid Ads (Meta / Google)",
-    p4s6desc: "Bezahlte Werbekampagnen auf Meta (Facebook und Instagram) und Google Ads werden eingerichtet und verwaltet: Kampagnenstruktur, Zielgruppendefinition, Copywriting und kontinuierliche Optimierung. Das Werbebudget, das Sie direkt in die Plattformen investieren, ist separat und gehört Ihnen. Dieses Honorar deckt ausschließlich die professionelle Strategie und Verwaltung.",
-
-    p5name: "Kundenservice-Support",
-    p5desc: "Die Person, die sich nach dem Kauf um Ihre Kunden kümmert und das Team täglich koordiniert hält. Die Position, die alles andere zusammenhält.",
-    p5s1title: "Kundensupport (Nachrichten & Anfragen)",
-    p5s1desc: "Jede Person, die Ihre Marke kontaktiert und eine Antwort erwartet, ist entweder ein potenzieller Kunde oder ein aktiver Kunde, der sich betreut fühlen muss. Alle eingehenden Anfragen per E-Mail, Direktnachrichten und WhatsApp werden mit einem definierten Antwortprotokoll und maximalen 24-Stunden-Reaktionszeiten verwaltet. Ohne dies werden Leads kalt und bestehende Kunden nehmen Unordnung wahr.",
-    p5s2title: "Täglicher operativer Support (WhatsApp)",
-    p5s2desc: "Der direkte Kontaktpunkt zwischen Ihnen und dem Team, damit der Betrieb ohne Engpässe läuft. Tägliche Koordination per WhatsApp an Werktagen: Echtzeit-Klärung von Fragen, Vorfallmanagement, Lieferbestätigung und Prioritätsabstimmung. Eliminiert endlose Nachrichtenketten ohne Antworten.",
-    p5s3title: "After-Sales-Nachverfolgung & Retention",
-    p5s3desc: "Der Moment, in dem jemand kauft oder sich anmeldet, ist erst der Anfang. Dieser Service verwaltet den Nachkaufkontakt mit einer strukturierten Sequenz: Willkommensnachricht, Erwartungsbestätigung, 7-Tage-Check-in und geplante Kontaktpunkte. Kunden, die sich nach dem Kauf betreut fühlen, kaufen am häufigsten erneut und empfehlen am aktivsten weiter.",
-    p5s4title: "Wöchentliche Follow-up-Meetings (4/Monat)",
-    p5s4desc: "4 strukturierte monatliche Meetings — eines pro Woche — mit definierter Agenda und Protokollen. Jede Sitzung überprüft die Ergebnisse der Vorwoche, identifiziert Blockaden, trifft datenbasierte Entscheidungen und legt Prioritäten für die kommende Woche fest. Ohne diese Kadenz arbeiten Teams ohne gemeinsame Sichtbarkeit.",
-    p5s5title: "Private Community-Verwaltung (Discord / Gruppe)",
-    p5s5desc: "Wenn Sie eine private Discord-, Telegram- oder WhatsApp-Gruppe mit Schülern oder Kunden haben, hängt ihr Wert vollständig davon ab, wie aktiv die Community ist. Tägliche Moderation, Interaktionen zur Aufrechterhaltung hoher Aktivitätsniveaus, Veröffentlichung exklusiver Inhalte und Erkennung von abwanderungsgefährdeten Mitgliedern werden verwaltet. Eine gut verwaltete Community ist Ihr größtes Retention-Asset.",
-
-    posNames: { 1:"Community Mgmt", 2:"Grafikdesign", 3:"Datenbank", 4:"E-Mail / Marketing", 5:"Kundenservice" }
-  },
-
-  sv: {
-    eyebrow: "Tjänstekonfiguration per position",
-    title: "Bygg ditt anpassade driftsbudget",
-    subtitle: "Varje ruta du markerar representerar en verklig uppgift som någon utför åt dig varje månad. Läs varje beskrivning noggrant, bedöm vad du behöver och bygg budgeten som speglar din verksamhet exakt.",
-    dialRef: "Referens:",
-    fullStack: "Fullt paket",
-    pos: "Position",
-    perMonth: "/ mån",
-    perCampaign: "/ kampanj",
-    base: "Bas", pro: "Pro", full: "Komplett",
-    breakdownTitle: "Budgetsammanfattning",
-    breakdownSub: "Här ser du exakt vad du investerar i och vad varje euro av din totalbudget representerar.",
-    empty: "Välj tjänster ovan för att börja bygga din budget.",
-    subtotal: "Delsumma",
-    vat: "Moms (21%)",
-    totalVat: "Totalt inkl. moms",
-    btnPdf: "Generera budget-PDF",
-    btnEmail: "Skicka via e-post",
-    btnReset: "Rensa",
-    pillLabel: "Totalt + moms",
-    footerTag: "är byggd på struktur. Välj nu din.",
-    toastSuggested: "Föreslagen selektion: ~{amt} / mån (exkl. moms)",
-    toastReset: "Selektion rensad.",
-    toastPdf: "Budget klar — Skriv ut > Spara som PDF.",
-    toastEmail: "E-postklient öppnad med ditt val.",
-    toastEmpty: "Välj minst en tjänst.",
-    pdfTitle: "Tjänsteförslag — Anpassad budget",
-    pdfDate: "Datum",
-    emailSubject: "HYBRYD — Tjänsteförslag",
-    emailHeader: "HYBRYD — Tjänsteförslag",
-
-    p1name: "Community Management",
-    p1desc: "Allt som händer på dina sociala kanaler efter att du publicerat: vem svarar, hur de svarar och vilken bild du projicerar i varje daglig interaktion.",
-    p1s1title: "Innehålls- och kalenderhantering",
-    p1s1desc: "Varje månad definieras vad som publiceras, när och med vilket mål. En strukturerad redaktionskalender skapas veckovis med ämnen, format och nyckeldata markerade. Utan detta system publiceras innehåll reaktivt utan strategisk koherens — vilket gör att kontot verkar inkonsekvent och utan tydlig riktning.",
-    p1s2title: "DM- och kommentarshantering",
-    p1s2desc: "Någon svarar för dig, varje dag. Direktmeddelanden hanteras med protokoll, kommentarer modereras för att ta bort brus och riktiga leads identifieras och flaggas för uppföljning. Inkluderar aktivt underhåll av varumärkesrösten i varje interaktion. Utan detta uppfattar din community att ingen finns bakom kontot — och potentiella kunder försvinner i tystnad.",
-    p1s3title: "Social lyssnande & övervakning",
-    p1s3desc: "Realtidsspårning av varumärkesomtal, konkurrentrörelser och relevanta samtal i din bransch. Du får varningar vid ryktesrisker och en veckorapport om hur ditt innehåll uppfattas. Detta låter dig reagera i tid istället för att få veta för sent vad folk säger om dig.",
-    p1s4title: "Avancerad Community Management (Komplett)",
-    p1s4desc: "Komplett hantering av din sociala närvaro: redaktionsplanering, meddelandesvar, kommentarsmoderering, varumärkesövervakning och veckorapporter — allt ingår. Aktiv närvaro 6 dagar i veckan. Alternativet för den som vill delegera denna position helt utan att oroa sig för ett enda operativt detalj.",
-
-    p2name: "Grafisk design",
-    p2desc: "Vad folk ser avgör om de stannar upp och läser. Här bestäms volym, format och visuell kvalitet på allt du publicerar varje månad.",
-    p2s1title: "Karusellpaket (8 / månad)",
-    p2s1desc: "8 karusellinlägg per månad designade för att positionera dig som auktoritet i din sektor. Varje stycke har sin egen narrativa struktur: slagkraftigt omslag, verklig innehållsutveckling och avslutning med uppmaning. Detta är formatet som genererar flest sparningar, delningar och kvalificerade följare på Instagram. Utan dem samlar din profil bara visningar — utan att konvertera.",
-    p2s2title: "Karusellpaket (12 / månad)",
-    p2s2desc: "12 karusellinlägg per månad för de som behöver högre publiceringsfrekvens och vill mätta sin nisch med konstant värdefullt innehåll. Vid denna volym belönar algoritmen dig, din publik associerar dig direkt med ditt expertområde och den organiska tillväxtkurvan accelererar synligt. Rekommenderas i aktiva tillväxt- eller lanseringsfaser.",
-    p2s3title: "Stories-system (Dagliga mallar)",
-    p2s3desc: "Stories är den mest direkta kanalen med din dagliga publik — det första de ser när de öppnar appen. Ett system med redigerbara mallar skapas i olika format: undersökningar, frågor, värdefullt innehåll, bakom kulisserna och uppmaningar. Inkluderar månadsvis användningsguide så att vem som helst i teamet kan publicera dem korrekt utan att bryta varumärkesestetiken.",
-    p2s4title: "Reel-redigering (4 / månad)",
-    p2s4desc: "4 professionellt redigerade reels per månad: färgkorrigering, synkroniserade animerade undertexter, strategiskt musikval och redigeringstakt anpassad för kortformat. Reels är den primära drivkraften för organisk räckvidd på Instagram och TikTok. Med denna tjänst slutar ditt videoinnehåll se improviserat ut och börjar konkurrera visuellt med mycket större konton.",
-    p2s5title: "Kampanj- och eventgrafik",
-    p2s5desc: "När du har ett event, lansering eller specialkampanj behöver du grafik som kommunicerar brådskande, exklusivitet och varumärkeskoherens. Upp till 10 format (flöde, stories, omslag, banner) med enhetligt visuellt språk designas. Undviker det vanliga misstaget att publicera kampanjer med improviserade designer som underminerar produktens trovärdighet.",
-
-    p3name: "Databashantering",
-    p3desc: "Den interna ordning ingen ser men som får allt att fungera: filer, kontaktlistor, mätvärden och strukturerade data för verkliga beslut.",
-    p3s1title: "Drive & digitalt tillgångshantering",
-    p3s1desc: "Om din Drive har mappar med namn som 'final', 'final2' eller 'definitiv_v3' är denna tjänst för dig. Hela den digitala filstrukturen organiseras — innehåll, designer, videor, dokument — med ett tydligt namngivningssystem, korrekt hierarkiserade mappar och rätt konfigurerade åtkomsträttigheter. Teamet slutar slösa tid på att söka efter filer.",
-    p3s2title: "Innehållsarkiveringssystem",
-    p3s2desc: "Allt producerat innehåll arkiveras med version, datum, kanal och tillhörande prestandamätvärde. Detta gör det möjligt att veta vad som fungerar, återanvända högpresterande stycken och ha en fullständig arbetshistorik. Utan detta system produceras innehåll, publiceras och försvinner — utan ackumulerat lärande.",
-    p3s3title: "Kontakt- och lead-databas",
-    p3s3desc: "En smutsig databas är förlorade pengar. Denna tjänst inkluderar periodisk rensning av dubbletter eller inaktiva kontakter, segmentering efter intresseprofiler eller trattstadie och förberedelse av rena listor redo att använda i varje kampanj. Kvaliteten på dina e-postmarknadsförings- och betald-reklamresultat beror direkt på hur väl din databas är segmenterad.",
-    p3s4title: "Prestandarapporter & dashboards",
-    p3s4desc: "Visuella dashboards skapas som konsoliderar alla relevanta mätvärden på ett ställe: räckvidd, engagemang, e-postöppningsfrekvenser, konverteringar, följartillväxt och månadsvis målstatus. Utan detta börjar varje möte med att söka efter siffror på olika ställen. Med detta baseras beslutsfattande på verklig, uppdaterad data.",
-
-    p4name: "E-postmarknadsföring & Strategi",
-    p4desc: "Från att skicka e-post till din lista till att ha någon som tänker och leder hela din marknadsföringsstrategi. Välj den nivå du behöver.",
-    p4s1title: "Månadsvis e-postmarknadsföring (4 kampanjer)",
-    p4s1desc: "E-post förblir kanalen med högst avkastning på investering av alla digitala kanaler. 4 fullständiga månatliga utskick hanteras: copywriting, malldesign, listsegmentering och post-utskicksanalys. Om du redan har en lista men inte använder den konsekvent låter du ett av dina mest värdefulla tillgångar förfalla.",
-    p4s2title: "E-postautomatiseringar & sekvenser",
-    p4s2desc: "Automatiseringar arbetar medan du sover. Flöden designas och implementeras som utlöses automatiskt baserat på användarbeteende: välkomstsekvens för nya prenumeranter, nurturing-flöde för kalla leads, reaktivering av inaktiva kontakter och post-event-uppföljning. En gång konfigurerade genererar dessa flöden kontinuerligt försäljning utan manuell intervention.",
-    p4s3title: "Manus- och copywriting",
-    p4s3desc: "Allt David eller Xavi kommunicerar på kamera eller skriftligt måste låta autentiskt, tydligt och med säljintention. Videomanus med narrativ struktur, annonskopior för Meta och Google samt landningssidetexter skrivs. Rösten är alltid anpassad till varumärkestonen — låter inte generisk eller aggressivt reklamliknande.",
-    p4s4title: "Månadsvis strategisk ledning",
-    p4s4desc: "En person med strategisk vision som säkerställer att allt som produceras och publiceras är anpassat till varumärkespositioneringen och månadsvis mål. Inkluderar definition av månadsnarrativ, prestandagenomgång och två anpassningssessioner. Idealiskt om du redan har ett operativt team men behöver någon som garanterar koherens och riktning.",
-    p4s5title: "Fraktionerad CMO (Komplett marknadsföring)",
-    p4s5desc: "HYBRYD agerar som din externa marknadsföringsdirektör. Global strategi, koordinering av alla aktiva tjänster, positioneringsbeslut och resultatövervakning — allt hanterat utan att du behöver anställa en intern CMO. Du betalar för kapaciteten hos en hel avdelning till en bråkdel av kostnaden.",
-    p4s6title: "Betald annonsering (Meta / Google)",
-    p4s6desc: "Betalda annonskampanjer på Meta (Facebook och Instagram) och Google Ads ställs in och hanteras: kampanjstruktur, målgruppsdefinition, copywriting och kontinuerlig optimering. Annonsbudgeten du investerar direkt i plattformarna är separat och din. Detta arvode täcker uteslutande strategi, inställning och professionell hantering av den budgeten.",
-
-    p5name: "Kundtjänstsupport",
-    p5desc: "Den som tar hand om dina kunder efter att de köpt och håller teamet koordinerat dag för dag. Positionen som håller upp allt annat.",
-    p5s1title: "Kundsupport (Meddelanden & förfrågningar)",
-    p5s1desc: "Varje person som kontaktar ditt varumärke och förväntar sig svar är antingen en potentiell kund eller en aktiv kund som behöver känna sig omhändertagen. Alla inkommande förfrågningar via e-post, direktmeddelanden och WhatsApp hanteras med ett definierat svarsprotokoll och maximala 24-timmars svarstider. Utan detta kallnar leads och befintliga kunder uppfattar oordning.",
-    p5s2title: "Dagligt operativt stöd (WhatsApp)",
-    p5s2desc: "Den direkta kontaktpunkten mellan dig och teamet så att verksamheten flödar utan flaskhalsar. Daglig koordinering via WhatsApp på arbetsdagar: realtidslösning av frågor, incidenthantering, leveransbekräftelse och prioritetsanpassning. Eliminerar ändlösa meddelandetrådar utan svar.",
-    p5s3title: "Uppföljning efter försäljning & retention",
-    p5s3desc: "Ögonblicket när någon köper eller registrerar sig är bara början. Denna tjänst hanterar kontakten efter avslut med en strukturerad sekvens: välkomstmeddelande, förväntningsbekräftelse, 7-dagars check-in och schemalagda kontaktpunkter. Kunder som känner sig omhändertagna efter köp köper igen mest frekvent och rekommenderar mest aktivt.",
-    p5s4title: "Veckovisa uppföljningsmöten (4/månad)",
-    p5s4desc: "4 strukturerade månatliga möten — ett per vecka — med definierad agenda och mötesprotokoll. Varje session granskar föregående veckas resultat, identifierar blockeringar, fattar datadrivna beslut och sätter prioriteringar för kommande vecka. Utan denna kadens arbetar team utan delad synlighet och problem upptäcks när de redan är svåra att korrigera.",
-    p5s5title: "Privat community-hantering (Discord / Grupp)",
-    p5s5desc: "Om du har en privat Discord-, Telegram- eller WhatsApp-grupp med elever eller kunder beror dess värde helt på hur aktiv communityn är. Daglig moderering, interaktioner för att hålla aktivitetsnivåerna höga, publicering av exklusivt innehåll och detektering av medlemmar med avhopp-risk hanteras. En välskött community är ditt största retentionstillgång och den mest kraftfulla källan till organiska vittnesmål.",
-
-    posNames: { 1:"Community Mgmt", 2:"Grafisk design", 3:"Databas", 4:"E-post / Marknadsföring", 5:"Kundtjänst" }
-  }
+  en: { eyebrow:"Full Marketing & Communication Service", title:"Build Your Monthly Budget", subtitle:"Each service is designed so you focus exclusively on personal client relationships while we manage all marketing, communication and digital growth operations.", valueTitle:"Your only job: take care of your clients", valueText:"We make your business grow digitally while you do what you do best: build real relationships with everyone who trusts you. Marketing, social, campaigns, analytics, production — all covered.", refTitle:"Spain Market Reference 2026 (monthly cost of hiring these positions separately)", refCMLabel:"In-house Community Manager", refDesignLabel:"In-house Graphic Designer", refEmailLabel:"Email Marketing Manager", refAdsLabel:"Paid Ads Specialist", refProdLabel:"Content Producer / Coordinator", refAnalystLabel:"Digital Analyst", pos1:"01 — Content & Social Management", p1name:"Your digital presence hands-free", p1desc:"Constant publishing, daily replies, active community", pos2:"02 — Communication & Automation", p2name:"Messages that arrive at the right time", p2desc:"Email and WhatsApp working together to retain and activate", pos3:"03 — Design & Web", p3name:"All the visuals you need", p3desc:"Professional graphics and always-updated web", pos4:"04 — Production", p4name:"From idea to ready-to-publish content", p4desc:"Scripts, coordination and full recording organization", pos5:"05 — Analytics & Performance", p5name:"Data-driven decisions, not intuition", p5desc:"Metrics, ads optimization and continuous improvement", perMonth:"/ month", includes:"Includes:", breakdownTitle:"Monthly Budget Summary", breakdownSub:"Total investment in marketing, communication and digital management", empty:"Select the services you need above to build your budget.", subtotal:"Subtotal", discount:"Applied discount", vat:"VAT (21%)", totalVat:"Total Monthly Investment", btnPdf:"Download Budget PDF", btnEmail:"Send via Email", btnReset:"Clear Selection", pillLabel:"Monthly Investment", footerTag:"Your complete marketing team without hiring anyone.", toastReset:"Selection cleared.", toastPdf:"Budget ready — Print > Save as PDF.", toastEmail:"Email client opened.", toastEmpty:"Select at least one service.", social_feed_title:"Feed Posts (4/month)", social_stories_title:"Weekly Stories (12/month)", social_community_title:"Comments & DMs Management", social_whatsapp_title:"WhatsApp Community Management", comm_whatsapp_title:"Strategic WhatsApp Management", comm_email_title:"Email Marketing Management", comm_campaigns_title:"Weekly Campaigns (Email + WhatsApp)", design_graphics_title:"Content Graphic Design", design_web_title:"Web Adjustments & Modifications", prod_org_title:"Content Production Organization", prod_scripts_title:"Recording Scripts Development", perf_analytics_title:"App Metrics Analysis", perf_ads_title:"Paid Ads Management & Optimization", posNames:{1:"Social",2:"Communication",3:"Design",4:"Production",5:"Analytics"} },
+  de: { eyebrow:"Vollständiger Marketing- & Kommunikationsservice", title:"Erstellen Sie Ihr monatliches Budget", subtitle:"Jeder Service ist so gestaltet, dass Sie sich ausschließlich auf persönliche Kundenbeziehungen konzentrieren, während wir alle Marketing-, Kommunikations- und digitalen Wachstumsoperationen verwalten.", valueTitle:"Ihre einzige Aufgabe: sich um Ihre Kunden kümmern", valueText:"Wir lassen Ihr Geschäft digital wachsen, während Sie das tun, was Sie am besten können: echte Beziehungen zu jedem aufbauen, der Ihnen vertraut. Marketing, Social, Kampagnen, Analysen, Produktion — alles abgedeckt.", refTitle:"Spanien Marktreferenz 2026 (monatliche Kosten für separate Einstellung dieser Positionen)", refCMLabel:"Interner Community Manager", refDesignLabel:"Interner Grafikdesigner", refEmailLabel:"E-Mail-Marketing-Manager", refAdsLabel:"Paid Ads Spezialist", refProdLabel:"Content Producer / Koordinator", refAnalystLabel:"Digital Analyst", pos1:"01 — Inhalts- & Social-Verwaltung", p1name:"Ihre digitale Präsenz ohne Aufwand", p1desc:"Konstante Veröffentlichung, tägliche Antworten, aktive Community", pos2:"02 — Kommunikation & Automatisierung", p2name:"Nachrichten zur richtigen Zeit", p2desc:"E-Mail und WhatsApp arbeiten zusammen", pos3:"03 — Design & Web", p3name:"Alle Grafiken, die Sie benötigen", p3desc:"Professionelle Grafiken und stets aktuelle Web", pos4:"04 — Produktion", p4name:"Von der Idee zum fertigen Inhalt", p4desc:"Skripte, Koordination und vollständige Organisation", pos5:"05 — Analytik & Performance", p5name:"Datenbasierte Entscheidungen", p5desc:"Metriken, Ads-Optimierung und kontinuierliche Verbesserung", perMonth:"/ Monat", includes:"Beinhaltet:", breakdownTitle:"Monatliche Budgetübersicht", breakdownSub:"Gesamtinvestition in Marketing, Kommunikation und digitales Management", empty:"Wählen Sie oben die benötigten Services.", subtotal:"Zwischensumme", discount:"Angewandter Rabatt", vat:"MwSt. (21%)", totalVat:"Gesamtinvestition monatlich", btnPdf:"Budget-PDF herunterladen", btnEmail:"Per E-Mail senden", btnReset:"Auswahl löschen", pillLabel:"Monatliche Investition", footerTag:"Ihr komplettes Marketing-Team ohne jemanden einzustellen.", toastReset:"Auswahl gelöscht.", toastPdf:"Budget bereit.", toastEmail:"E-Mail-Client geöffnet.", toastEmpty:"Wählen Sie mindestens einen Service.", posNames:{1:"Social",2:"Kommunikation",3:"Design",4:"Produktion",5:"Analytik"} },
+  sv: { eyebrow:"Fullständig marknadsförings- & kommunikationstjänst", title:"Bygg din månatliga budget", subtitle:"Varje tjänst är utformad så att du fokuserar uteslutande på personliga kundrelationer medan vi hanterar all marknadsföring, kommunikation och digitala tillväxtoperationer.", valueTitle:"Ditt enda jobb: ta hand om dina kunder", valueText:"Vi får ditt företag att växa digitalt medan du gör det du gör bäst: bygga riktiga relationer med alla som litar på dig. Marknadsföring, sociala medier, kampanjer, analys, produktion — allt täckt.", refTitle:"Spanien Marknadsreferens 2026 (månadskostnad för att anställa dessa positioner separat)", refCMLabel:"Intern Community Manager", refDesignLabel:"Intern Grafisk Designer", refEmailLabel:"E-postmarknadsföringschef", refAdsLabel:"Paid Ads Specialist", refProdLabel:"Content Producer / Koordinator", refAnalystLabel:"Digital Analytiker", pos1:"01 — Innehålls- & Socialhantering", p1name:"Din digitala närvaro utan ansträngning", p1desc:"Konstant publicering, dagliga svar, aktiv community", pos2:"02 — Kommunikation & Automatisering", p2name:"Meddelanden vid rätt tidpunkt", p2desc:"E-post och WhatsApp arbetar tillsammans", pos3:"03 — Design & Webb", p3name:"All grafik du behöver", p3desc:"Professionell grafik och alltid uppdaterad webb", pos4:"04 — Produktion", p4name:"Från idé till färdigt innehåll", p4desc:"Manus, koordination och fullständig inspelningsorganisation", pos5:"05 — Analys & Prestanda", p5name:"Datadrivna beslut", p5desc:"Mätvärden, annonsoptimering och kontinuerlig förbättring", perMonth:"/ månad", includes:"Inkluderar:", breakdownTitle:"Månatlig Budgetsammanfattning", breakdownSub:"Total investering i marknadsföring, kommunikation och digital hantering", empty:"Välj de tjänster du behöver ovan.", subtotal:"Delsumma", discount:"Tillämpad rabatt", vat:"Moms (21%)", totalVat:"Total månadsinvestering", btnPdf:"Ladda ner Budget-PDF", btnEmail:"Skicka via e-post", btnReset:"Rensa urval", pillLabel:"Månadsinvestering", footerTag:"Ditt kompletta marknadsföringsteam utan att anställa någon.", toastReset:"Urval rensat.", toastPdf:"Budget klar.", toastEmail:"E-postklient öppnad.", toastEmpty:"Välj minst en tjänst.", posNames:{1:"Socialt",2:"Kommunikation",3:"Design",4:"Produktion",5:"Analys"} }
 };
 
-// ─────────────────────────────────────────────────
 // STATE
-// ─────────────────────────────────────────────────
 let lang = 'es';
 const VAT = 0.21;
 const selected = new Map();
 const POS_COLORS = {1:'#00ff41',2:'#7b61ff',3:'#00cfff',4:'#ff6b35',5:'#ffcc00'};
 
-// ─────────────────────────────────────────────────
-// LANG SWITCHER
-// ─────────────────────────────────────────────────
+// LANG
 function setLang(l) {
   lang = l;
   document.querySelectorAll('.lang-btn').forEach(b => b.classList.toggle('active', b.textContent.trim().toLowerCase() === l));
@@ -853,39 +631,17 @@ function setLang(l) {
 
 function applyTranslations() {
   const t = T[lang];
-
-  // Simple data-i18n attributes
   document.querySelectorAll('[data-i18n]').forEach(el => {
     const k = el.dataset.i18n;
-    if (k === 'pos') {
-      el.textContent = t.pos + ' ' + el.dataset.posN;
-    } else if (t[k] !== undefined) {
-      el.textContent = t[k];
-    }
+    if (t[k]) el.textContent = t[k];
   });
-
-  // data-i18n-key for innerHTML-like (plain text)
-  document.querySelectorAll('[data-i18n-key]').forEach(el => {
-    const k = el.dataset.i18nKey;
-    if (t[k] !== undefined) el.textContent = t[k];
-  });
-
-  // data-i18n-text (button text override)
-  document.querySelectorAll('[data-i18n-text]').forEach(el => {
-    const k = el.dataset.i18nText;
-    if (t[k] !== undefined) el.textContent = t[k];
-  });
-
-  // Update selected item names in breakdown
   selected.forEach((val, card) => {
     const k = card.dataset.svc;
-    val.name = t[k + 'title'] || val.name;
+    val.name = t[k + '_title'] || val.name;
   });
 }
 
-// ─────────────────────────────────────────────────
 // CARD TOGGLE
-// ─────────────────────────────────────────────────
 function toggleCard(card) {
   const cb = card.querySelector('.card-check');
   const on = !cb.checked;
@@ -893,17 +649,16 @@ function toggleCard(card) {
   card.classList.toggle('selected', on);
   const k = card.dataset.svc;
   const t = T[lang];
+  const price = parseInt(card.dataset.basePrice, 10);
   if (on) {
-    selected.set(card, { name: t[k + 'title'] || k, price: parseInt(card.dataset.price,10), pos: parseInt(card.dataset.pos,10), svc: k });
+    selected.set(card, { name: t[k + '_title'] || k, price, pos: parseInt(card.dataset.pos,10), svc: k });
   } else {
     selected.delete(card);
   }
   render();
 }
 
-// ─────────────────────────────────────────────────
 // RENDER
-// ─────────────────────────────────────────────────
 function render() {
   const t = T[lang];
   const list = document.getElementById('breakdownList');
@@ -924,9 +679,29 @@ function render() {
 
   let sub = 0;
   selected.forEach(({ price }) => { sub += price; });
-  const vat = sub * VAT, total = sub + vat;
-  anim('subtotal', sub); anim('vatAmount', vat); anim('finalTotal', total);
 
+  // Bundle discount: 5+ services → 10% off, full package (all 15) → 15% off
+  let bundleDiscount = 0;
+  if (selected.size >= 15) bundleDiscount = sub * 0.15;
+  else if (selected.size >= 10) bundleDiscount = sub * 0.12;
+  else if (selected.size >= 5) bundleDiscount = sub * 0.10;
+
+  const afterDiscount = sub - bundleDiscount;
+  const vat = afterDiscount * VAT;
+  const total = afterDiscount + vat;
+
+  anim('subtotal', sub);
+  const discRow = document.getElementById('discountRow');
+  if (bundleDiscount > 0) {
+    discRow.style.display = 'flex';
+    anim('discountAmount', -bundleDiscount);
+  } else {
+    discRow.style.display = 'none';
+  }
+  anim('vatAmount', vat);
+  anim('finalTotal', total);
+
+  // Sticky pill
   const sticky = document.getElementById('summarySticky');
   if (selected.size === 0) {
     sticky.style.display = 'none';
@@ -946,43 +721,19 @@ function render() {
   }
 }
 
-// ─────────────────────────────────────────────────
-// PRESETS (by svc key)
-// ─────────────────────────────────────────────────
-const PRESETS = {
-  1500: ['p1s1','p2s3','p5s2'],
-  2000: ['p1s1','p1s2','p2s1','p5s1'],
-  2500: ['p1s4','p2s1','p2s3','p3s1','p5s1'],
-  3000: ['p1s4','p2s1','p2s4','p3s1','p4s1','p5s2'],
-  4000: ['p1s4','p2s2','p2s3','p3s1','p3s3','p4s1','p5s1','p5s3'],
-  6000: ['p1s4','p2s2','p2s3','p2s4','p3s1','p3s2','p3s4','p4s1','p4s2','p4s4','p5s1','p5s2','p5s4']
-};
-
-function applyDial(budget, btn) {
-  document.querySelectorAll('.dial-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  resetAll(true);
-  const keys = PRESETS[budget];
-  if (!keys) return;
-  document.querySelectorAll('.card').forEach(card => {
-    if (keys.includes(card.dataset.svc)) toggleCard(card);
+function resetAll() {
+  document.querySelectorAll('.card.selected').forEach(c => {
+    c.classList.remove('selected');
+    c.querySelector('.card-check').checked = false;
   });
-  let sub = 0; selected.forEach(({ price }) => { sub += price; });
-  showToast(T[lang].toastSuggested.replace('{amt}', fmt(sub)));
-}
-
-function resetAll(silent) {
-  document.querySelectorAll('.card.selected').forEach(c => { c.classList.remove('selected'); c.querySelector('.card-check').checked = false; });
   selected.clear();
   render();
-  if (!silent) { document.querySelectorAll('.dial-btn').forEach(b => b.classList.remove('active')); showToast(T[lang].toastReset); }
+  showToast(T[lang].toastReset);
 }
 
-// ─────────────────────────────────────────────────
 // UTILS
-// ─────────────────────────────────────────────────
 function fmt(n) {
-  return new Intl.NumberFormat('de-DE', { minimumFractionDigits:2, maximumFractionDigits:2 }).format(n) + '\u20ac';
+  return new Intl.NumberFormat('de-DE', { minimumFractionDigits:2, maximumFractionDigits:2 }).format(Math.abs(n)) + '\u20ac';
 }
 
 function anim(id, target) {
@@ -1002,9 +753,7 @@ function showToast(msg) {
   setTimeout(() => t.classList.remove('show'), 3400);
 }
 
-// ─────────────────────────────────────────────────
 // PDF
-// ─────────────────────────────────────────────────
 function generatePDF() {
   if (selected.size === 0) { showToast(T[lang].toastEmpty); return; }
   const t = T[lang]; let sub = 0, rows = '';
@@ -1014,20 +763,23 @@ function generatePDF() {
     rows += '<tr><td colspan="2" style="padding:14px 0 6px;font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:' + POS_COLORS[pos] + ';border-bottom:1px solid ' + POS_COLORS[pos] + '40;">' + (t.posNames[pos]||'') + '</td></tr>';
     items.forEach(({ name, price }) => { rows += '<tr><td style="padding:8px 0;border-bottom:1px solid #1a2a1e;color:#c8d6cc;font-size:12px;">' + name + '</td><td style="padding:8px 0;border-bottom:1px solid #1a2a1e;color:#fff;font-weight:600;text-align:right;font-size:12px;">' + fmt(price) + '</td></tr>'; });
   });
-  const vat = sub * VAT, total = sub + vat;
-  const date = new Date().toLocaleDateString(lang === 'es' ? 'es-ES' : lang === 'de' ? 'de-DE' : lang === 'sv' ? 'sv-SE' : 'en-GB', { year:'numeric', month:'long', day:'numeric' });
-  const html = '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>HYBRYD</title><style>body{font-family:Segoe UI,Arial,sans-serif;background:#050a07;color:#c8d6cc;padding:60px 40px;max-width:720px;margin:0 auto;}h1{color:#00ff41;font-size:28px;font-weight:800;letter-spacing:-.02em;margin-bottom:4px;}.s{color:#5a7062;font-size:10px;letter-spacing:.2em;text-transform:uppercase;display:block;margin-bottom:8px;}.d{color:#5a7062;font-size:11px;display:block;margin-bottom:40px;}table{width:100%;border-collapse:collapse;}.tr td{padding:12px 0;font-size:13px;color:#c8d6cc;border-top:1px solid #00ff41;}.fin td{font-size:22px;font-weight:800;color:#00ff41;padding:14px 0;border-top:2px solid #00ff41;}.foot{color:#5a7062;font-size:10px;letter-spacing:.2em;text-transform:uppercase;margin-top:60px;border-top:1px solid #1a2a1e;padding-top:24px;}</style></head><body><h1>HYBRYD</h1><span class="s">' + t.pdfTitle + '</span><span class="d">' + t.pdfDate + ': ' + date + '</span><table><tbody>' + rows + '<tr class="tr"><td>' + t.subtotal + '</td><td style="text-align:right;">' + fmt(sub) + '</td></tr><tr class="tr"><td>' + t.vat + '</td><td style="text-align:right;">' + fmt(vat) + '</td></tr><tr class="fin"><td>' + t.totalVat + '</td><td style="text-align:right;">' + fmt(total) + '</td></tr></tbody></table><p class="foot">HYBRYD ' + t.footerTag + '</p></body></html>';
+  let bundleDisc = 0;
+  if (selected.size >= 15) bundleDisc = sub * 0.15;
+  else if (selected.size >= 10) bundleDisc = sub * 0.12;
+  else if (selected.size >= 5) bundleDisc = sub * 0.10;
+  const afterDisc = sub - bundleDisc;
+  const vat = afterDisc * VAT, total = afterDisc + vat;
+  const date = new Date().toLocaleDateString(lang==='es'?'es-ES':lang==='de'?'de-DE':lang==='sv'?'sv-SE':'en-GB', { year:'numeric', month:'long', day:'numeric' });
+  const html = '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>HYBRYD Presupuesto</title><style>body{font-family:Segoe UI,Arial,sans-serif;background:#050a07;color:#c8d6cc;padding:60px 40px;max-width:720px;margin:0 auto;}h1{color:#00ff41;font-size:28px;font-weight:800;margin-bottom:4px;}.s{color:#5a7062;font-size:10px;text-transform:uppercase;margin-bottom:40px;display:block;}table{width:100%;border-collapse:collapse;}.tr td{padding:12px 0;font-size:13px;color:#c8d6cc;border-top:1px solid #00ff41;}.fin td{font-size:22px;font-weight:800;color:#00ff41;padding:14px 0;border-top:2px solid #00ff41;}.disc{color:#ff6b35;}</style></head><body><h1>HYBRYD</h1><span class="s">' + date + '</span><table><tbody>' + rows + '<tr class="tr"><td>' + t.subtotal + '</td><td style="text-align:right;">' + fmt(sub) + '</td></tr>' + (bundleDisc>0?'<tr class="tr disc"><td>' + t.discount + '</td><td style="text-align:right;">' + fmt(-bundleDisc) + '</td></tr>':'') + '<tr class="tr"><td>' + t.vat + '</td><td style="text-align:right;">' + fmt(vat) + '</td></tr><tr class="fin"><td>' + t.totalVat + '</td><td style="text-align:right;">' + fmt(total) + '</td></tr></tbody></table></body></html>';
   const win = window.open('','_blank');
   if (win) { win.document.write(html); win.document.close(); win.onload = () => win.print(); }
   showToast(T[lang].toastPdf);
 }
 
-// ─────────────────────────────────────────────────
 // EMAIL
-// ─────────────────────────────────────────────────
 function sendByEmail() {
   if (selected.size === 0) { showToast(T[lang].toastEmpty); return; }
-  const t = T[lang]; let sub = 0, body = t.emailHeader + '%0A%0A';
+  const t = T[lang]; let sub = 0, body = 'HYBRYD%0A%0A';
   const byPos = {};
   selected.forEach(({ name, price, pos }) => { sub += price; if (!byPos[pos]) byPos[pos] = []; byPos[pos].push({ name, price }); });
   Object.entries(byPos).forEach(([pos, items]) => {
@@ -1035,15 +787,20 @@ function sendByEmail() {
     items.forEach(({ name, price }) => { body += '\u2014 ' + name + ': ' + fmt(price) + '%0A'; });
     body += '%0A';
   });
-  const vat = sub * VAT, total = sub + vat;
-  body += t.subtotal + ': ' + fmt(sub) + '%0A' + t.vat + ': ' + fmt(vat) + '%0A' + t.totalVat + ': ' + fmt(total) + '%0A%0AHYBRYD ' + t.footerTag;
-  window.location.href = 'mailto:?subject=' + encodeURIComponent(t.emailSubject) + '&body=' + body;
+  let bundleDisc = 0;
+  if (selected.size >= 15) bundleDisc = sub * 0.15;
+  else if (selected.size >= 10) bundleDisc = sub * 0.12;
+  else if (selected.size >= 5) bundleDisc = sub * 0.10;
+  const afterDisc = sub - bundleDisc;
+  const vat = afterDisc * VAT, total = afterDisc + vat;
+  body += t.subtotal + ': ' + fmt(sub) + '%0A';
+  if (bundleDisc > 0) body += t.discount + ': ' + fmt(-bundleDisc) + '%0A';
+  body += t.vat + ': ' + fmt(vat) + '%0A' + t.totalVat + ': ' + fmt(total);
+  window.location.href = 'mailto:?subject=HYBRYD&body=' + body;
   showToast(t.toastEmail);
 }
 
-// ─────────────────────────────────────────────────
 // INIT
-// ─────────────────────────────────────────────────
 applyTranslations();
 </script>
 
